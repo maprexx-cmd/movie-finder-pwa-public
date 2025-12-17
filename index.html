@@ -1,756 +1,166 @@
 <!doctype html>
-
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#5b34d6" />
-  <title>Movie finder</title>  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icon-192.png">  <style>
-    :root{
-      --p1:#5b34d6;
-      --p2:#7b5cff;
-      --bg:#0f1115;
-      --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.08);
-      --border:rgba(255,255,255,.12);
-      --text:#f2f3f5;
-      --muted:rgba(242,243,245,.72);
-      --good:#29d37f;
-      --warn:#ffcc66;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#5b34d6">
+<title>Movie finder</title>
 
-    *{ -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-    body{
-      margin:0;
-      padding:16px;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 20% 0%, rgba(91,52,214,.35), transparent 60%),
-        radial-gradient(1000px 700px at 90% 10%, rgba(123,92,255,.25), transparent 55%),
-        var(--bg);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
 
-    .app{ max-width: 980px; margin: 0 auto; }
+<style>
+:root{
+--p1:#5b34d6;--p2:#7b5cff;--bg:#0f1115;
+--card:rgba(255,255,255,.06);--border:rgba(255,255,255,.12);
+--text:#f2f3f5;--muted:rgba(242,243,245,.72);
+}
 
-    .top{
-      border-radius: 22px;
-      padding: 14px 14px;
-      background: linear-gradient(135deg, rgba(91,52,214,.95), rgba(123,92,255,.9));
-      box-shadow: 0 14px 40px rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.18);
-    }
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
+body{
+margin:0;padding:16px;color:var(--text);
+background:
+radial-gradient(1200px 800px at 20% 0%, rgba(91,52,214,.35), transparent 60%),
+radial-gradient(1000px 700px at 90% 10%, rgba(123,92,255,.25), transparent 55%),
+var(--bg);
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+.app{max-width:900px;margin:0 auto}
 
-    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .space{ justify-content: space-between; }
+.top{
+background:linear-gradient(135deg,var(--p1),var(--p2));
+border-radius:22px;padding:14px;
+box-shadow:0 14px 40px rgba(0,0,0,.45)
+}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.space{justify-content:space-between}
 
-    .brand{
-      display:flex; gap:12px; align-items:center;
-    }
-    .badge{
-      width:44px; height:44px; border-radius: 14px;
-      background: rgba(255,255,255,.16);
-      display:flex; align-items:center; justify-content:center;
-      font-weight:800;
-      letter-spacing:.5px;
-      border:1px solid rgba(255,255,255,.2);
-    }
-    .h1{ font-size: 20px; font-weight: 800; margin:0; line-height:1.1; }
-    .sub{ margin-top: 2px; font-size: 13px; opacity:.92; }
+.badge{
+width:44px;height:44px;border-radius:14px;
+background:rgba(255,255,255,.2);
+display:flex;align-items:center;justify-content:center;
+font-weight:900
+}
 
-    .card{
-      margin-top: 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    }
+.card{
+margin-top:12px;background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;padding:14px;
+box-shadow:0 10px 30px rgba(0,0,0,.35)
+}
 
-    .title{ font-size: 16px; font-weight: 800; margin: 0 0 8px; }
-    .muted{ color: var(--muted); font-size: 13px; }
+.btn{
+border:0;border-radius:14px;
+padding:12px 14px;font-weight:700;
+background:linear-gradient(135deg,var(--p1),var(--p2));
+color:#fff
+}
+.btn.sec{background:rgba(255,255,255,.12)}
 
-    .btn{
-      border:0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .btn.primary{
-      color:#fff;
-      background: linear-gradient(135deg, var(--p1), var(--p2));
-      box-shadow: 0 10px 24px rgba(91,52,214,.35);
-    }
-    .btn.secondary{
-      background: rgba(255,255,255,.10);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.14);
-    }
-    .btn:disabled{ opacity:.5; cursor: default; }
+.grid{display:grid;gap:12px;margin-top:12px}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .dot{
-      width:8px; height:8px; border-radius: 999px;
-      background: var(--warn);
-    }
-    .dot.good{ background: var(--good); }
+.movie{
+display:grid;grid-template-columns:110px 1fr;gap:12px
+}
+.poster{
+width:110px;height:165px;border-radius:14px;
+background:#0003;overflow:hidden
+}
+.poster img{width:100%;height:100%;object-fit:cover}
 
-    .field{
-      display:grid;
-      gap:6px;
-      min-width: 170px;
-      flex: 1;
-    }
+.kpi{font-size:12px;padding:6px 8px;
+border-radius:999px;background:#fff1;color:#fff}
 
-    select{
-      width: 100%;
-      padding: 12px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size: 15px;
-      outline: none;
-    }
+.providers{margin-top:10px;display:none}
+.providers span{
+display:inline-flex;align-items:center;gap:6px;
+padding:6px 10px;border-radius:999px;
+background:#fff1;font-size:13px
+}
+.providers img{width:20px;height:20px;border-radius:999px}
+</style>
+</head>
 
-    .slider{
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-    }
-    .sliderTop{
-      display:flex; justify-content: space-between; align-items:center;
-      margin-bottom: 8px;
-    }
-    .sliderName{ font-weight: 800; font-size: 14px; }
-    .sliderVal{
-      min-width: 34px;
-      text-align: right;
-      color: rgba(255,255,255,.9);
-      font-weight: 800;
-      font-size: 14px;
-    }
-    input[type="range"]{ width:100%; accent-color: var(--p2); }
+<body>
+<div class="app">
 
-    .resultsHeader{
-      display:flex; justify-content: space-between; align-items:center; gap: 10px; flex-wrap: wrap;
-    }
-
-    .grid{
-      display:grid;
-      gap: 12px;
-      margin-top: 10px;
-    }
-    @media (min-width: 960px){
-      .grid{ grid-template-columns: 1fr 1fr; }
-    }
-
-    .movieCard{
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 18px;
-      padding: 12px;
-    }
-    .movie{
-      display:grid;
-      grid-template-columns: 108px 1fr;
-      gap: 12px;
-      align-items: start;
-    }
-    .poster{
-      width:108px; height:162px;
-      border-radius: 14px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.12);
-      overflow:hidden;
-      box-shadow: 0 10px 24px rgba(0,0,0,.45);
-      display:flex; align-items:center; justify-content:center;
-    }
-    .poster img{ width:100%; height:100%; object-fit: cover; display:block; }
-    .mTitle{ font-weight: 900; font-size: 16px; margin:0; }
-    .kpis{ display:flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 10px; }
-    .kpi{
-      font-size: 12px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid rgba(255,255,255,.10);
-      color: rgba(255,255,255,.85);
-    }
-    .overview{ color: var(--muted); font-size: 13px; line-height: 1.35; }
-
-    .actions{ margin-top: 10px; display:flex; gap: 10px; flex-wrap: wrap; align-items:center; }
-    .tiny{ font-size: 12px; color: var(--muted); }
-
-    .providers{
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 16px;
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.10);
-      display:none;
-    }
-    .provTitle{ font-weight: 900; margin:0 0 6px; }
-    .provRow{ margin-top: 10px; }
-    .provLabel{ color: var(--muted); font-size: 12px; margin-bottom: 6px; }
-    .provItems{ display:flex; flex-wrap: wrap; gap: 8px; }
-    .provTag{
-      display:inline-flex; align-items:center; gap: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.12);
-      font-size: 13px;
-      color: rgba(255,255,255,.88);
-    }
-    .provTag img{ width: 20px; height: 20px; border-radius: 999px; object-fit: cover; }
-
-    .loading{
-      display:none;
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 10px;
-    }
-
-    .err{
-      display:none;
-      margin-top: 10px;
-      color: #ff6b6b;
-      font-weight: 700;
-      font-size: 13px;
-    }
-  </style></head><body>
-  <div class="app">
-    <div class="top">
-      <div class="row space">
-        <div class="brand">
-          <div class="badge">MF</div>
-          <div>
-            <p class="h1">Movie finder</p>
-            <div class="sub">Tu imposti l’umore. Io ti propongo cosa guardare.</div>
-          </div>
-        </div>
-        <button class="btn secondary" id="btnCredits">Info</button>
-      </div>
-      <div class="row" style="margin-top:10px;">
-        <div class="pill"><span class="dot good"></span>Regione: Italia</div>
-        <div class="pill"><span class="dot"></span>Disponibilità: può cambiare</div>
-      </div>
-    </div><div class="card">
-  <div class="resultsHeader">
-    <div>
-      <div class="title">Risultati</div>
-      <div class="muted">Niente generi, niente durata. Solo slider e tanti film.</div>
-    </div>
-    <div class="row">
-      <button class="btn primary" id="btnFind">Trova film</button>
-      <button class="btn secondary" id="btnShuffle" disabled>Rimescola</button>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:12px;">
-    <div class="field" style="min-width:190px;">
-      <label class="muted">Quanti risultati</label>
-      <select id="howMany">
-        <option value="6">6</option>
-        <option value="9">9</option>
-        <option value="12" selected>12</option>
-        <option value="16">16</option>
-        <option value="20">20</option>
-      </select>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <label class="muted">Solo disponibili online in IT</label>
-      <select id="onlyAvailable">
-        <option value="yes" selected>Sì</option>
-        <option value="no">No</option>
-      </select>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <label class="muted">Tipo disponibilità</label>
-      <select id="monetization">
-        <option value="flatrate,rent,buy" selected>Tutti</option>
-        <option value="flatrate">Solo abbonamento</option>
-        <option value="rent,buy">Solo noleggio e acquisto</option>
-      </select>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <label class="muted">Qualità suggerimenti</label>
-      <select id="qualityMode">
-        <option value="balanced" selected>Bilanciato</option>
-        <option value="popular">Più popolari</option>
-        <option value="rated">Più votati</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="err" id="err"></div>
-  <div class="loading" id="loading">Sto cercando...</div>
+<div class="top">
+<div class="row space">
+<div class="row">
+<div class="badge">MF</div>
+<div>
+<b>Movie finder</b><br>
+<small>Tu scegli l’umore. Io scelgo il film.</small>
+</div>
+</div>
+<button class="btn sec" id="info">Info</button>
+</div>
 </div>
 
 <div class="card">
-  <div class="title">Slider 0 a 5</div>
-  <div class="muted">Alza uno o più slider. Se li lasci a 0, io scelgo titoli forti e popolari.</div>
-
-  <div class="row" style="margin-top:12px;">
-    <div class="field" style="min-width:220px;">
-      <div class="slider">
-        <div class="sliderTop">
-          <div class="sliderName">Comico</div>
-          <div class="sliderVal" id="v_comico">0</div>
-        </div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s_comico">
-      </div>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <div class="slider">
-        <div class="sliderTop">
-          <div class="sliderName">Azione</div>
-          <div class="sliderVal" id="v_azione">0</div>
-        </div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s_azione">
-      </div>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <div class="slider">
-        <div class="sliderTop">
-          <div class="sliderName">Romantico</div>
-          <div class="sliderVal" id="v_romantico">0</div>
-        </div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s_romantico">
-      </div>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:12px;">
-    <div class="field" style="min-width:220px;">
-      <div class="slider">
-        <div class="sliderTop">
-          <div class="sliderName">Drammatico</div>
-          <div class="sliderVal" id="v_drammatico">0</div>
-        </div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s_drammatico">
-      </div>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <div class="slider">
-        <div class="sliderTop">
-          <div class="sliderName">Thriller</div>
-          <div class="sliderVal" id="v_thriller">0</div>
-        </div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s_thriller">
-      </div>
-    </div>
-
-    <div class="field" style="min-width:220px;">
-      <div class="slider">
-        <div class="sliderTop">
-          <div class="sliderName">Horror</div>
-          <div class="sliderVal" id="v_horror">0</div>
-        </div>
-        <input type="range" min="0" max="5" step="1" value="0" id="s_horror">
-      </div>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:12px;">
-    <button class="btn secondary" id="btnReset">Reset slider</button>
-    <div class="tiny" id="hint"></div>
-  </div>
+<b>Slider</b>
+<div class="row">
+<div>Comico <input type="range" id="s_comico" min="0" max="5"></div>
+<div>Azione <input type="range" id="s_azione" min="0" max="5"></div>
+<div>Romantico <input type="range" id="s_romantico" min="0" max="5"></div>
+<div>Drammatico <input type="range" id="s_drammatico" min="0" max="5"></div>
+<div>Thriller <input type="range" id="s_thriller" min="0" max="5"></div>
+<div>Horror <input type="range" id="s_horror" min="0" max="5"></div>
+</div>
+<button class="btn" id="find">Trova film</button>
 </div>
 
 <div class="card">
-  <div class="resultsHeader">
-    <div>
-      <div class="title">Lista film</div>
-      <div class="muted">Tocca “Dove si vede” per loghi e categorie.</div>
-    </div>
-    <div class="pill" id="countPill">0 film</div>
-  </div>
-  <div id="results" class="grid"></div>
+<b>Risultati (4)</b>
+<div id="results" class="grid"></div>
 </div>
 
-  </div>  <script>
-    const TMDB_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
-    const TMDB = "https://api.themoviedb.org/3";
-    const IMG = "https://image.tmdb.org/t/p/w342";
-    const LOGO = "https://image.tmdb.org/t/p/w92";
-    const REGION = "IT";
+</div>
 
-    const state = {
-      vibe: { comico:0, azione:0, romantico:0, drammatico:0, thriller:0, horror:0 },
-      pool: []
-    };
+<script>
+const KEY="f8ecb75282e8dcea2d4845598cc7d030";
+const TMDB="https://api.themoviedb.org/3";
+const IMG="https://image.tmdb.org/t/p/w342";
+const LOGO="https://image.tmdb.org/t/p/w92";
 
-    const elErr = document.getElementById("err");
-    const elLoading = document.getElementById("loading");
-    const elResults = document.getElementById("results");
-    const elCount = document.getElementById("countPill");
-    const elHint = document.getElementById("hint");
+async function discover(){
+const r=await fetch(`${TMDB}/discover/movie?api_key=${KEY}&language=it-IT&watch_region=IT&with_watch_monetization_types=flatrate&sort_by=vote_count.desc`);
+return (await r.json()).results.slice(0,4);
+}
 
-    const onlyAvailable = document.getElementById("onlyAvailable");
-    const monetization = document.getElementById("monetization");
-    const howMany = document.getElementById("howMany");
-    const qualityMode = document.getElementById("qualityMode");
+async function providers(id){
+const r=await fetch(`${TMDB}/movie/${id}/watch/providers?api_key=${KEY}`);
+return (await r.json()).results.IT?.flatrate||[];
+}
 
-    const btnFind = document.getElementById("btnFind");
-    const btnShuffle = document.getElementById("btnShuffle");
-    const btnReset = document.getElementById("btnReset");
+document.getElementById("find").onclick=async()=>{
+const list=await discover();
+const box=document.getElementById("results");
+box.innerHTML="";
+for(const m of list){
+const p=await providers(m.id);
+box.innerHTML+=`
+<div class="card">
+<div class="movie">
+<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}</div>
+<div>
+<b>${m.title}</b><br>
+<span class="kpi">Voto ${m.vote_average}</span>
+<p>${m.overview?.slice(0,120)||""}</p>
+<button class="btn sec" onclick="this.nextElementSibling.style.display='block'">Dove si vede</button>
+<div class="providers">
+${p.map(x=>`<span><img src="${LOGO+x.logo_path}">${x.provider_name}</span>`).join("")}
+</div>
+</div>
+</div>
+</div>`;
+}
+};
 
-    function showErr(msg){
-      elErr.style.display = msg ? "block" : "none";
-      elErr.textContent = msg || "";
-    }
-
-    function esc(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-
-    function bindSliders(){
-      const keys = ["comico","azione","romantico","drammatico","thriller","horror"];
-      for (const k of keys){
-        const s = document.getElementById("s_"+k);
-        const v = document.getElementById("v_"+k);
-        s.addEventListener("input", ()=>{
-          state.vibe[k] = Number(s.value);
-          v.textContent = s.value;
-          updateHint();
-        });
-      }
-      updateHint();
-    }
-
-    function resetSliders(){
-      const keys = ["comico","azione","romantico","drammatico","thriller","horror"];
-      for (const k of keys){
-        state.vibe[k] = 0;
-        document.getElementById("s_"+k).value = 0;
-        document.getElementById("v_"+k).textContent = "0";
-      }
-      updateHint();
-    }
-
-    function updateHint(){
-      const top = topSliders(2);
-      if (!top.length){
-        elHint.textContent = "Suggerimento: alza almeno uno slider per risultati più mirati.";
-        return;
-      }
-      elHint.textContent = "Focus: " + top.map(x=>x.key).join(", ") + ".";
-    }
-
-    function topSliders(n){
-      const entries = Object.entries(state.vibe).map(([k,v])=>({key:k,value:v}));
-      entries.sort((a,b)=>b.value-a.value);
-      return entries.filter(x=>x.value>0).slice(0,n);
-    }
-
-    function buildGenreIdsFromSliders(){
-      const map = [
-        { key:"comico", ids:[35] },
-        { key:"azione", ids:[28,12] },
-        { key:"romantico", ids:[10749] },
-        { key:"drammatico", ids:[18] },
-        { key:"thriller", ids:[53,80,9648] },
-        { key:"horror", ids:[27] }
-      ];
-
-      const scored = map.map(m => ({key:m.key, value: state.vibe[m.key] || 0, ids:m.ids}));
-      scored.sort((a,b)=>b.value-a.value);
-
-      const top = scored.filter(x=>x.value>0).slice(0,3);
-      const ids = [];
-      for (const t of top) ids.push(...t.ids);
-
-      return {
-        genreIds: [...new Set(ids)],
-        topKeys: top.map(t=>t.key)
-      };
-    }
-
-    function log10(x){ return Math.log(x)/Math.log(10); }
-
-    function vibeBonus(movie){
-      const ids = new Set(movie.genre_ids || []);
-      const v = state.vibe;
-      let bonus = 0;
-
-      const byKey = {
-        comico:[35],
-        azione:[28,12],
-        romantico:[10749],
-        drammatico:[18],
-        thriller:[53,80,9648],
-        horror:[27]
-      };
-
-      for (const k of Object.keys(byKey)){
-        const wanted = v[k] || 0;
-        if (wanted === 0) continue;
-        const hits = byKey[k].some(id=>ids.has(id));
-        if (hits) bonus += wanted/5;
-        else bonus -= (wanted/5) * 0.25;
-      }
-      return bonus;
-    }
-
-    function score(movie){
-      const vote = Number(movie.vote_average || 0) / 10;
-      const count = Number(movie.vote_count || 0);
-      const quality = vote * log10(count + 1);
-      const vibe = vibeBonus(movie);
-      return quality + (0.35 * vibe);
-    }
-
-    async function fetchJson(url){
-      const r = await fetch(url);
-      if (!r.ok) throw new Error("Errore rete");
-      return r.json();
-    }
-
-    function sortByMode(arr){
-      const mode = qualityMode.value;
-      const out = [...arr];
-
-      if (mode === "popular"){
-        out.sort((a,b)=>(b.popularity||0)-(a.popularity||0));
-        return out;
-      }
-
-      if (mode === "rated"){
-        out.sort((a,b)=>(b.vote_average||0)-(a.vote_average||0));
-        return out;
-      }
-
-      out.sort((a,b)=>score(b)-score(a));
-      return out;
-    }
-
-    async function discover(page, genreIds){
-      const p = new URLSearchParams();
-      p.set("api_key", TMDB_KEY);
-      p.set("language", "it-IT");
-      p.set("include_adult", "false");
-      p.set("include_video", "false");
-      p.set("page", String(page));
-
-      if (qualityMode.value === "popular") p.set("sort_by", "popularity.desc");
-      else if (qualityMode.value === "rated") p.set("sort_by", "vote_average.desc");
-      else p.set("sort_by", "vote_count.desc");
-
-      if (genreIds.length) p.set("with_genres", genreIds.join(","));
-
-      if (onlyAvailable.value === "yes"){
-        p.set("watch_region", REGION);
-        p.set("with_watch_monetization_types", monetization.value);
-      }
-
-      const url = TMDB + "/discover/movie?" + p.toString();
-      const j = await fetchJson(url);
-      return j.results || [];
-    }
-
-    async function watchProviders(movieId){
-      const url = TMDB + "/movie/" + movieId + "/watch/providers?api_key=" + TMDB_KEY;
-      const j = await fetchJson(url);
-      const it = (j.results || {})[REGION];
-      if (!it) return null;
-      return {
-        flatrate: it.flatrate || [],
-        rent: it.rent || [],
-        buy: it.buy || []
-      };
-    }
-
-    function providersBlock(label, list){
-      if (!list || !list.length) return "";
-      const items = list.map(p=>{
-        const logo = p.logo_path ? "<img src='" + LOGO + p.logo_path + "' alt=''>" : "";
-        return "<span class='provTag'>" + logo + esc(p.provider_name) + "</span>";
-      }).join("");
-      return "<div class='provRow'><div class='provLabel'>" + esc(label) + "</div><div class='provItems'>" + items + "</div></div>";
-    }
-
-    function whyText(topKeys){
-      if (!topKeys.length) return "Slider a 0. Ti propongo titoli forti e popolari.";
-      return "Slider più alti: " + topKeys.join(", ") + ".";
-    }
-
-    function movieCardHtml(m, topKeys){
-      const poster = m.poster_path ? (IMG + m.poster_path) : "";
-      const vote = Number(m.vote_average || 0).toFixed(1);
-      const date = m.release_date || "n.d.";
-      const overview = (m.overview || "Trama non disponibile.").slice(0, 260) + ((m.overview || "").length > 260 ? "..." : "");
-
-      return "" +
-        "<div class='movieCard'>" +
-          "<div class='movie'>" +
-            "<div class='poster'>" +
-              (poster ? "<img src='" + poster + "' alt=''>" : "<div class='muted'>No poster</div>") +
-            "</div>" +
-            "<div>" +
-              "<p class='mTitle'>" + esc(m.title || "Titolo non disponibile") + "</p>" +
-              "<div class='kpis'>" +
-                "<span class='kpi'>Voto: " + vote + "</span>" +
-                "<span class='kpi'>Voti: " + (m.vote_count || 0) + "</span>" +
-                "<span class='kpi'>Uscita: " + esc(date) + "</span>" +
-              "</div>" +
-              "<div class='overview'>" + esc(overview) + "</div>" +
-              "<div class='actions'>" +
-                "<button class='btn secondary' data-action='providers' data-id='" + m.id + "'>Dove si vede</button>" +
-                "<span class='tiny'>" + esc(whyText(topKeys)) + "</span>" +
-              "</div>" +
-              "<div class='providers' id='prov_" + m.id + "'></div>" +
-            "</div>" +
-          "</div>" +
-        "</div>";
-    }
-
-    async function renderProviders(movieId){
-      const box = document.getElementById("prov_" + movieId);
-      if (!box) return;
-
-      if (box.dataset.loaded === "1"){
-        box.style.display = (box.style.display === "none" || !box.style.display) ? "block" : "none";
-        return;
-      }
-
-      box.style.display = "block";
-      box.innerHTML = "<div class='muted'>Carico disponibilità...</div>";
-
-      try{
-        const wp = await watchProviders(movieId);
-        if (!wp){
-          box.innerHTML = "<div class='muted'>Disponibilità non trovata per IT.</div>";
-          box.dataset.loaded = "1";
-          return;
-        }
-
-        const hasAny = (wp.flatrate && wp.flatrate.length) || (wp.rent && wp.rent.length) || (wp.buy && wp.buy.length);
-        if (!hasAny){
-          box.innerHTML = "<div class='muted'>Non risulta disponibile online in IT.</div>";
-          box.dataset.loaded = "1";
-          return;
-        }
-
-        box.innerHTML =
-          "<p class='provTitle'>Disponibile online in Italia</p>" +
-          providersBlock("Abbonamento", wp.flatrate) +
-          providersBlock("Noleggio", wp.rent) +
-          providersBlock("Acquisto", wp.buy);
-
-        box.dataset.loaded = "1";
-      }catch(e){
-        box.innerHTML = "<div class='muted'>Errore nel caricamento disponibilità.</div>";
-      }
-    }
-
-    function attachHandlers(){
-      elResults.querySelectorAll("button[data-action='providers']").forEach(b=>{
-        b.addEventListener("click", async ()=>{
-          const id = Number(b.getAttribute("data-id"));
-          await renderProviders(id);
-        });
-      });
-    }
-
-    function shuffle(arr){
-      for (let i = arr.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        const t = arr[i];
-        arr[i] = arr[j];
-        arr[j] = t;
-      }
-      return arr;
-    }
-
-    function renderFromPool(topKeys){
-      const n = Math.max(1, Number(howMany.value || 12));
-      const slice = state.pool.slice(0, n);
-      elResults.innerHTML = slice.map(m=>movieCardHtml(m, topKeys)).join("");
-      elCount.textContent = slice.length + " film";
-      attachHandlers();
-    }
-
-    async function find(){
-      showErr("");
-      elLoading.style.display = "block";
-      elResults.innerHTML = "";
-      elCount.textContent = "0 film";
-      btnShuffle.disabled = true;
-
-      try{
-        const { genreIds, topKeys } = buildGenreIdsFromSliders();
-
-        const p1 = await discover(1, genreIds);
-        const p2 = await discover(2, genreIds);
-        const p3 = await discover(3, genreIds);
-        const p4 = await discover(4, genreIds);
-
-        const all = [...p1, ...p2, ...p3, ...p4].filter(x=>x && x.id);
-
-        const uniq = new Map();
-        for (const m of all) uniq.set(m.id, m);
-        const arr = Array.from(uniq.values());
-
-        const sorted = sortByMode(arr);
-
-        state.pool = shuffle(sorted);
-
-        renderFromPool(topKeys);
-        btnShuffle.disabled = state.pool.length === 0;
-      }catch(e){
-        showErr("Errore. Controlla internet o chiave.");
-      }finally{
-        elLoading.style.display = "none";
-      }
-    }
-
-    function reshuffle(){
-      if (!state.pool.length) return;
-      const { topKeys } = buildGenreIdsFromSliders();
-      state.pool = shuffle(state.pool);
-      renderFromPool(topKeys);
-    }
-
-    document.getElementById("btnCredits").addEventListener("click", ()=>{
-      alert("Questa PWA usa TMDB API. This product uses the TMDB API but is not endorsed or certified by TMDB.");
-    });
-
-    btnFind.addEventListener("click", find);
-    btnShuffle.addEventListener("click", reshuffle);
-    btnReset.addEventListener("click", resetSliders);
-
-    if ("serviceWorker" in navigator){
-      navigator.serviceWorker.register("sw.js").catch(()=>{});
-    }
-
-    bindSliders();
-  </script></body>
+document.getElementById("info").onclick=()=>{
+alert("Usa TMDB API. Non affiliato a TMDB.");
+};
+</script>
+</body>
 </html>
