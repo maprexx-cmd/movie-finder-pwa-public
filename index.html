@@ -7,132 +7,388 @@
   <meta name="theme-color" content="#5b34d6" />
   <title>Movie finder</title>  <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icon-192.png">  <style>
-    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    body { margin: 0; padding: 16px; }
-    .app { max-width: 720px; margin: 0 auto; }
-    .row { display: flex; gap: 12px; flex-wrap: wrap; }
-    .card { border: 1px solid rgba(0,0,0,.12); border-radius: 14px; padding: 12px; }
-    .title { font-size: 18px; font-weight: 700; margin: 0 0 8px; }
-    .muted { opacity: .75; font-size: 13px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip { border: 1px solid rgba(0,0,0,.18); border-radius: 999px; padding: 8px 10px; font-size: 14px; background: transparent; }
-    .chip.on { border-color: rgba(0,0,0,.45); }
-    .btn { border: 0; border-radius: 12px; padding: 10px 12px; font-size: 15px; }
-    .btn.primary { background: #5b34d6; color: #fff; }
-    .btn.secondary { background: rgba(0,0,0,.08); }
-    .btn:disabled { opacity: .5; }
-    .field { display: grid; gap: 6px; min-width: 160px; }
-    select { padding: 10px; border-radius: 10px; border: 1px solid rgba(0,0,0,.18); font-size: 15px; width: 100%; }
-    input[type="range"] { width: 100%; }
-    .movie { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
-    .poster { width: 120px; height: 180px; border-radius: 12px; background: rgba(0,0,0,.08); overflow: hidden; display:flex; align-items:center; justify-content:center; }
-    .poster img { width: 100%; height: 100%; object-fit: cover; display:block; }
-    .kpi { display:flex; gap: 10px; flex-wrap: wrap; margin: 6px 0 10px; }
-    .pill { font-size: 12px; padding: 6px 8px; border-radius: 999px; background: rgba(0,0,0,.08); }
-    .why { margin-top: 10px; padding: 10px; border-radius: 12px; background: rgba(91,52,214,.10); }
-    .err { color: #b00020; }
-    .hr { height: 1px; background: rgba(0,0,0,.12); margin: 12px 0; }
-  </style></head>
-<body>
+    :root{
+      --p1:#5b34d6;
+      --p2:#7b5cff;
+      --bg:#0f1115;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.12);
+      --text:#f2f3f5;
+      --muted:rgba(242,243,245,.72);
+      --good:#29d37f;
+      --warn:#ffcc66;
+    }
+
+    *{ -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    body{
+      margin:0;
+      padding:16px;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(91,52,214,.35), transparent 60%),
+        radial-gradient(1000px 700px at 90% 10%, rgba(123,92,255,.25), transparent 55%),
+        var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .app{ max-width: 980px; margin: 0 auto; }
+
+    .top{
+      border-radius: 22px;
+      padding: 14px 14px;
+      background: linear-gradient(135deg, rgba(91,52,214,.95), rgba(123,92,255,.9));
+      box-shadow: 0 14px 40px rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .space{ justify-content: space-between; }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .badge{
+      width:44px; height:44px; border-radius: 14px;
+      background: rgba(255,255,255,.16);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800;
+      letter-spacing:.5px;
+      border:1px solid rgba(255,255,255,.2);
+    }
+    .h1{ font-size: 20px; font-weight: 800; margin:0; line-height:1.1; }
+    .sub{ margin-top: 2px; font-size: 13px; opacity:.92; }
+
+    .card{
+      margin-top: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .title{ font-size: 16px; font-weight: 800; margin: 0 0 8px; }
+    .muted{ color: var(--muted); font-size: 13px; }
+
+    .btn{
+      border:0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn.primary{
+      color:#fff;
+      background: linear-gradient(135deg, var(--p1), var(--p2));
+      box-shadow: 0 10px 24px rgba(91,52,214,.35);
+    }
+    .btn.secondary{
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .btn:disabled{ opacity:.5; cursor: default; }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .dot{
+      width:8px; height:8px; border-radius: 999px;
+      background: var(--warn);
+    }
+    .dot.good{ background: var(--good); }
+
+    .field{
+      display:grid;
+      gap:6px;
+      min-width: 170px;
+      flex: 1;
+    }
+
+    select{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .slider{
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .sliderTop{
+      display:flex; justify-content: space-between; align-items:center;
+      margin-bottom: 8px;
+    }
+    .sliderName{ font-weight: 800; font-size: 14px; }
+    .sliderVal{
+      min-width: 34px;
+      text-align: right;
+      color: rgba(255,255,255,.9);
+      font-weight: 800;
+      font-size: 14px;
+    }
+    input[type="range"]{ width:100%; accent-color: var(--p2); }
+
+    .resultsHeader{
+      display:flex; justify-content: space-between; align-items:center; gap: 10px; flex-wrap: wrap;
+    }
+
+    .grid{
+      display:grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    @media (min-width: 960px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .movieCard{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .movie{
+      display:grid;
+      grid-template-columns: 108px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .poster{
+      width:108px; height:162px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      box-shadow: 0 10px 24px rgba(0,0,0,.45);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .poster img{ width:100%; height:100%; object-fit: cover; display:block; }
+    .mTitle{ font-weight: 900; font-size: 16px; margin:0; }
+    .kpis{ display:flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 10px; }
+    .kpi{
+      font-size: 12px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.85);
+    }
+    .overview{ color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .actions{ margin-top: 10px; display:flex; gap: 10px; flex-wrap: wrap; align-items:center; }
+    .tiny{ font-size: 12px; color: var(--muted); }
+
+    .providers{
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      display:none;
+    }
+    .provTitle{ font-weight: 900; margin:0 0 6px; }
+    .provRow{ margin-top: 10px; }
+    .provLabel{ color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .provItems{ display:flex; flex-wrap: wrap; gap: 8px; }
+    .provTag{
+      display:inline-flex; align-items:center; gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      font-size: 13px;
+      color: rgba(255,255,255,.88);
+    }
+    .provTag img{ width: 20px; height: 20px; border-radius: 999px; object-fit: cover; }
+
+    .loading{
+      display:none;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .err{
+      display:none;
+      margin-top: 10px;
+      color: #ff6b6b;
+      font-weight: 700;
+      font-size: 13px;
+    }
+  </style></head><body>
   <div class="app">
-    <div class="row" style="justify-content: space-between; align-items: center;">
-      <div>
-        <div class="title">Movie finder</div>
-        <div class="muted">PWA, 1 film alla volta, generi, slider, disponibilità streaming.</div>
+    <div class="top">
+      <div class="row space">
+        <div class="brand">
+          <div class="badge">MF</div>
+          <div>
+            <p class="h1">Movie finder</p>
+            <div class="sub">Tu imposti l’umore. Io ti propongo cosa guardare.</div>
+          </div>
+        </div>
+        <button class="btn secondary" id="btnCredits">Info</button>
       </div>
-      <button class="btn secondary" id="btnCredits">Crediti</button>
-    </div><div class="hr"></div>
+      <div class="row" style="margin-top:10px;">
+        <div class="pill"><span class="dot good"></span>Regione: Italia</div>
+        <div class="pill"><span class="dot"></span>Disponibilità: può cambiare</div>
+      </div>
+    </div><div class="card">
+  <div class="resultsHeader">
+    <div>
+      <div class="title">Risultati</div>
+      <div class="muted">Niente generi, niente durata. Solo slider e tanti film.</div>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="btnFind">Trova film</button>
+      <button class="btn secondary" id="btnShuffle" disabled>Rimescola</button>
+    </div>
+  </div>
 
-<div class="card">
-  <div class="title">Generi</div>
-  <div class="muted">Seleziona fino a 3 generi.</div>
-  <div id="genres" class="chips" style="margin-top: 10px;"></div>
-  <div id="errGenres" class="err" style="margin-top: 8px; display:none;"></div>
-</div>
-
-<div style="height: 12px;"></div>
-
-<div class="card">
-  <div class="title">Filtri</div>
-  <div class="row">
-    <div class="field">
-      <label class="muted">Durata max</label>
-      <select id="runtimeMax">
-        <option value="">Qualsiasi</option>
-        <option>80</option><option>90</option><option>100</option><option>110</option>
-        <option selected>120</option>
-        <option>140</option><option>160</option><option>180</option>
+  <div class="row" style="margin-top:12px;">
+    <div class="field" style="min-width:190px;">
+      <label class="muted">Quanti risultati</label>
+      <select id="howMany">
+        <option value="6">6</option>
+        <option value="9">9</option>
+        <option value="12" selected>12</option>
+        <option value="16">16</option>
+        <option value="20">20</option>
       </select>
     </div>
-    <div class="field">
-      <label class="muted">Tipo</label>
+
+    <div class="field" style="min-width:220px;">
+      <label class="muted">Solo disponibili online in IT</label>
+      <select id="onlyAvailable">
+        <option value="yes" selected>Sì</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+
+    <div class="field" style="min-width:220px;">
+      <label class="muted">Tipo disponibilità</label>
       <select id="monetization">
-        <option value="flatrate,rent,buy">Tutti</option>
+        <option value="flatrate,rent,buy" selected>Tutti</option>
         <option value="flatrate">Solo abbonamento</option>
+        <option value="rent,buy">Solo noleggio e acquisto</option>
+      </select>
+    </div>
+
+    <div class="field" style="min-width:220px;">
+      <label class="muted">Qualità suggerimenti</label>
+      <select id="qualityMode">
+        <option value="balanced" selected>Bilanciato</option>
+        <option value="popular">Più popolari</option>
+        <option value="rated">Più votati</option>
       </select>
     </div>
   </div>
 
-  <div style="height: 8px;"></div>
-
-  <label class="muted">
-    <input type="checkbox" id="onlyAvailable" />
-    Mostra solo disponibili online
-  </label>
+  <div class="err" id="err"></div>
+  <div class="loading" id="loading">Sto cercando...</div>
 </div>
-
-<div style="height: 12px;"></div>
 
 <div class="card">
   <div class="title">Slider 0 a 5</div>
+  <div class="muted">Alza uno o più slider. Se li lasci a 0, io scelgo titoli forti e popolari.</div>
 
-  <div class="row" style="margin-top: 10px;">
-    <div class="field" style="flex:1;">
-      <label class="muted">Comico: <span id="v_comico">0</span></label>
-      <input type="range" min="0" max="5" step="1" value="0" id="s_comico" />
+  <div class="row" style="margin-top:12px;">
+    <div class="field" style="min-width:220px;">
+      <div class="slider">
+        <div class="sliderTop">
+          <div class="sliderName">Comico</div>
+          <div class="sliderVal" id="v_comico">0</div>
+        </div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s_comico">
+      </div>
     </div>
-    <div class="field" style="flex:1;">
-      <label class="muted">Azione: <span id="v_azione">0</span></label>
-      <input type="range" min="0" max="5" step="1" value="0" id="s_azione" />
+
+    <div class="field" style="min-width:220px;">
+      <div class="slider">
+        <div class="sliderTop">
+          <div class="sliderName">Azione</div>
+          <div class="sliderVal" id="v_azione">0</div>
+        </div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s_azione">
+      </div>
+    </div>
+
+    <div class="field" style="min-width:220px;">
+      <div class="slider">
+        <div class="sliderTop">
+          <div class="sliderName">Romantico</div>
+          <div class="sliderVal" id="v_romantico">0</div>
+        </div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s_romantico">
+      </div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="field" style="flex:1;">
-      <label class="muted">Romantico: <span id="v_romantico">0</span></label>
-      <input type="range" min="0" max="5" step="1" value="0" id="s_romantico" />
+  <div class="row" style="margin-top:12px;">
+    <div class="field" style="min-width:220px;">
+      <div class="slider">
+        <div class="sliderTop">
+          <div class="sliderName">Drammatico</div>
+          <div class="sliderVal" id="v_drammatico">0</div>
+        </div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s_drammatico">
+      </div>
     </div>
-    <div class="field" style="flex:1;">
-      <label class="muted">Drammatico: <span id="v_drammatico">0</span></label>
-      <input type="range" min="0" max="5" step="1" value="0" id="s_drammatico" />
+
+    <div class="field" style="min-width:220px;">
+      <div class="slider">
+        <div class="sliderTop">
+          <div class="sliderName">Thriller</div>
+          <div class="sliderVal" id="v_thriller">0</div>
+        </div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s_thriller">
+      </div>
+    </div>
+
+    <div class="field" style="min-width:220px;">
+      <div class="slider">
+        <div class="sliderTop">
+          <div class="sliderName">Horror</div>
+          <div class="sliderVal" id="v_horror">0</div>
+        </div>
+        <input type="range" min="0" max="5" step="1" value="0" id="s_horror">
+      </div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="field" style="flex:1;">
-      <label class="muted">Thriller: <span id="v_thriller">0</span></label>
-      <input type="range" min="0" max="5" step="1" value="0" id="s_thriller" />
-    </div>
-    <div class="field" style="flex:1;">
-      <label class="muted">Horror: <span id="v_horror">0</span></label>
-      <input type="range" min="0" max="5" step="1" value="0" id="s_horror" />
-    </div>
+  <div class="row" style="margin-top:12px;">
+    <button class="btn secondary" id="btnReset">Reset slider</button>
+    <div class="tiny" id="hint"></div>
   </div>
-
-  <div class="row" style="margin-top: 10px;">
-    <button class="btn primary" id="btnFind">Trova un film</button>
-    <button class="btn secondary" id="btnNext" disabled>Altro</button>
-  </div>
-
-  <div id="err" class="err" style="margin-top: 10px; display:none;"></div>
 </div>
 
-<div style="height: 12px;"></div>
-
 <div class="card">
-  <div class="title">Risultato</div>
-  <div id="loading" class="muted" style="display:none;">Sto cercando...</div>
-  <div id="result" style="margin-top: 10px;"></div>
+  <div class="resultsHeader">
+    <div>
+      <div class="title">Lista film</div>
+      <div class="muted">Tocca “Dove si vede” per loghi e categorie.</div>
+    </div>
+    <div class="pill" id="countPill">0 film</div>
+  </div>
+  <div id="results" class="grid"></div>
 </div>
 
   </div>  <script>
@@ -143,162 +399,31 @@
     const REGION = "IT";
 
     const state = {
-      genres: [],
-      selected: new Set(),
-      pool: [],
-      idx: 0,
-      vibe: { comico:0, azione:0, romantico:0, drammatico:0, thriller:0, horror:0 }
+      vibe: { comico:0, azione:0, romantico:0, drammatico:0, thriller:0, horror:0 },
+      pool: []
     };
 
-    const elGenres = document.getElementById("genres");
     const elErr = document.getElementById("err");
-    const elErrGenres = document.getElementById("errGenres");
     const elLoading = document.getElementById("loading");
-    const elResult = document.getElementById("result");
+    const elResults = document.getElementById("results");
+    const elCount = document.getElementById("countPill");
+    const elHint = document.getElementById("hint");
 
-    const btnFind = document.getElementById("btnFind");
-    const btnNext = document.getElementById("btnNext");
-
-    const runtimeMax = document.getElementById("runtimeMax");
     const onlyAvailable = document.getElementById("onlyAvailable");
     const monetization = document.getElementById("monetization");
+    const howMany = document.getElementById("howMany");
+    const qualityMode = document.getElementById("qualityMode");
 
-    function showErr(el, msg) {
-      el.style.display = msg ? "block" : "none";
-      el.textContent = msg || "";
+    const btnFind = document.getElementById("btnFind");
+    const btnShuffle = document.getElementById("btnShuffle");
+    const btnReset = document.getElementById("btnReset");
+
+    function showErr(msg){
+      elErr.style.display = msg ? "block" : "none";
+      elErr.textContent = msg || "";
     }
 
-    function vibeBind() {
-      const keys = ["comico","azione","romantico","drammatico","thriller","horror"];
-      for (const k of keys) {
-        const s = document.getElementById("s_"+k);
-        const v = document.getElementById("v_"+k);
-        s.addEventListener("input", () => {
-          state.vibe[k] = Number(s.value);
-          v.textContent = s.value;
-        });
-      }
-    }
-
-    function chip(name, on, onClick) {
-      const b = document.createElement("button");
-      b.className = "chip" + (on ? " on" : "");
-      b.textContent = name;
-      b.addEventListener("click", onClick);
-      return b;
-    }
-
-    function renderGenres() {
-      elGenres.innerHTML = "";
-      for (const g of state.genres) {
-        const on = state.selected.has(g.id);
-        elGenres.appendChild(chip(g.name, on, () => toggleGenre(g.id)));
-      }
-    }
-
-    function toggleGenre(id) {
-      showErr(elErrGenres, "");
-      if (state.selected.has(id)) state.selected.delete(id);
-      else {
-        if (state.selected.size >= 3) {
-          showErr(elErrGenres, "Massimo 3 generi.");
-          return;
-        }
-        state.selected.add(id);
-      }
-      renderGenres();
-    }
-
-    async function fetchJson(url) {
-      const r = await fetch(url);
-      if (!r.ok) throw new Error("Errore rete");
-      return r.json();
-    }
-
-    async function fetchGenres() {
-      const url = `${TMDB}/genre/movie/list?api_key=${TMDB_KEY}&language=it-IT`;
-      const j = await fetchJson(url);
-      return j.genres || [];
-    }
-
-    async function discover(page=1) {
-      const g = [...state.selected].join(",");
-      const rt = runtimeMax.value;
-
-      const p = new URLSearchParams();
-      p.set("api_key", TMDB_KEY);
-      p.set("language", "it-IT");
-      p.set("include_adult", "false");
-      p.set("include_video", "false");
-      p.set("sort_by", "vote_count.desc");
-      p.set("page", String(page));
-      if (g) p.set("with_genres", g);
-      if (rt) p.set("with_runtime.lte", rt);
-
-      if (onlyAvailable.checked) {
-        p.set("watch_region", REGION);
-        p.set("with_watch_monetization_types", monetization.value);
-      }
-
-      const url = `${TMDB}/discover/movie?` + p.toString();
-      const j = await fetchJson(url);
-      return j.results || [];
-    }
-
-    async function watchProviders(movieId) {
-      const url = `${TMDB}/movie/${movieId}/watch/providers?api_key=${TMDB_KEY}`;
-      const j = await fetchJson(url);
-      const it = (j.results || {})[REGION];
-      if (!it) return null;
-      return {
-        flatrate: it.flatrate || [],
-        rent: it.rent || [],
-        buy: it.buy || [],
-        link: it.link || null
-      };
-    }
-
-    function log10(x) { return Math.log(x) / Math.log(10); }
-
-    function vibeBonus(movie) {
-      const ids = new Set(movie.genre_ids || []);
-      const v = state.vibe;
-      let bonus = 0;
-
-      const byName = {
-        comico: [35],
-        azione: [28,12],
-        romantico: [10749],
-        drammatico: [18],
-        thriller: [53,80,9648],
-        horror: [27]
-      };
-
-      for (const k of Object.keys(byName)) {
-        const wanted = v[k] || 0;
-        if (wanted === 0) continue;
-        const hits = byName[k].some(id => ids.has(id));
-        if (hits) bonus += wanted / 5;
-        else bonus -= (wanted / 5) * 0.25;
-      }
-      return bonus;
-    }
-
-    function score(movie) {
-      const vote = Number(movie.vote_average || 0) / 10;
-      const count = Number(movie.vote_count || 0);
-      const quality = vote * log10(count + 1);
-      const vibe = vibeBonus(movie);
-      return quality + (0.35 * vibe);
-    }
-
-    function pickBest(list) {
-      const arr = [...list];
-      arr.sort((a,b) => score(b) - score(a));
-      return arr;
-    }
-
-    function esc(s) {
+    function esc(s){
       return String(s)
         .replaceAll("&","&amp;")
         .replaceAll("<","&lt;")
@@ -307,124 +432,325 @@
         .replaceAll("'","&#039;");
     }
 
-    function providersBlock(title, list) {
+    function bindSliders(){
+      const keys = ["comico","azione","romantico","drammatico","thriller","horror"];
+      for (const k of keys){
+        const s = document.getElementById("s_"+k);
+        const v = document.getElementById("v_"+k);
+        s.addEventListener("input", ()=>{
+          state.vibe[k] = Number(s.value);
+          v.textContent = s.value;
+          updateHint();
+        });
+      }
+      updateHint();
+    }
+
+    function resetSliders(){
+      const keys = ["comico","azione","romantico","drammatico","thriller","horror"];
+      for (const k of keys){
+        state.vibe[k] = 0;
+        document.getElementById("s_"+k).value = 0;
+        document.getElementById("v_"+k).textContent = "0";
+      }
+      updateHint();
+    }
+
+    function updateHint(){
+      const top = topSliders(2);
+      if (!top.length){
+        elHint.textContent = "Suggerimento: alza almeno uno slider per risultati più mirati.";
+        return;
+      }
+      elHint.textContent = "Focus: " + top.map(x=>x.key).join(", ") + ".";
+    }
+
+    function topSliders(n){
+      const entries = Object.entries(state.vibe).map(([k,v])=>({key:k,value:v}));
+      entries.sort((a,b)=>b.value-a.value);
+      return entries.filter(x=>x.value>0).slice(0,n);
+    }
+
+    function buildGenreIdsFromSliders(){
+      const map = [
+        { key:"comico", ids:[35] },
+        { key:"azione", ids:[28,12] },
+        { key:"romantico", ids:[10749] },
+        { key:"drammatico", ids:[18] },
+        { key:"thriller", ids:[53,80,9648] },
+        { key:"horror", ids:[27] }
+      ];
+
+      const scored = map.map(m => ({key:m.key, value: state.vibe[m.key] || 0, ids:m.ids}));
+      scored.sort((a,b)=>b.value-a.value);
+
+      const top = scored.filter(x=>x.value>0).slice(0,3);
+      const ids = [];
+      for (const t of top) ids.push(...t.ids);
+
+      return {
+        genreIds: [...new Set(ids)],
+        topKeys: top.map(t=>t.key)
+      };
+    }
+
+    function log10(x){ return Math.log(x)/Math.log(10); }
+
+    function vibeBonus(movie){
+      const ids = new Set(movie.genre_ids || []);
+      const v = state.vibe;
+      let bonus = 0;
+
+      const byKey = {
+        comico:[35],
+        azione:[28,12],
+        romantico:[10749],
+        drammatico:[18],
+        thriller:[53,80,9648],
+        horror:[27]
+      };
+
+      for (const k of Object.keys(byKey)){
+        const wanted = v[k] || 0;
+        if (wanted === 0) continue;
+        const hits = byKey[k].some(id=>ids.has(id));
+        if (hits) bonus += wanted/5;
+        else bonus -= (wanted/5) * 0.25;
+      }
+      return bonus;
+    }
+
+    function score(movie){
+      const vote = Number(movie.vote_average || 0) / 10;
+      const count = Number(movie.vote_count || 0);
+      const quality = vote * log10(count + 1);
+      const vibe = vibeBonus(movie);
+      return quality + (0.35 * vibe);
+    }
+
+    async function fetchJson(url){
+      const r = await fetch(url);
+      if (!r.ok) throw new Error("Errore rete");
+      return r.json();
+    }
+
+    function sortByMode(arr){
+      const mode = qualityMode.value;
+      const out = [...arr];
+
+      if (mode === "popular"){
+        out.sort((a,b)=>(b.popularity||0)-(a.popularity||0));
+        return out;
+      }
+
+      if (mode === "rated"){
+        out.sort((a,b)=>(b.vote_average||0)-(a.vote_average||0));
+        return out;
+      }
+
+      out.sort((a,b)=>score(b)-score(a));
+      return out;
+    }
+
+    async function discover(page, genreIds){
+      const p = new URLSearchParams();
+      p.set("api_key", TMDB_KEY);
+      p.set("language", "it-IT");
+      p.set("include_adult", "false");
+      p.set("include_video", "false");
+      p.set("page", String(page));
+
+      if (qualityMode.value === "popular") p.set("sort_by", "popularity.desc");
+      else if (qualityMode.value === "rated") p.set("sort_by", "vote_average.desc");
+      else p.set("sort_by", "vote_count.desc");
+
+      if (genreIds.length) p.set("with_genres", genreIds.join(","));
+
+      if (onlyAvailable.value === "yes"){
+        p.set("watch_region", REGION);
+        p.set("with_watch_monetization_types", monetization.value);
+      }
+
+      const url = TMDB + "/discover/movie?" + p.toString();
+      const j = await fetchJson(url);
+      return j.results || [];
+    }
+
+    async function watchProviders(movieId){
+      const url = TMDB + "/movie/" + movieId + "/watch/providers?api_key=" + TMDB_KEY;
+      const j = await fetchJson(url);
+      const it = (j.results || {})[REGION];
+      if (!it) return null;
+      return {
+        flatrate: it.flatrate || [],
+        rent: it.rent || [],
+        buy: it.buy || []
+      };
+    }
+
+    function providersBlock(label, list){
       if (!list || !list.length) return "";
-      const items = list.map(p => {
-        const logo = p.logo_path ? `<img src="${LOGO}${p.logo_path}" style="width:20px;height:20px;border-radius:999px;object-fit:cover">` : "";
-        return `<span style="display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.08);margin:4px 6px 0 0;">${logo}${esc(p.provider_name)}</span>`;
+      const items = list.map(p=>{
+        const logo = p.logo_path ? "<img src='" + LOGO + p.logo_path + "' alt=''>" : "";
+        return "<span class='provTag'>" + logo + esc(p.provider_name) + "</span>";
       }).join("");
-      return `<div style="margin-top:10px;"><div class="muted">${esc(title)}</div><div style="margin-top:6px;">${items}</div></div>`;
+      return "<div class='provRow'><div class='provLabel'>" + esc(label) + "</div><div class='provItems'>" + items + "</div></div>";
     }
 
-    function whyText(movie) {
-      const gmap = new Map(state.genres.map(x => [x.id, x.name]));
-      const chosen = (movie.genre_ids || []).filter(id => state.selected.has(id)).map(id => gmap.get(id)).filter(Boolean);
-      const topV = Object.entries(state.vibe).sort((a,b)=>b[1]-a[1]).filter(x=>x[1]>0).slice(0,2).map(x=>x[0]);
-      const parts = [];
-      if (chosen.length) parts.push("Generi: " + chosen.slice(0,3).join(", "));
-      if (topV.length) parts.push("Slider: " + topV.join(", "));
-      parts.push("Voto e numero voti buoni.");
-      return parts.join(" ");
+    function whyText(topKeys){
+      if (!topKeys.length) return "Slider a 0. Ti propongo titoli forti e popolari.";
+      return "Slider più alti: " + topKeys.join(", ") + ".";
     }
 
-    async function renderMovie(movie) {
-      if (!movie) {
-        elResult.innerHTML = `<div class="muted">Nessun film trovato.</div>`;
-        btnNext.disabled = true;
+    function movieCardHtml(m, topKeys){
+      const poster = m.poster_path ? (IMG + m.poster_path) : "";
+      const vote = Number(m.vote_average || 0).toFixed(1);
+      const date = m.release_date || "n.d.";
+      const overview = (m.overview || "Trama non disponibile.").slice(0, 260) + ((m.overview || "").length > 260 ? "..." : "");
+
+      return "" +
+        "<div class='movieCard'>" +
+          "<div class='movie'>" +
+            "<div class='poster'>" +
+              (poster ? "<img src='" + poster + "' alt=''>" : "<div class='muted'>No poster</div>") +
+            "</div>" +
+            "<div>" +
+              "<p class='mTitle'>" + esc(m.title || "Titolo non disponibile") + "</p>" +
+              "<div class='kpis'>" +
+                "<span class='kpi'>Voto: " + vote + "</span>" +
+                "<span class='kpi'>Voti: " + (m.vote_count || 0) + "</span>" +
+                "<span class='kpi'>Uscita: " + esc(date) + "</span>" +
+              "</div>" +
+              "<div class='overview'>" + esc(overview) + "</div>" +
+              "<div class='actions'>" +
+                "<button class='btn secondary' data-action='providers' data-id='" + m.id + "'>Dove si vede</button>" +
+                "<span class='tiny'>" + esc(whyText(topKeys)) + "</span>" +
+              "</div>" +
+              "<div class='providers' id='prov_" + m.id + "'></div>" +
+            "</div>" +
+          "</div>" +
+        "</div>";
+    }
+
+    async function renderProviders(movieId){
+      const box = document.getElementById("prov_" + movieId);
+      if (!box) return;
+
+      if (box.dataset.loaded === "1"){
+        box.style.display = (box.style.display === "none" || !box.style.display) ? "block" : "none";
         return;
       }
 
-      const poster = movie.poster_path ? `${IMG}${movie.poster_path}` : "";
-      const wp = await watchProviders(movie.id);
+      box.style.display = "block";
+      box.innerHTML = "<div class='muted'>Carico disponibilità...</div>";
 
-      if (onlyAvailable.checked) {
-        const hasAny = wp && ((wp.flatrate && wp.flatrate.length) || (wp.rent && wp.rent.length) || (wp.buy && wp.buy.length));
-        if (!hasAny) {
-          next();
+      try{
+        const wp = await watchProviders(movieId);
+        if (!wp){
+          box.innerHTML = "<div class='muted'>Disponibilità non trovata per IT.</div>";
+          box.dataset.loaded = "1";
           return;
         }
+
+        const hasAny = (wp.flatrate && wp.flatrate.length) || (wp.rent && wp.rent.length) || (wp.buy && wp.buy.length);
+        if (!hasAny){
+          box.innerHTML = "<div class='muted'>Non risulta disponibile online in IT.</div>";
+          box.dataset.loaded = "1";
+          return;
+        }
+
+        box.innerHTML =
+          "<p class='provTitle'>Disponibile online in Italia</p>" +
+          providersBlock("Abbonamento", wp.flatrate) +
+          providersBlock("Noleggio", wp.rent) +
+          providersBlock("Acquisto", wp.buy);
+
+        box.dataset.loaded = "1";
+      }catch(e){
+        box.innerHTML = "<div class='muted'>Errore nel caricamento disponibilità.</div>";
       }
-
-      const providersHtml = wp
-        ? `<div class="why">
-             <div class="muted">Disponibile online in Italia</div>
-             ${providersBlock("Abbonamento", wp.flatrate)}
-             ${providersBlock("Noleggio", wp.rent)}
-             ${providersBlock("Acquisto", wp.buy)}
-           </div>`
-        : `<div class="muted" style="margin-top:10px;">Disponibilità online non trovata per IT.</div>`;
-
-      elResult.innerHTML = `
-        <div class="movie">
-          <div class="poster">${poster ? `<img src="${poster}" alt="">` : `<div class="muted">No poster</div>`}</div>
-          <div>
-            <div class="title">${esc(movie.title || "Titolo non disponibile")}</div>
-            <div class="kpi">
-              <div class="pill">Voto: ${(movie.vote_average || 0).toFixed ? (movie.vote_average||0).toFixed(1) : movie.vote_average}</div>
-              <div class="pill">Voti: ${movie.vote_count || 0}</div>
-              <div class="pill">Uscita: ${movie.release_date || "n.d."}</div>
-            </div>
-            <div class="muted">${esc((movie.overview || "Trama non disponibile.").slice(0, 380))}${(movie.overview||"").length>380 ? "..." : ""}</div>
-            <div class="why"><div class="muted">Perché te lo consiglio</div><div>${esc(whyText(movie))}</div></div>
-            ${providersHtml}
-          </div>
-        </div>
-      `;
-
-      btnNext.disabled = false;
     }
 
-    async function find() {
-      showErr(elErr, "");
-      showErr(elErrGenres, "");
+    function attachHandlers(){
+      elResults.querySelectorAll("button[data-action='providers']").forEach(b=>{
+        b.addEventListener("click", async ()=>{
+          const id = Number(b.getAttribute("data-id"));
+          await renderProviders(id);
+        });
+      });
+    }
 
-      if (state.selected.size === 0) {
-        showErr(elErrGenres, "Seleziona almeno 1 genere.");
-        return;
+    function shuffle(arr){
+      for (let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = arr[i];
+        arr[i] = arr[j];
+        arr[j] = t;
       }
+      return arr;
+    }
 
+    function renderFromPool(topKeys){
+      const n = Math.max(1, Number(howMany.value || 12));
+      const slice = state.pool.slice(0, n);
+      elResults.innerHTML = slice.map(m=>movieCardHtml(m, topKeys)).join("");
+      elCount.textContent = slice.length + " film";
+      attachHandlers();
+    }
+
+    async function find(){
+      showErr("");
       elLoading.style.display = "block";
-      elResult.innerHTML = "";
-      btnNext.disabled = true;
+      elResults.innerHTML = "";
+      elCount.textContent = "0 film";
+      btnShuffle.disabled = true;
 
-      try {
-        const list1 = await discover(1);
-        const list2 = await discover(2);
-        state.pool = pickBest([...list1, ...list2]);
-        state.idx = 0;
-        await renderMovie(state.pool[0] || null);
-      } catch (e) {
-        showErr(elErr, "Errore. Controlla internet o chiave.");
-      } finally {
+      try{
+        const { genreIds, topKeys } = buildGenreIdsFromSliders();
+
+        const p1 = await discover(1, genreIds);
+        const p2 = await discover(2, genreIds);
+        const p3 = await discover(3, genreIds);
+        const p4 = await discover(4, genreIds);
+
+        const all = [...p1, ...p2, ...p3, ...p4].filter(x=>x && x.id);
+
+        const uniq = new Map();
+        for (const m of all) uniq.set(m.id, m);
+        const arr = Array.from(uniq.values());
+
+        const sorted = sortByMode(arr);
+
+        state.pool = shuffle(sorted);
+
+        renderFromPool(topKeys);
+        btnShuffle.disabled = state.pool.length === 0;
+      }catch(e){
+        showErr("Errore. Controlla internet o chiave.");
+      }finally{
         elLoading.style.display = "none";
       }
     }
 
-    async function next() {
+    function reshuffle(){
       if (!state.pool.length) return;
-      state.idx = (state.idx + 1) % state.pool.length;
-      await renderMovie(state.pool[state.idx]);
+      const { topKeys } = buildGenreIdsFromSliders();
+      state.pool = shuffle(state.pool);
+      renderFromPool(topKeys);
     }
 
-    document.getElementById("btnCredits").addEventListener("click", () => {
+    document.getElementById("btnCredits").addEventListener("click", ()=>{
       alert("Questa PWA usa TMDB API. This product uses the TMDB API but is not endorsed or certified by TMDB.");
     });
 
     btnFind.addEventListener("click", find);
-    btnNext.addEventListener("click", next);
+    btnShuffle.addEventListener("click", reshuffle);
+    btnReset.addEventListener("click", resetSliders);
 
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").catch(() => {});
+    if ("serviceWorker" in navigator){
+      navigator.serviceWorker.register("sw.js").catch(()=>{});
     }
 
-    (async function init() {
-      vibeBind();
-      try {
-        state.genres = await fetchGenres();
-        renderGenres();
-      } catch (e) {
-        showErr(elErr, "Non riesco a caricare i generi. Controlla internet o chiave.");
-      }
-    })();
+    bindSliders();
   </script></body>
 </html>
