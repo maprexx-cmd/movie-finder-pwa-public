@@ -1,266 +1,1330 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Movie Finder</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>Movie Finder</title>
 
-<style>
-:root{
---bg:#0b1020;
---card:#111827;
---text:#e5e7eb;
---muted:#9ca3af;
---line:rgba(255,255,255,.1);
---acidY:#d9ff2f;
---acidG:#39ff6b;
---blue:#1e40af;
-}
-*{box-sizing:border-box}
-body{
-margin:0;
-font-family:system-ui;
-background:linear-gradient(180deg,#050813,#0b1020);
-color:var(--text);
-padding:16px;
-}
-.card{
-background:rgba(255,255,255,.03);
-border:1px solid var(--line);
-border-radius:20px;
-padding:16px;
-margin-bottom:16px;
-}
-h1,h2,h3{margin:0 0 10px}
-.small{font-size:12px;color:var(--muted)}
-.btn{
-padding:12px 18px;
-border-radius:999px;
-border:none;
-font-weight:900;
-cursor:pointer;
-}
-.main{
-background:linear-gradient(90deg,var(--acidY),var(--acidG));
-color:var(--blue);
-}
-.secondary{
-background:transparent;
-border:1px solid var(--line);
-color:var(--text);
-}
-.hidden{display:none}
-input{
-width:100%;
-padding:12px;
-border-radius:14px;
-border:1px solid var(--line);
-background:#000;
-color:#fff;
-}
-input[type=range]{width:100%}
-.genre{
-border:1px solid var(--line);
-border-radius:14px;
-padding:10px;
-margin-bottom:8px;
-}
-.badge{
-float:right;
-background:rgba(217,255,47,.15);
-border:1px solid rgba(217,255,47,.3);
-color:var(--acidY);
-padding:4px 10px;
-border-radius:999px;
-font-size:12px;
-}
-.providers{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-}
-.provider{
-border:1px solid var(--line);
-border-radius:999px;
-padding:6px 10px;
-display:flex;
-align-items:center;
-gap:6px;
-font-size:12px;
-cursor:pointer;
-}
-.provider img{width:22px;height:22px;border-radius:6px}
-.provider.active{
-border-color:var(--acidG);
-background:rgba(57,255,107,.15);
-}
-.tabs{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.tab{
-padding:8px 12px;
-border-radius:999px;
-border:1px solid var(--line);
-cursor:pointer;
-}
-.tab.active{
-background:linear-gradient(90deg,var(--acidY),var(--acidG));
-color:var(--blue);
-border:none;
-}
-.result{
-border:1px solid var(--line);
-border-radius:16px;
-padding:10px;
-display:grid;
-grid-template-columns:90px 1fr;
-gap:10px;
-margin-bottom:12px;
-}
-.poster{
-width:90px;height:135px;
-background:#000;
-border-radius:12px;
-overflow:hidden;
-}
-.poster img{width:100%;height:100%;object-fit:cover}
-.fade{
-position:fixed;
-inset:0;
-background:#000;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:10;
-}
-.fade.show{display:flex}
-</style>
+  <style>
+    :root{
+      --bg0:#050813;
+      --bg1:#0b1020;
+      --card:rgba(255,255,255,.03);
+      --card2:rgba(255,255,255,.02);
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --line:rgba(255,255,255,.10);
+      --y:#d9ff2f;
+      --g:#39ff6b;
+      --blue:#1e40af;
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --r:22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(1000px 600px at 25% 15%, rgba(217,255,47,.10), transparent 55%),
+        radial-gradient(900px 520px at 80% 25%, rgba(57,255,107,.09), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:18px 14px 34px;
+    }
+    .wrap{max-width:980px;margin:0 auto;}
+    .topline{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      font-size:13px;color:var(--muted);margin-bottom:12px;opacity:.95;
+      flex-wrap:wrap;
+    }
+    .topline a{color:var(--y);text-decoration:none}
+    .brand{display:flex;align-items:center;gap:12px;margin:10px 0 16px;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg, rgba(217,255,47,.95), rgba(57,255,107,.85));
+      box-shadow:0 12px 40px rgba(217,255,47,.12);
+      display:grid;place-items:center;color:#0b1020;font-weight:1000;
+    }
+    .brand h1{margin:0;font-size:22px;letter-spacing:.2px}
+    .brand .sub{color:var(--muted);margin-top:2px;font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px;}
+    @media(min-width:920px){.grid{grid-template-columns:1.15fr .85fr}}
+    .card{
+      background:linear-gradient(180deg, var(--card), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    h2{margin:0 0 10px;font-size:20px}
+    h3{margin:0 0 8px;font-size:15px}
+    p{margin:0 0 10px;color:var(--muted);line-height:1.35}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:12px 16px;
+      font-weight:1000;
+      letter-spacing:.2px;
+      cursor:pointer;
+      background:rgba(255,255,255,.02);
+      color:var(--text);
+      user-select:none;
+    }
+    .btn:active{transform:scale(.99)}
+    .btnPrimary{
+      border:none;
+      background:linear-gradient(90deg, var(--y), var(--g));
+      color:var(--blue);
+      box-shadow:0 18px 45px rgba(217,255,47,.18);
+    }
+    .btnGhost{background:rgba(255,255,255,.02)}
+    .btnDanger{border:1px solid rgba(255,255,255,.16);color:#ffb4b4}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .pill strong{color:var(--text)}
+    .divider{height:1px;background:var(--line);margin:14px 0}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+    .tab{
+      padding:10px 12px;border-radius:999px;border:1px solid var(--line);
+      background:rgba(255,255,255,.02);color:var(--text);
+      cursor:pointer;font-weight:1000;font-size:13px;
+    }
+    .tabActive{
+      border:none;
+      background:linear-gradient(90deg, rgba(217,255,47,.95), rgba(57,255,107,.78));
+      color:var(--blue);
+    }
+    .choiceList{display:grid;gap:10px;margin:10px 0 14px}
+    .choiceItem{border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:16px;padding:12px;}
+    .choiceItem ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.35}
+    .formRow{display:grid;gap:8px;margin-top:10px}
+    .input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.15);
+      color:var(--text);
+      outline:none;
+    }
+    .input::placeholder{color:rgba(229,231,235,.55)}
+    .small{font-size:12px;color:var(--muted);line-height:1.35}
+    .toggleRow{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      margin-top:10px;padding:10px 12px;border:1px solid var(--line);
+      background:rgba(255,255,255,.02);border-radius:16px;
+    }
+    .toggleRow span{color:var(--muted);font-size:13px}
+    .toggleRow input{width:22px;height:22px;accent-color:var(--g);}
+    .genres{display:grid;gap:8px;margin-top:10px;max-height:360px;overflow:auto;padding-right:4px;}
+    .genreRow{
+      display:grid;grid-template-columns:1.3fr .7fr;gap:10px;align-items:center;
+      border:1px solid var(--line);background:rgba(255,255,255,.02);
+      border-radius:14px;padding:10px 12px;
+    }
+    .genreName{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .badge{
+      min-width:34px;text-align:center;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(217,255,47,.12);
+      border:1px solid rgba(217,255,47,.25);
+      color:var(--y);
+      font-weight:1000;
+      font-size:12px;
+    }
+    input[type="range"]{width:100%}
+    .providersPick{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      border-radius:16px;
+      padding:12px;
+      margin-top:10px;
+    }
+    .provHead{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .provList{display:flex;gap:8px;flex-wrap:wrap}
+    .provChip{
+      display:flex;align-items:center;gap:8px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      border-radius:999px;
+      padding:7px 10px;
+      cursor:pointer;
+      user-select:none;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .provChip img{width:20px;height:20px;border-radius:7px;border:1px solid rgba(255,255,255,.12)}
+    .provChip.active{
+      border-color:rgba(57,255,107,.45);
+      background:rgba(57,255,107,.12);
+      color:var(--text);
+    }
+    .results{display:grid;gap:12px;margin-top:10px;}
+    .resultCard{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius:18px;
+      padding:12px;
+      display:grid;
+      grid-template-columns:96px 1fr;
+      gap:12px;
+      align-items:start;
+    }
+    .poster{
+      width:96px;height:144px;border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      overflow:hidden;
+      display:grid;place-items:center;
+      color:rgba(229,231,235,.55);
+      font-size:11px;text-align:center;padding:6px;
+    }
+    .poster img{width:100%;height:100%;object-fit:cover;display:block}
+    .meta h3{margin:0 0 6px;font-size:16px;line-height:1.15}
+    .meta .o{margin:0 0 8px;color:var(--muted);font-size:13px;line-height:1.35}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{font-size:12px;color:var(--muted);border:1px solid var(--line);background:rgba(0,0,0,.12);padding:7px 10px;border-radius:999px;}
+    .providersBox{
+      margin-top:8px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+      border-radius:14px;
+      padding:10px 10px;
+    }
+    .provTitle{
+      font-size:12px;color:var(--muted);
+      margin:0 0 8px 0;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    }
+    .provGroups{display:grid;gap:8px;}
+    .provGroup{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .provLabel{
+      font-size:11px;
+      color:rgba(229,231,235,.75);
+      padding:4px 8px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.02);
+    }
+    .provLogo{
+      width:26px;height:26px;border-radius:9px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      overflow:hidden;
+      display:grid;place-items:center;
+      font-size:10px;
+      color:rgba(229,231,235,.65);
+    }
+    .provLogo img{width:100%;height:100%;object-fit:cover;display:block}
+    .provEmpty{font-size:12px;color:var(--muted);}
+    .hidden{display:none}
+    .splash{
+      position:fixed;inset:0;display:grid;place-items:center;
+      background:
+        radial-gradient(800px 520px at 50% 35%, rgba(217,255,47,.12), transparent 55%),
+        radial-gradient(700px 480px at 60% 45%, rgba(57,255,107,.10), transparent 55%),
+        linear-gradient(180deg, #050813, #070b16);
+      z-index:50;
+      transition:opacity .55s ease;
+    }
+    .splashHidden{opacity:0;pointer-events:none}
+    .splashInner{text-align:center;padding:20px;}
+    .splashIcon{
+      width:86px;height:86px;border-radius:26px;margin:0 auto 16px;
+      background:linear-gradient(135deg, rgba(217,255,47,.98), rgba(57,255,107,.86));
+      box-shadow:0 18px 60px rgba(217,255,47,.16);
+      display:grid;place-items:center;color:#0b1020;font-weight:1000;font-size:34px;
+    }
+    .splashTitle{font-size:22px;margin:0 0 6px}
+    .splashAsk{font-size:14px;color:var(--muted);margin:0}
+    .fadeOut{
+      position:fixed;inset:0;background:#000;
+      opacity:0;pointer-events:none;
+      z-index:80;
+      transition:opacity .7s ease;
+      display:grid;place-items:center;
+      padding:20px;
+    }
+    .fadeOut.show{opacity:1;pointer-events:auto}
+    .fadeText{text-align:center;font-weight:1000;font-size:22px;color:var(--text);margin-bottom:14px}
+  </style>
 </head>
 
 <body>
+  <div class="splash" id="splash">
+    <div class="splashInner">
+      <div class="splashIcon">MF</div>
+      <div class="splashTitle">Movie Finder</div>
+      <div class="splashAsk">COSA VUOI GUARDARE OGGI?</div>
+    </div>
+  </div>
 
-<div class="card">
-<h1>Movie Finder</h1>
-<p class="small">Cosa vuoi guardare oggi?</p>
-<button class="btn main" onclick="start()">Cosa guardi oggi?</button>
-</div>
+  <div class="fadeOut" id="fadeOut">
+    <div>
+      <div class="fadeText">Sta iniziando il film...</div>
+      <div class="row" style="justify-content:center">
+        <button class="btn btnPrimary" id="exitNowBtn">Esci dalla app</button>
+      </div>
+      <div style="height:10px"></div>
+      <div class="small" style="text-align:center;max-width:420px">
+        Se il telefono non chiude la scheda, chiudi tu questa pagina.
+      </div>
+    </div>
+  </div>
 
-<div class="card" id="login">
-<h2>Premium</h2>
-<p class="small">Demo Premium</p>
-<input id="email" placeholder="Email">
-<br><br>
-<input id="password" type="password" placeholder="Password">
-<br><br>
-<button class="btn main" onclick="login()">Accedi Premium</button>
-<p class="small" id="loginMsg"></p>
-</div>
+  <div class="wrap">
+    <div class="topline">
+      <div>Profilo: <a href="https://github.com/maprexx-cmd" target="_blank" rel="noreferrer">github.com/maprexx-cmd</a></div>
+      <div>App: <a href="https://maprexx-cmd.github.io/movie-finder-pwa-public/" target="_blank" rel="noreferrer">maprexx-cmd.github.io</a></div>
+    </div>
 
-<div class="card hidden" id="filters">
-<h2>Preferenze</h2>
+    <div class="brand">
+      <div class="logo">MF</div>
+      <div>
+        <h1>Movie Finder</h1>
+        <div class="sub">Basic e Premium. Slider e piattaforme. Trending e social.</div>
+      </div>
+    </div>
 
-<div class="genre">Comico <span class="badge" id="b35">0</span>
-<input type="range" min="0" max="5" oninput="upd(35,this.value)">
-</div>
+    <div class="grid">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Piano</h2>
+          <span class="pill" id="planPill"><strong>Basic</strong> attivo</span>
+        </div>
 
-<div class="genre">Azione <span class="badge" id="b28">0</span>
-<input type="range" min="0" max="5" oninput="upd(28,this.value)">
-</div>
+        <div class="tabs">
+          <button class="tab tabActive" id="tabBasic">Basic</button>
+          <button class="tab" id="tabPremium">Premium</button>
+        </div>
 
-<div class="genre">Romantico <span class="badge" id="b10749">0</span>
-<input type="range" min="0" max="5" oninput="upd(10749,this.value)">
-</div>
+        <div class="choiceList" id="planInfo"></div>
 
-<div class="genre">Animazione <span class="badge" id="b16">0</span>
-<input type="range" min="0" max="5" oninput="upd(16,this.value)">
-</div>
+        <div class="toggleRow">
+          <span>Mostra solo disponibili online</span>
+          <input type="checkbox" id="onlyOnlineToggle" checked>
+        </div>
 
-<button class="btn main" onclick="loadProviders()">Avanti</button>
-</div>
+        <div class="divider"></div>
 
-<div class="card hidden" id="platforms">
-<h2>Piattaforme</h2>
-<div class="providers" id="provList"></div>
-<br>
-<button class="btn main" onclick="search()">Cerca</button>
-</div>
+        <div id="premiumGate" class="hidden">
+          <div class="pill"><strong>Premium</strong> accesso</div>
+          <div class="formRow">
+            <button class="btn btnPrimary" id="payBtn">Vai al pagamento Play Store</button>
+            <button class="btn btnGhost" id="alreadyBtn">Ho già Premium</button>
 
-<div class="card hidden" id="results">
-<h2>Risultati</h2>
-<div id="res"></div>
-</div>
+            <div id="loginBox" class="hidden">
+              <input class="input" id="loginEmail" placeholder="Email">
+              <input class="input" id="loginPass" type="password" placeholder="Password">
+              <div class="row">
+                <button class="btn btnPrimary" id="loginBtn">Accedi</button>
+                <button class="btn btnGhost" id="logoutBtn">Esci</button>
+              </div>
+              <div class="small" id="loginMsg"></div>
+              <div class="small">Demo Premium: maprexx@gmail.com e password 1234</div>
+            </div>
+          </div>
+        </div>
 
-<div class="fade" id="fade">
-<h2>Sta iniziando il film...</h2>
-<button class="btn main" onclick="window.close()">Esci dall'app</button>
-</div>
+        <div class="row">
+          <button class="btn btnPrimary" id="goBtn">Cosa guardi oggi?</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div id="basicPanel">
+          <div class="pill"><strong>Basic</strong> 1 ricerca al giorno. 3 risultati. VM18 escluso.</div>
+          <div class="small" style="margin-top:8px">Selezioni multiple. La ricerca usa AND.</div>
+          <div class="genres" id="basicGenres"></div>
+          <div class="row" style="margin-top:10px">
+            <button class="btn btnPrimary" id="basicSearchBtn">Trova film</button>
+          </div>
+          <div class="results" id="basicResults" style="display:none"></div>
+        </div>
+
+        <div id="premiumPanel" class="hidden">
+          <div class="tabs" id="premiumTabs">
+            <button class="tab tabActive" data-sec="premFilm">Film</button>
+            <button class="tab" data-sec="premTv">Serie TV</button>
+            <button class="tab" data-sec="premTrending">Trending</button>
+            <button class="tab" data-sec="premSocial">Social</button>
+            <button class="tab" data-sec="premLast">Ultimi visti</button>
+            <button class="tab" data-sec="premWatch">Watchlist</button>
+          </div>
+
+          <div id="premFilm" class="premSec">
+            <div class="pill"><strong>Film</strong> Slider 0 a 5. 5 risultati. Illimitato. AND.</div>
+            <div class="genres" id="premFilmGenres"></div>
+
+            <div class="providersPick">
+              <div class="provHead">
+                <div class="pill"><strong>Piattaforme</strong> Seleziona o lascia Tutte</div>
+                <div class="row">
+                  <button class="btn btnGhost" id="filmAllProvBtn">Tutte</button>
+                  <button class="btn btnGhost" id="filmClearProvBtn">Svuota</button>
+                </div>
+              </div>
+              <div class="provList" id="premFilmProvList"></div>
+              <div class="small" id="premFilmProvMsg"></div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <button class="btn btnPrimary" id="premFilmSearchBtn">Cerca film</button>
+            </div>
+            <div class="results" id="premFilmResults"></div>
+          </div>
+
+          <div id="premTv" class="premSec hidden">
+            <div class="pill"><strong>Serie TV</strong> Slider 0 a 5. 5 risultati. Illimitato. AND.</div>
+            <div class="genres" id="premTvGenres"></div>
+
+            <div class="providersPick">
+              <div class="provHead">
+                <div class="pill"><strong>Piattaforme</strong> Seleziona o lascia Tutte</div>
+                <div class="row">
+                  <button class="btn btnGhost" id="tvAllProvBtn">Tutte</button>
+                  <button class="btn btnGhost" id="tvClearProvBtn">Svuota</button>
+                </div>
+              </div>
+              <div class="provList" id="premTvProvList"></div>
+              <div class="small" id="premTvProvMsg"></div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <button class="btn btnPrimary" id="premTvSearchBtn">Cerca serie TV</button>
+            </div>
+            <div class="results" id="premTvResults"></div>
+          </div>
+
+          <div id="premTrending" class="premSec hidden">
+            <div class="pill"><strong>Trending</strong> Top 5 della settimana (TMDB). Film o serie.</div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn btnPrimary" id="loadTrendingBtn">Carica trending</button>
+              <button class="btn btnGhost" id="toggleTrendingBtn">Mostra: Film</button>
+            </div>
+            <div class="results" id="trendingResults"></div>
+            <div class="small" style="margin-top:10px">
+              Nota: TMDB non fornisce i “più visti per piattaforma”. Qui usiamo Trending TMDB e filtri piattaforme.
+            </div>
+          </div>
+
+          <div id="premSocial" class="premSec hidden">
+            <div class="pill"><strong>Social</strong> Condividi ultimo visto o la app.</div>
+            <div class="formRow" style="margin-top:10px">
+              <input class="input" id="socialMsg" placeholder="Messaggio opzionale">
+              <div class="row">
+                <button class="btn btnPrimary" id="shareLastBtn">Condividi ultimo visto</button>
+                <button class="btn btnGhost" id="shareAppBtn">Condividi la app</button>
+              </div>
+              <div class="small" id="shareHint">Se non si apre la condivisione, copia e incolla.</div>
+              <textarea class="input hidden" id="shareFallback" rows="4"></textarea>
+            </div>
+          </div>
+
+          <div id="premLast" class="premSec hidden">
+            <div class="pill"><strong>Ultimi visti</strong> Lista locale sul telefono.</div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn btnGhost" id="clearLastBtn">Svuota lista</button>
+            </div>
+            <div class="results" id="lastResults"></div>
+          </div>
+
+          <div id="premWatch" class="premSec hidden">
+            <div class="pill"><strong>Watchlist</strong> Lista locale. Versione Play Store può sincronizzare con account.</div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn btnGhost" id="clearWatchBtn">Svuota watchlist</button>
+            </div>
+            <div class="results" id="watchResults"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Impostazioni</h2>
+        <p>Se la chiave API è già presente, non toccare nulla.</p>
+        <div class="formRow">
+          <input class="input" id="apiKeyInput" placeholder="TMDB API key">
+          <div class="row">
+            <button class="btn btnPrimary" id="saveKeyBtn">Salva chiave</button>
+            <button class="btn btnGhost" id="clearKeyBtn">Rimuovi chiave</button>
+            <button class="btn btnDanger" id="resetBtn">Reset app</button>
+          </div>
+          <div class="small" id="keyStatus"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="choiceItem">
+          <h3>Cose importanti</h3>
+          <ul>
+            <li>Originali Netflix e Prime Video inclusi, se presenti in TMDB</li>
+            <li>Disponibilità streaming dipende dalla regione IT su TMDB</li>
+            <li>Basic: trama breve, 3 risultati, 1 ricerca al giorno, no VM18</li>
+            <li>Premium: login demo, slider completi, piattaforme, trending, social, watchlist</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <script>
-const API="f8ecb75282e8dcea2d4845598cc7d030";
-const IMG="https://image.tmdb.org/t/p/w500";
-const LOGO="https://image.tmdb.org/t/p/w45";
-let genres={}, providers=[];
+  const APP_URL = "https://maprexx-cmd.github.io/movie-finder-pwa-public/";
+  const REGION = "IT";
 
-function start(){}
+  const IMG_POSTER = "https://image.tmdb.org/t/p/w500";
+  const IMG_PROVIDER = "https://image.tmdb.org/t/p/w92";
 
-function login(){
-if(email.value==="maprexx@gmail.com" && password.value==="1234"){
-login.classList.add("hidden");
-filters.classList.remove("hidden");
-}else{
-loginMsg.textContent="Credenziali non valide";
-}
-}
+  const LS = {
+    apiKey:"mf_tmdb_key",
+    plan:"mf_plan",
+    onlyOnline:"mf_only_online",
+    basicDate:"mf_basic_date",
+    basicCount:"mf_basic_count",
+    premiumActive:"mf_premium_active",
+    lastViewed:"mf_last_viewed",
+    watchlist:"mf_watchlist",
+    selectedProvMovie:"mf_sel_prov_movie",
+    selectedProvTv:"mf_sel_prov_tv"
+  };
 
-function upd(id,val){
-genres[id]=val;
-document.getElementById("b"+id).textContent=val;
-}
+  const el = (id) => document.getElementById(id);
 
-async function loadProviders(){
-filters.classList.add("hidden");
-platforms.classList.remove("hidden");
-provList.innerHTML="Carico...";
-const r=await fetch(`https://api.themoviedb.org/3/watch/providers/movie?api_key=${API}&watch_region=IT`);
-const d=await r.json();
-provList.innerHTML="";
-d.results.forEach(p=>{
-const el=document.createElement("div");
-el.className="provider";
-el.innerHTML=`<img src="${LOGO+p.logo_path}">${p.provider_name}`;
-el.onclick=()=>{
-el.classList.toggle("active");
-if(providers.includes(p.provider_id)){
-providers=providers.filter(x=>x!==p.provider_id);
-}else{
-providers.push(p.provider_id);
-}
-};
-provList.appendChild(el);
-});
-}
+  const state = {
+    apiKey: localStorage.getItem(LS.apiKey) || "f8ecb75282e8dcea2d4845598cc7d030",
+    plan: localStorage.getItem(LS.plan) || "basic",
+    onlyOnline: (localStorage.getItem(LS.onlyOnline) ?? "1") === "1",
+    premiumActive: localStorage.getItem(LS.premiumActive) === "1",
+    trendingType: "movie",
+    providersMovie: [],
+    providersTv: [],
+    selProvMovie: loadIntArray(LS.selectedProvMovie),
+    selProvTv: loadIntArray(LS.selectedProvTv)
+  };
 
-async function search(){
-platforms.classList.add("hidden");
-results.classList.remove("hidden");
-res.innerHTML="Carico...";
-const g=Object.keys(genres).filter(x=>genres[x]>0).join(",");
-const p=providers.join("|");
-const r=await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API}&language=it-IT&watch_region=IT&with_genres=${g}&with_watch_providers=${p}&with_watch_monetization_types=flatrate|rent|buy`);
-const d=await r.json();
-res.innerHTML="";
-d.results.slice(0,5).forEach(m=>{
-const div=document.createElement("div");
-div.className="result";
-div.innerHTML=`
-<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}</div>
-<div>
-<h3>${m.title}</h3>
-<p class="small">${m.overview||""}</p>
-<button class="btn secondary" onclick="fade.classList.add('show')">Guarda</button>
-</div>`;
-res.appendChild(div);
-});
-}
+  function loadIntArray(key){
+    try{
+      const a = JSON.parse(localStorage.getItem(key) || "[]");
+      return Array.isArray(a) ? a.map(x => parseInt(x,10)).filter(n => Number.isFinite(n)) : [];
+    }catch(e){return []}
+  }
+  function saveIntArray(key, arr){
+    localStorage.setItem(key, JSON.stringify((arr||[]).map(x=>parseInt(x,10)).filter(n=>Number.isFinite(n))));
+  }
+
+  function safeText(s){
+    return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  }
+
+  function todayKey(){
+    const d=new Date();
+    const y=d.getFullYear();
+    const m=String(d.getMonth()+1).padStart(2,"0");
+    const da=String(d.getDate()).padStart(2,"0");
+    return y+"-"+m+"-"+da;
+  }
+  function getBasicCount(){
+    const t=todayKey();
+    const dt=localStorage.getItem(LS.basicDate);
+    if(dt !== t){
+      localStorage.setItem(LS.basicDate, t);
+      localStorage.setItem(LS.basicCount, "0");
+      return 0;
+    }
+    return parseInt(localStorage.getItem(LS.basicCount) || "0", 10);
+  }
+  function incBasicCount(){
+    const c=getBasicCount()+1;
+    localStorage.setItem(LS.basicCount, String(c));
+    return c;
+  }
+
+  async function tmdb(path, params){
+    if(!state.apiKey) throw new Error("Manca la TMDB API key.");
+    const url = new URL("https://api.themoviedb.org/3"+path);
+    url.searchParams.set("api_key", state.apiKey);
+    if(params && params.language !== false) url.searchParams.set("language","it-IT");
+    if(params){
+      for(const [k,v] of Object.entries(params)){
+        if(k==="language") continue;
+        if(v===undefined || v===null || v==="") continue;
+        url.searchParams.set(k, String(v));
+      }
+    }
+    const res = await fetch(url.toString());
+    if(!res.ok){
+      const txt = await res.text().catch(()=> "");
+      throw new Error("Errore TMDB: "+res.status+" "+txt);
+    }
+    return res.json();
+  }
+
+  async function loadProviders(type){
+    const data = await tmdb(`/watch/providers/${type}`, { watch_region: REGION, language:false });
+    const list = (data && data.results) ? data.results : [];
+    return list
+      .filter(p => p && p.provider_id && p.provider_name && p.logo_path)
+      .map(p => ({
+        id: p.provider_id,
+        name: p.provider_name,
+        logo: p.logo_path ? (IMG_PROVIDER + p.logo_path) : ""
+      }));
+  }
+
+  async function getWatchProviders(type, id){
+    const data = await tmdb(`/${type}/${id}/watch/providers`, { language:false });
+    const it = data && data.results && data.results[REGION] ? data.results[REGION] : null;
+    const out = { flatrate:[], rent:[], buy:[] };
+    if(!it) return out;
+    out.flatrate = Array.isArray(it.flatrate) ? it.flatrate : [];
+    out.rent = Array.isArray(it.rent) ? it.rent : [];
+    out.buy = Array.isArray(it.buy) ? it.buy : [];
+    return out;
+  }
+
+  function providersExist(p){
+    return (p.flatrate && p.flatrate.length) || (p.rent && p.rent.length) || (p.buy && p.buy.length);
+  }
+
+  function provLogoHtml(p){
+    const logo = p.logo_path ? (IMG_PROVIDER + p.logo_path) : "";
+    if(logo){
+      return `<span class="provLogo" title="${safeText(p.provider_name)}"><img src="${logo}" alt=""></span>`;
+    }
+    return `<span class="provLogo" title="${safeText(p.provider_name)}">Logo</span>`;
+  }
+
+  function buildProvidersBox(){
+    return `
+      <div class="providersBox">
+        <div class="provTitle">
+          <span>Dove guardarlo</span>
+          <span class="small" style="margin:0">Regione: ${REGION}</span>
+        </div>
+        <div class="provGroups">
+          <div class="provGroup"><span class="provLabel">Abbonamento</span><span class="provList" data-kind="flatrate"></span></div>
+          <div class="provGroup"><span class="provLabel">Noleggio</span><span class="provList" data-kind="rent"></span></div>
+          <div class="provGroup"><span class="provLabel">Acquisto</span><span class="provList" data-kind="buy"></span></div>
+          <div class="provEmpty" data-empty style="display:none">Non disponibile online per IT, o dato non disponibile.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  async function fillProvidersBox(cardEl, type, id){
+    const box = cardEl.querySelector(".providersBox");
+    if(!box) return;
+    try{
+      const p = await getWatchProviders(type, id);
+      const emptyEl = box.querySelector('[data-empty]');
+      const fl = box.querySelector('[data-kind="flatrate"]');
+      const re = box.querySelector('[data-kind="rent"]');
+      const bu = box.querySelector('[data-kind="buy"]');
+
+      fl.innerHTML = (p.flatrate || []).slice(0, 10).map(provLogoHtml).join("");
+      re.innerHTML = (p.rent || []).slice(0, 10).map(provLogoHtml).join("");
+      bu.innerHTML = (p.buy || []).slice(0, 10).map(provLogoHtml).join("");
+
+      const ok = providersExist(p);
+      emptyEl.style.display = ok ? "none" : "block";
+      cardEl.dataset.onlineOk = ok ? "1" : "0";
+
+      if(state.onlyOnline && cardEl.dataset.onlineOk === "0"){
+        cardEl.style.display = "none";
+      }
+    }catch(e){
+      const emptyEl = box.querySelector('[data-empty]');
+      emptyEl.textContent = "Errore provider.";
+      emptyEl.style.display = "block";
+      cardEl.dataset.onlineOk = "0";
+      if(state.onlyOnline) cardEl.style.display = "none";
+    }
+  }
+
+  function shortOverview(text, premium){
+    const t=(text || "").trim();
+    if(!t) return "Trama non disponibile.";
+    if(premium) return t;
+    if(t.length <= 140) return t;
+    return t.slice(0,140).trim()+"...";
+  }
+
+  function buildResultCard(item, type, premium){
+    const title = item.title || item.name || "Titolo";
+    const overview = shortOverview(item.overview, premium);
+    const poster = item.poster_path ? (IMG_POSTER + item.poster_path) : "";
+    const posterHtml = poster ? `<img src="${poster}" alt="Locandina">` : `Locandina non disponibile`;
+
+    const year = (item.release_date || item.first_air_date || "").slice(0,4);
+    const rating = (typeof item.vote_average === "number") ? item.vote_average.toFixed(1) : "";
+    const chips = [];
+    if(year) chips.push("Anno "+year);
+    if(rating) chips.push("Voto "+rating);
+    chips.push(type === "tv" ? "Serie TV" : "Film");
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = `
+      <div class="resultCard">
+        <div class="poster">${posterHtml}</div>
+        <div class="meta">
+          <h3>${safeText(title)}</h3>
+          <p class="o">${safeText(overview)}</p>
+          <div class="chips">${chips.map(c => `<span class="chip">${safeText(c)}</span>`).join("")}</div>
+          ${buildProvidersBox()}
+          <div class="divider"></div>
+          <div class="row">
+            <button class="btn btnPrimary" data-act="watch">Guarda</button>
+            <button class="btn btnGhost" data-act="saveLast">Ultimi visti</button>
+            <button class="btn btnGhost" data-act="saveWatch">Watchlist</button>
+            <button class="btn btnGhost" data-act="share">Condividi</button>
+          </div>
+        </div>
+      </div>
+    `;
+    const card = wrapper.firstElementChild;
+
+    card.querySelector('[data-act="watch"]').onclick = () => triggerExitFade();
+    card.querySelector('[data-act="saveLast"]').onclick = () => addLastViewed(item, type);
+    card.querySelector('[data-act="saveWatch"]').onclick = () => addWatchlist(item, type);
+    card.querySelector('[data-act="share"]').onclick = () => shareTitle(item, type);
+
+    fillProvidersBox(card, type, item.id);
+
+    return card;
+  }
+
+  function triggerExitFade(){
+    el("fadeOut").classList.add("show");
+  }
+
+  el("exitNowBtn").onclick = () => { try{ window.close(); }catch(e){} };
+
+  function addLastViewed(item, type){
+    const title = item.title || item.name || "Titolo";
+    const entry = { id:item.id, type, title, poster_path:item.poster_path||"", ts:Date.now() };
+    const list = JSON.parse(localStorage.getItem(LS.lastViewed) || "[]");
+    const filtered = list.filter(x => !(x.id===entry.id && x.type===entry.type));
+    filtered.unshift(entry);
+    localStorage.setItem(LS.lastViewed, JSON.stringify(filtered.slice(0, 30)));
+    renderLastViewed();
+  }
+
+  function addWatchlist(item, type){
+    const title = item.title || item.name || "Titolo";
+    const entry = { id:item.id, type, title, poster_path:item.poster_path||"", ts:Date.now() };
+    const list = JSON.parse(localStorage.getItem(LS.watchlist) || "[]");
+    const filtered = list.filter(x => !(x.id===entry.id && x.type===entry.type));
+    filtered.unshift(entry);
+    localStorage.setItem(LS.watchlist, JSON.stringify(filtered.slice(0, 60)));
+    renderWatchlist();
+  }
+
+  function renderListInto(containerId, storageKey){
+    const box = el(containerId);
+    if(!box) return;
+    const list = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    if(!list.length){
+      box.innerHTML = `<div class="small">Vuoto.</div>`;
+      return;
+    }
+    box.innerHTML = "";
+    for(const x of list){
+      const fake = {
+        id:x.id,
+        title: x.type==="movie" ? x.title : undefined,
+        name: x.type==="tv" ? x.title : undefined,
+        poster_path:x.poster_path,
+        overview:""
+      };
+      box.appendChild(buildResultCard(fake, x.type, true));
+    }
+  }
+
+  function renderLastViewed(){ renderListInto("lastResults", LS.lastViewed); }
+  function renderWatchlist(){ renderListInto("watchResults", LS.watchlist); }
+
+  function applyOnlyOnlineFilter(container){
+    if(!container) return;
+    const cards = Array.from(container.querySelectorAll(".resultCard"));
+    for(const c of cards){
+      if(!state.onlyOnline){
+        c.style.display = "";
+        continue;
+      }
+      const ok = c.dataset.onlineOk === "1";
+      c.style.display = ok ? "" : "none";
+    }
+  }
+
+  function limitVisible(container, max){
+    if(!container) return;
+    const cards = Array.from(container.querySelectorAll(".resultCard")).filter(c => c.style.display !== "none");
+    cards.forEach((c,i)=>{ if(i>=max) c.style.display="none"; });
+  }
+
+  async function shareWithFallback(payload){
+    const txt = payload.text || "";
+    const url = payload.url || "";
+    const full = (txt ? (txt+"\n") : "") + url;
+
+    try{
+      if(navigator.share){
+        await navigator.share(payload);
+        el("shareFallback").classList.add("hidden");
+        el("shareHint").textContent = "Condivisione inviata.";
+        return;
+      }
+    }catch(e){}
+
+    el("shareFallback").classList.remove("hidden");
+    el("shareFallback").value = full;
+    el("shareHint").textContent = "Copia e incolla questo testo nella app social.";
+    el("shareFallback").focus();
+    el("shareFallback").select();
+  }
+
+  function shareTitle(item, type){
+    const title = item.title || item.name || "Titolo";
+    const msg = (el("socialMsg").value || "").trim();
+    const base = "Sto usando Movie Finder. "+(type==="tv"?"Serie TV":"Film")+": "+title+".";
+    const text = msg ? (msg+"\n"+base) : base;
+    shareWithFallback({ title:"Movie Finder", text, url:APP_URL });
+  }
+
+  function shareLastViewed(){
+    const list = JSON.parse(localStorage.getItem(LS.lastViewed) || "[]");
+    if(!list.length){
+      alert("Nessun ultimo visto.");
+      return;
+    }
+    const x = list[0];
+    const msg = (el("socialMsg").value || "").trim();
+    const base = "Sto usando Movie Finder. "+(x.type==="tv"?"Serie TV":"Film")+": "+x.title+".";
+    const text = msg ? (msg+"\n"+base) : base;
+    shareWithFallback({ title:"Movie Finder", text, url:APP_URL });
+  }
+
+  function shareApp(){
+    const msg = (el("socialMsg").value || "").trim();
+    const base = "Movie Finder. Scegli i generi e trova cosa guardare oggi.";
+    const text = msg ? (msg+"\n"+base) : base;
+    shareWithFallback({ title:"Movie Finder", text, url:APP_URL });
+  }
+
+  function planInfoHtml(plan){
+    if(plan==="basic"){
+      return `
+        <div class="choiceItem">
+          <h3>Versione BASIC, gratuita</h3>
+          <ul>
+            <li>Solo film, nessuna serie TV</li>
+            <li>Una ricerca al giorno, 3 risultati</li>
+            <li>Filtri essenziali: comico, azione, romantico, cartoni animati</li>
+            <li>Esclusione contenuti VM18</li>
+            <li>Disponibilità streaming con loghi</li>
+            <li>Trama molto breve</li>
+            <li>Nessuna registrazione</li>
+          </ul>
+        </div>
+      `;
+    }
+    return `
+      <div class="choiceItem">
+        <h3>Versione PREMIUM</h3>
+        <ul>
+          <li>Film e serie TV</li>
+          <li>Nessun limite di ricerche giornaliere</li>
+          <li>Accesso a tutti i generi con slider 0 a 5</li>
+          <li>Filtro piattaforme selezionabili</li>
+          <li>Accesso ai contenuti VM18</li>
+          <li>Trama estesa</li>
+          <li>Watchlist, trending, social, ultimi visti</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  function renderKeyStatus(){
+    el("apiKeyInput").value = state.apiKey || "";
+    el("keyStatus").textContent = state.apiKey ? "Chiave salvata." : "Incolla la chiave e salva.";
+  }
+
+  function setPlan(plan){
+    state.plan = plan;
+    localStorage.setItem(LS.plan, plan);
+
+    el("planInfo").innerHTML = planInfoHtml(plan);
+    el("tabBasic").classList.toggle("tabActive", plan==="basic");
+    el("tabPremium").classList.toggle("tabActive", plan==="premium");
+
+    el("basicPanel").classList.toggle("hidden", plan!=="basic");
+    el("premiumGate").classList.toggle("hidden", plan!=="premium");
+    el("premiumPanel").classList.toggle("hidden", !(plan==="premium" && state.premiumActive));
+
+    el("planPill").innerHTML = plan==="basic"
+      ? "<strong>Basic</strong> attivo"
+      : ("<strong>Premium</strong> " + (state.premiumActive ? "attivo" : "bloccato"));
+
+    el("basicResults").style.display = "none";
+    el("basicResults").innerHTML = "";
+  }
+
+  function setPremiumActive(active){
+    state.premiumActive = active;
+    localStorage.setItem(LS.premiumActive, active ? "1" : "0");
+    setPlan("premium");
+    if(active){
+      ensurePremiumDataLoaded();
+    }
+  }
+
+  function buildBasicGenres(){
+    const basic = [
+      { id:35, name:"Comico" },
+      { id:28, name:"Azione" },
+      { id:10749, name:"Romantico" },
+      { id:16, name:"Cartoni animati" }
+    ];
+    const box = el("basicGenres");
+    box.innerHTML = "";
+    for(const g of basic){
+      const row = document.createElement("div");
+      row.className="genreRow";
+      row.innerHTML = `
+        <div class="genreName">
+          <div>${safeText(g.name)}</div>
+          <div class="badge" id="b_b_${g.id}">No</div>
+        </div>
+        <div>
+          <input type="checkbox" id="b_c_${g.id}" style="width:22px;height:22px;accent-color:var(--g)">
+        </div>
+      `;
+      box.appendChild(row);
+      const c = row.querySelector("#b_c_"+g.id);
+      const b = row.querySelector("#b_b_"+g.id);
+      c.addEventListener("change", ()=> b.textContent = c.checked ? "Si" : "No");
+    }
+  }
+
+  async function basicSearch(){
+    const out = el("basicResults");
+    out.style.display = "grid";
+    out.innerHTML = `<div class="small">Carico...</div>`;
+
+    const count = getBasicCount();
+    if(count >= 1){
+      out.innerHTML = `<div class="small">Hai già fatto la ricerca di oggi.</div>`;
+      return;
+    }
+
+    const selected = [];
+    el("basicGenres").querySelectorAll('input[type="checkbox"]').forEach(ch=>{
+      if(ch.checked){
+        const id = parseInt(ch.id.replace("b_c_",""),10);
+        if(Number.isFinite(id)) selected.push(id);
+      }
+    });
+
+    if(!selected.length){
+      out.innerHTML = `<div class="small">Seleziona almeno un genere.</div>`;
+      return;
+    }
+
+    incBasicCount();
+
+    try{
+      const data = await tmdb("/discover/movie", {
+        include_adult:"false",
+        sort_by:"popularity.desc",
+        page:1,
+        with_genres:selected.join(","), 
+        watch_region:REGION,
+        with_watch_monetization_types:"flatrate|rent|buy"
+      });
+
+      const list = (data.results || []).slice(0, 12);
+      out.innerHTML = "";
+
+      if(!list.length){
+        out.innerHTML = `<div class="small">Nessun risultato.</div>`;
+        return;
+      }
+
+      for(const item of list){
+        out.appendChild(buildResultCard(item, "movie", false));
+      }
+
+      setTimeout(()=>{
+        applyOnlyOnlineFilter(out);
+        limitVisible(out, 3);
+      }, 1000);
+
+    }catch(e){
+      out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
+    }
+  }
+
+  function buildSliderRow(container, g){
+    const row = document.createElement("div");
+    row.className="genreRow";
+    row.innerHTML = `
+      <div class="genreName">
+        <div>${safeText(g.name)}</div>
+        <div class="badge" id="${container.id}_b_${g.id}">0</div>
+      </div>
+      <div><input type="range" min="0" max="5" value="0" step="1" id="${container.id}_r_${g.id}"></div>
+    `;
+    container.appendChild(row);
+    const r = row.querySelector("#"+container.id+"_r_"+g.id);
+    const b = row.querySelector("#"+container.id+"_b_"+g.id);
+    r.addEventListener("input", ()=> b.textContent = r.value);
+  }
+
+  function getSliderSelections(container){
+    const list=[];
+    container.querySelectorAll('input[type="range"]').forEach(r=>{
+      const v=parseInt(r.value,10);
+      const id=parseInt(r.id.split("_r_")[1],10);
+      if(v>0) list.push({id, w:v});
+    });
+    list.sort((a,b)=>b.w-a.w);
+    return list;
+  }
+
+  function requireAllSelected(items, selectedIds){
+    if(!selectedIds.length) return items;
+    return items.filter(it=>{
+      const ids = it.genre_ids || [];
+      return selectedIds.every(gid => ids.includes(gid));
+    });
+  }
+
+  async function ensurePremiumDataLoaded(){
+    if(!state.apiKey) return;
+
+    if(!state.providersMovie.length){
+      state.providersMovie = await loadProviders("movie");
+      renderProviderPicker("movie");
+    }
+    if(!state.providersTv.length){
+      state.providersTv = await loadProviders("tv");
+      renderProviderPicker("tv");
+    }
+
+    const movieBox = el("premFilmGenres");
+    const tvBox = el("premTvGenres");
+
+    if(movieBox.childElementCount===0){
+      const mg = await tmdb("/genre/movie/list", {});
+      movieBox.innerHTML="";
+      (mg.genres||[]).forEach(g=>buildSliderRow(movieBox,g));
+    }
+    if(tvBox.childElementCount===0){
+      const tg = await tmdb("/genre/tv/list", {});
+      tvBox.innerHTML="";
+      (tg.genres||[]).forEach(g=>buildSliderRow(tvBox,g));
+    }
+
+    renderLastViewed();
+    renderWatchlist();
+  }
+
+  function renderProviderPicker(type){
+    const list = type==="movie" ? state.providersMovie : state.providersTv;
+    const boxId = type==="movie" ? "premFilmProvList" : "premTvProvList";
+    const msgId = type==="movie" ? "premFilmProvMsg" : "premTvProvMsg";
+    const box = el(boxId);
+    const msg = el(msgId);
+
+    const selected = type==="movie" ? state.selProvMovie : state.selProvTv;
+
+    box.innerHTML = "";
+    msg.textContent = "Se non selezioni nulla, vale Tutte.";
+
+    const sorted = [...list].sort((a,b)=>a.name.localeCompare(b.name));
+
+    for(const p of sorted){
+      const chip = document.createElement("div");
+      chip.className = "provChip"+(selected.includes(p.id) ? " active" : "");
+      chip.dataset.pid = String(p.id);
+      chip.innerHTML = `${p.logo ? `<img src="${p.logo}" alt="">` : ""}<span>${safeText(p.name)}</span>`;
+      chip.onclick = () => {
+        const id = parseInt(chip.dataset.pid,10);
+        let sel = type==="movie" ? state.selProvMovie : state.selProvTv;
+        if(sel.includes(id)) sel = sel.filter(x=>x!==id); else sel = sel.concat([id]);
+        if(type==="movie"){
+          state.selProvMovie = sel;
+          saveIntArray(LS.selectedProvMovie, sel);
+        }else{
+          state.selProvTv = sel;
+          saveIntArray(LS.selectedProvTv, sel);
+        }
+        chip.classList.toggle("active");
+      };
+      box.appendChild(chip);
+    }
+  }
+
+  function setProvidersAll(type){
+    if(type==="movie"){
+      state.selProvMovie = [];
+      saveIntArray(LS.selectedProvMovie, []);
+    }else{
+      state.selProvTv = [];
+      saveIntArray(LS.selectedProvTv, []);
+    }
+    renderProviderPicker(type);
+  }
+
+  function setProvidersClear(type){
+    if(type==="movie"){
+      state.selProvMovie = [];
+      saveIntArray(LS.selectedProvMovie, []);
+    }else{
+      state.selProvTv = [];
+      saveIntArray(LS.selectedProvTv, []);
+    }
+    renderProviderPicker(type);
+  }
+
+  function scoreItems(items, weights){
+    const map = new Map(weights.map(w=>[w.id,w.w]));
+    return items.map(it=>{
+      const ids = it.genre_ids || [];
+      let s = 0;
+      for(const gid of ids){
+        if(map.has(gid)) s += map.get(gid);
+      }
+      return {it, s};
+    }).sort((a,b)=>b.s-a.s).map(x=>x.it);
+  }
+
+  async function premiumSearch(type){
+    const out = type==="movie" ? el("premFilmResults") : el("premTvResults");
+    out.innerHTML = `<div class="small">Carico...</div>`;
+
+    try{
+      const genreBox = type==="movie" ? el("premFilmGenres") : el("premTvGenres");
+      const weights = getSliderSelections(genreBox);
+      if(!weights.length){
+        out.innerHTML = `<div class="small">Alza almeno uno slider.</div>`;
+        return;
+      }
+
+      const selectedIds = weights.map(x=>x.id);
+      const selectedProviders = type==="movie" ? state.selProvMovie : state.selProvTv;
+      const provParam = selectedProviders.length ? selectedProviders.join("|") : "";
+
+      const data = await tmdb(`/discover/${type}`, {
+        sort_by:"popularity.desc",
+        page:1,
+        include_adult:"true",
+        watch_region:REGION,
+        with_watch_providers:provParam,
+        with_watch_monetization_types:"flatrate|rent|buy",
+        with_genres:selectedIds.join("|")
+      });
+
+      let items = (data.results || []).slice(0, 80);
+      items = requireAllSelected(items, selectedIds);
+      items = scoreItems(items, weights);
+
+      out.innerHTML = "";
+
+      if(!items.length){
+        out.innerHTML = `<div class="small">Nessun risultato. Abbassa qualche slider o togli filtri piattaforme.</div>`;
+        return;
+      }
+
+      const top = items.slice(0, 12);
+      for(const item of top){
+        out.appendChild(buildResultCard(item, type, true));
+        addLastViewed(item, type);
+      }
+
+      setTimeout(()=>{
+        applyOnlyOnlineFilter(out);
+        limitVisible(out, 5);
+      }, 1200);
+
+    }catch(e){
+      out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
+    }
+  }
+
+  async function loadTrending(){
+    const out = el("trendingResults");
+    out.innerHTML = `<div class="small">Carico...</div>`;
+    try{
+      const data = await tmdb(`/trending/${state.trendingType}/week`, {});
+      let list = (data.results || []).slice(0, 12);
+
+      out.innerHTML = "";
+      if(!list.length){
+        out.innerHTML = `<div class="small">Nessun dato.</div>`;
+        return;
+      }
+
+      for(const item of list){
+        out.appendChild(buildResultCard(item, state.trendingType, true));
+      }
+
+      setTimeout(()=>{
+        applyOnlyOnlineFilter(out);
+        limitVisible(out, 5);
+      }, 1200);
+
+    }catch(e){
+      out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
+    }
+  }
+
+  function showPremiumSection(secId){
+    document.querySelectorAll(".premSec").forEach(s=>{
+      s.classList.toggle("hidden", s.id !== secId);
+    });
+    el("premiumTabs").querySelectorAll(".tab").forEach(t=>{
+      t.classList.toggle("tabActive", t.getAttribute("data-sec") === secId);
+    });
+    if(secId==="premLast") renderLastViewed();
+    if(secId==="premWatch") renderWatchlist();
+  }
+
+  function resetApp(){
+    localStorage.clear();
+    location.reload();
+  }
+
+  function init(){
+    setTimeout(()=> el("splash").classList.add("splashHidden"), 2000);
+
+    el("planInfo").innerHTML = planInfoHtml(state.plan);
+
+    el("onlyOnlineToggle").checked = state.onlyOnline;
+    el("onlyOnlineToggle").addEventListener("change", ()=>{
+      state.onlyOnline = el("onlyOnlineToggle").checked;
+      localStorage.setItem(LS.onlyOnline, state.onlyOnline ? "1" : "0");
+    });
+
+    el("tabBasic").onclick = ()=>{ setPlan("basic"); };
+    el("tabPremium").onclick = ()=>{ setPlan("premium"); };
+
+    el("payBtn").onclick = ()=>{
+      alert("Qui è PWA. Il pagamento reale arriva nella app Play Store con Google Play Billing.");
+    };
+
+    el("alreadyBtn").onclick = ()=>{
+      el("loginBox").classList.remove("hidden");
+      el("loginMsg").textContent = "Inserisci email e password.";
+      el("loginEmail").value = "maprexx@gmail.com";
+    };
+
+    el("loginBtn").onclick = ()=>{
+      const email = (el("loginEmail").value || "").trim().toLowerCase();
+      const pass = (el("loginPass").value || "").trim();
+      if(email==="maprexx@gmail.com" && pass==="1234"){
+        el("loginMsg").textContent = "Premium attivo.";
+        setPremiumActive(true);
+      }else{
+        el("loginMsg").textContent = "Credenziali non valide.";
+      }
+    };
+
+    el("logoutBtn").onclick = ()=>{
+      el("loginMsg").textContent = "Sei uscita.";
+      setPremiumActive(false);
+    };
+
+    el("goBtn").onclick = ()=>{
+      if(state.plan==="basic"){
+        window.scrollTo({top:0, behavior:"smooth"});
+        return;
+      }
+      if(!state.premiumActive){
+        alert("Premium bloccato. Accedi prima.");
+        return;
+      }
+      el("premiumPanel").classList.remove("hidden");
+      showPremiumSection("premFilm");
+      window.scrollTo({top:0, behavior:"smooth"});
+    };
+
+    el("basicSearchBtn").onclick = ()=> basicSearch();
+
+    el("saveKeyBtn").onclick = async ()=>{
+      state.apiKey = (el("apiKeyInput").value || "").trim();
+      localStorage.setItem(LS.apiKey, state.apiKey);
+      renderKeyStatus();
+      if(state.premiumActive && state.plan==="premium"){
+        await ensurePremiumDataLoaded();
+      }
+    };
+
+    el("clearKeyBtn").onclick = ()=>{
+      state.apiKey = "";
+      localStorage.removeItem(LS.apiKey);
+      renderKeyStatus();
+    };
+
+    el("resetBtn").onclick = ()=> resetApp();
+
+    el("premiumTabs").addEventListener("click", (ev)=>{
+      const btn = ev.target.closest("button");
+      if(!btn) return;
+      const sec = btn.getAttribute("data-sec");
+      if(!sec) return;
+      showPremiumSection(sec);
+    });
+
+    el("premFilmSearchBtn").onclick = ()=> premiumSearch("movie");
+    el("premTvSearchBtn").onclick = ()=> premiumSearch("tv");
+
+    el("filmAllProvBtn").onclick = ()=> setProvidersAll("movie");
+    el("filmClearProvBtn").onclick = ()=> setProvidersClear("movie");
+    el("tvAllProvBtn").onclick = ()=> setProvidersAll("tv");
+    el("tvClearProvBtn").onclick = ()=> setProvidersClear("tv");
+
+    el("loadTrendingBtn").onclick = ()=> loadTrending();
+    el("toggleTrendingBtn").onclick = ()=>{
+      state.trendingType = state.trendingType === "movie" ? "tv" : "movie";
+      el("toggleTrendingBtn").textContent = state.trendingType === "movie" ? "Mostra: Film" : "Mostra: Serie TV";
+    };
+
+    el("shareLastBtn").onclick = ()=> shareLastViewed();
+    el("shareAppBtn").onclick = ()=> shareApp();
+
+    el("clearLastBtn").onclick = ()=>{
+      localStorage.removeItem(LS.lastViewed);
+      renderLastViewed();
+    };
+    el("clearWatchBtn").onclick = ()=>{
+      localStorage.removeItem(LS.watchlist);
+      renderWatchlist();
+    };
+
+    buildBasicGenres();
+    renderKeyStatus();
+    setPlan(state.plan);
+
+    if(state.premiumActive){
+      setPlan("premium");
+      ensurePremiumDataLoaded();
+    }
+  }
+
+  init();
 </script>
 
 </body>
