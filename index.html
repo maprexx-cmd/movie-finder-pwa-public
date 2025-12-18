@@ -1,166 +1,144 @@
 <!doctype html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#5b34d6">
-<title>Movie finder</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Movie Finder</title>
+  <meta name="theme-color" content="#0B0F1A" />
+  <style>
+    :root{
+      --bg:#0B0F1A;
+      --card:rgba(255,255,255,.06);
+      --border:rgba(255,255,255,.10);
+      --text:#F8FAFC;
+      --muted:rgba(248,250,252,.72);
+      --muted2:rgba(248,250,252,.55);
 
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-192.png">
+      --acidY:#EFFF00;
+      --acidG:#7CFF00;
+      --blueT:#0047FF;
+    }
 
-<style>
-:root{
---p1:#5b34d6;--p2:#7b5cff;--bg:#0f1115;
---card:rgba(255,255,255,.06);--border:rgba(255,255,255,.12);
---text:#f2f3f5;--muted:rgba(242,243,245,.72);
-}
+    *{box-sizing:border-box}
 
-*{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
-body{
-margin:0;padding:16px;color:var(--text);
-background:
-radial-gradient(1200px 800px at 20% 0%, rgba(91,52,214,.35), transparent 60%),
-radial-gradient(1000px 700px at 90% 10%, rgba(123,92,255,.25), transparent 55%),
-var(--bg);
-font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-}
-.app{max-width:900px;margin:0 auto}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(239,255,0,.16), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(124,255,0,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
 
-.top{
-background:linear-gradient(135deg,var(--p1),var(--p2));
-border-radius:22px;padding:14px;
-box-shadow:0 14px 40px rgba(0,0,0,.45)
-}
-.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.space{justify-content:space-between}
+    .app{
+      max-width:960px;
+      margin:0 auto;
+      padding:18px;
+    }
 
-.badge{
-width:44px;height:44px;border-radius:14px;
-background:rgba(255,255,255,.2);
-display:flex;align-items:center;justify-content:center;
-font-weight:900
-}
+    h1{
+      margin:0 0 4px 0;
+      font-size:20px;
+    }
 
-.card{
-margin-top:12px;background:var(--card);
-border:1px solid var(--border);
-border-radius:18px;padding:14px;
-box-shadow:0 10px 30px rgba(0,0,0,.35)
-}
+    .subtitle{
+      color:var(--muted);
+      font-size:13px;
+    }
 
-.btn{
-border:0;border-radius:14px;
-padding:12px 14px;font-weight:700;
-background:linear-gradient(135deg,var(--p1),var(--p2));
-color:#fff
-}
-.btn.sec{background:rgba(255,255,255,.12)}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      margin-top:16px;
+    }
 
-.grid{display:grid;gap:12px;margin-top:12px}
-@media(min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
 
-.movie{
-display:grid;grid-template-columns:110px 1fr;gap:12px
-}
-.poster{
-width:110px;height:165px;border-radius:14px;
-background:#0003;overflow:hidden
-}
-.poster img{width:100%;height:100%;object-fit:cover}
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+    }
 
-.kpi{font-size:12px;padding:6px 8px;
-border-radius:999px;background:#fff1;color:#fff}
+    .toggle input{
+      accent-color:var(--acidG);
+      transform:scale(1.2);
+    }
 
-.providers{margin-top:10px;display:none}
-.providers span{
-display:inline-flex;align-items:center;gap:6px;
-padding:6px 10px;border-radius:999px;
-background:#fff1;font-size:13px
-}
-.providers img{width:20px;height:20px;border-radius:999px}
-</style>
+    .cta{
+      margin-top:16px;
+      width:100%;
+      padding:14px;
+      border-radius:18px;
+      border:none;
+      background:linear-gradient(135deg,var(--acidY),var(--acidG));
+      color:var(--blueT);
+      font-weight:900;
+      font-size:16px;
+      cursor:pointer;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:10px;
+    }
+
+    .result{
+      margin-top:12px;
+    }
+  </style>
 </head>
 
 <body>
-<div class="app">
+  <div class="app">
+    <h1>Movie Finder</h1>
+    <div class="subtitle">
+      Trova un film disponibile online, senza perdere tempo
+    </div>
 
-<div class="top">
-<div class="row space">
-<div class="row">
-<div class="badge">MF</div>
-<div>
-<b>Movie finder</b><br>
-<small>Tu scegli l’umore. Io scelgo il film.</small>
-</div>
-</div>
-<button class="btn sec" id="info">Info</button>
-</div>
-</div>
+    <div class="card">
+      <b>Generi</b>
+      <div class="row">
+        <label class="toggle">
+          <input type="checkbox" /> Comico
+        </label>
+        <label class="toggle">
+          <input type="checkbox" /> Azione
+        </label>
+        <label class="toggle">
+          <input type="checkbox" /> Romantico
+        </label>
+      </div>
 
-<div class="card">
-<b>Slider</b>
-<div class="row">
-<div>Comico <input type="range" id="s_comico" min="0" max="5"></div>
-<div>Azione <input type="range" id="s_azione" min="0" max="5"></div>
-<div>Romantico <input type="range" id="s_romantico" min="0" max="5"></div>
-<div>Drammatico <input type="range" id="s_drammatico" min="0" max="5"></div>
-<div>Thriller <input type="range" id="s_thriller" min="0" max="5"></div>
-<div>Horror <input type="range" id="s_horror" min="0" max="5"></div>
-</div>
-<button class="btn" id="find">Trova film</button>
-</div>
+      <button class="cta">
+        Trova il film
+      </button>
 
-<div class="card">
-<b>Risultati (4)</b>
-<div id="results" class="grid"></div>
-</div>
+      <div class="muted">
+        Versione BASIC. Una ricerca al giorno.
+      </div>
+    </div>
 
-</div>
-
-<script>
-const KEY="f8ecb75282e8dcea2d4845598cc7d030";
-const TMDB="https://api.themoviedb.org/3";
-const IMG="https://image.tmdb.org/t/p/w342";
-const LOGO="https://image.tmdb.org/t/p/w92";
-
-async function discover(){
-const r=await fetch(`${TMDB}/discover/movie?api_key=${KEY}&language=it-IT&watch_region=IT&with_watch_monetization_types=flatrate&sort_by=vote_count.desc`);
-return (await r.json()).results.slice(0,4);
-}
-
-async function providers(id){
-const r=await fetch(`${TMDB}/movie/${id}/watch/providers?api_key=${KEY}`);
-return (await r.json()).results.IT?.flatrate||[];
-}
-
-document.getElementById("find").onclick=async()=>{
-const list=await discover();
-const box=document.getElementById("results");
-box.innerHTML="";
-for(const m of list){
-const p=await providers(m.id);
-box.innerHTML+=`
-<div class="card">
-<div class="movie">
-<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}</div>
-<div>
-<b>${m.title}</b><br>
-<span class="kpi">Voto ${m.vote_average}</span>
-<p>${m.overview?.slice(0,120)||""}</p>
-<button class="btn sec" onclick="this.nextElementSibling.style.display='block'">Dove si vede</button>
-<div class="providers">
-${p.map(x=>`<span><img src="${LOGO+x.logo_path}">${x.provider_name}</span>`).join("")}
-</div>
-</div>
-</div>
-</div>`;
-}
-};
-
-document.getElementById("info").onclick=()=>{
-alert("Usa TMDB API. Non affiliato a TMDB.");
-};
-</script>
+    <div class="card result">
+      <b>Risultato</b>
+      <div class="muted">
+        Fai una ricerca per vedere il film suggerito.
+      </div>
+    </div>
+  </div>
 </body>
 </html>
