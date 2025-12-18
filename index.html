@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Movie Finder</title>
-
-<!-- MANIFEST PWA -->
 <link rel="manifest" href="manifest.json">
-
 <style>
 :root{
   --bg:#050816;
@@ -19,9 +16,7 @@
   --muted:#9ca3af;
   --border:#1f2937;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-
 body{
   margin:0;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
@@ -29,13 +24,7 @@ body{
   color:var(--text);
   padding:16px;
 }
-
-.app{
-  max-width:480px;
-  margin:0 auto;
-}
-
-/* CARD BASE */
+.app{max-width:480px;margin:0 auto;}
 .card{
   background:var(--card);
   border-radius:22px;
@@ -43,16 +32,8 @@ body{
   margin-bottom:16px;
   border:1px solid var(--border);
 }
-
-h1,h2,h3{
-  margin:0 0 10px;
-}
-
-.small{
-  color:var(--muted);
-  font-size:13px;
-}
-
+h1,h2,h3{margin:0 0 10px;}
+.small{color:var(--muted);font-size:13px;}
 .btn{
   padding:13px 18px;
   border-radius:999px;
@@ -65,29 +46,17 @@ h1,h2,h3{
   justify-content:center;
   gap:6px;
 }
-
-.btn:disabled{
-  opacity:0.5;
-  cursor:default;
-}
-
+.btn:disabled{opacity:0.5;cursor:default;}
 .btn-primary{
   background:linear-gradient(90deg,var(--accent-yellow),var(--accent-green));
   color:var(--accent-blue);
 }
-
 .btn-secondary{
   background:transparent;
   border:1px solid #374151;
   color:#f9fafb;
 }
-
-.btn-ghost{
-  background:transparent;
-  color:#f9fafb;
-}
-
-/* TOGGLE VISIBILITY */
+.btn-ghost{background:transparent;color:#f9fafb;}
 .hidden{display:none}
 
 /* SPLASH */
@@ -102,40 +71,19 @@ h1,h2,h3{
   z-index:50;
   color:#0b1120;
   text-align:center;
-  animation:fadeIn 0.5s ease-out;
 }
-
-#splashLogo{
-  font-size:32px;
-  font-weight:900;
-  letter-spacing:1px;
-  margin-bottom:10px;
-}
-
-#splashText{
-  font-size:16px;
-}
-
-.fade-out{
+#splashScreen.fade-out{
   animation:fadeOut 0.6s ease-out forwards;
+  pointer-events:none;
 }
-
+#splashLogo{font-size:32px;font-weight:900;letter-spacing:1px;margin-bottom:10px;}
+#splashText{font-size:16px;}
 @keyframes fadeOut{
   to{opacity:0;transform:translateY(-6px);pointer-events:none;}
 }
 
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(8px);}
-  to{opacity:1;transform:translateY(0);}
-}
-
 /* HOME */
-.home-title{
-  font-size:24px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
+.home-title{font-size:24px;font-weight:800;margin-bottom:6px;}
 .badge{
   display:inline-flex;
   align-items:center;
@@ -146,8 +94,6 @@ h1,h2,h3{
   border:1px solid #111827;
   color:var(--muted);
 }
-
-/* LAYOUT BOTTONI HOME */
 .home-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -155,14 +101,13 @@ h1,h2,h3{
   margin-top:14px;
 }
 
-/* SEZIONE BASIC */
+/* BASIC */
 .genre-list{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
   margin-top:10px;
 }
-
 .genre{
   display:flex;
   align-items:center;
@@ -172,32 +117,22 @@ h1,h2,h3{
   border:1px solid #111827;
   background:#020617;
 }
-
 .genre label{
   display:flex;
   align-items:center;
   gap:8px;
   font-size:14px;
 }
-
 .genre input[type=checkbox]{
-  width:18px;
-  height:18px;
-  accent-color:var(--accent-green);
+  width:18px;height:18px;accent-color:var(--accent-green);
 }
-
 .section-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:8px;
 }
-
-/* RISULTATI BASIC */
-.results{
-  margin-top:10px;
-}
-
+.results{margin-top:10px;}
 .result{
   border:1px solid #374151;
   border-radius:18px;
@@ -208,7 +143,6 @@ h1,h2,h3{
   margin-bottom:12px;
   background:#020617;
 }
-
 .poster{
   width:85px;
   height:125px;
@@ -216,15 +150,8 @@ h1,h2,h3{
   border-radius:12px;
   overflow:hidden;
 }
-
-.poster img{width:100%;height:100%;object-fit:cover}
-
-.result-title{
-  font-size:15px;
-  font-weight:700;
-  margin-bottom:4px;
-}
-
+.poster img{width:100%;height:100%;object-fit:cover;}
+.result-title{font-size:15px;font-weight:700;margin-bottom:4px;}
 .result-overview{
   font-size:13px;
   color:var(--muted);
@@ -233,14 +160,12 @@ h1,h2,h3{
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
-
 .platforms{
   display:flex;
   flex-wrap:wrap;
   gap:6px;
   margin-top:6px;
 }
-
 .platform-tag{
   font-size:11px;
   padding:3px 8px;
@@ -251,20 +176,12 @@ h1,h2,h3{
   align-items:center;
   gap:4px;
 }
-
-.platform-dot{
-  width:6px;
-  height:6px;
-  border-radius:999px;
-}
-
+.platform-dot{width:6px;height:6px;border-radius:999px;}
 .platform-netflix{background:#e50914;}
 .platform-prime{background:#00a8e1;}
 .platform-disney{background:#113ccf;}
 .platform-apple{background:#9ca3af;}
 .platform-now{background:#00ffb2;}
-
-/* FOOTER BASIC */
 .basic-footer{
   display:flex;
   align-items:center;
@@ -272,56 +189,16 @@ h1,h2,h3{
   gap:10px;
   margin-top:8px;
 }
+.message{font-size:13px;color:var(--muted);margin-top:6px;}
+.message.error{color:#f97373;}
 
-/* OVERLAY USCITA */
-#exitOverlay{
-  position:fixed;
-  inset:0;
-  background:#000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  z-index:99;
-  color:#f9fafb;
-}
-
-#exitOverlay.show{display:flex}
-
-#exitOverlay h2{
-  margin-bottom:10px;
-}
-
-/* LOGIN PREMIUM */
-.input-group{
-  margin-top:10px;
-}
-
-.input-group label{
-  display:block;
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:4px;
-}
-
-.input-group input{
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid #111827;
-  background:#020617;
-  color:#f9fafb;
-  font-size:14px;
-}
-
-/* PREMIUM LAYOUT BASE */
+/* PREMIUM */
 .tabs{
   display:flex;
   gap:6px;
   overflow-x:auto;
   padding-bottom:4px;
 }
-
 .tab{
   padding:7px 11px;
   border-radius:999px;
@@ -331,19 +208,29 @@ h1,h2,h3{
   cursor:pointer;
   white-space:nowrap;
 }
-
 .tab.active{
   background:linear-gradient(90deg,var(--accent-yellow),var(--accent-green));
   color:var(--accent-blue);
   border:none;
 }
-
-/* SCHERMATE STEP PREMIUM */
-.step{
-  margin-top:10px;
+.premium-tab{margin-top:10px;}
+.step{margin-top:10px;}
+.input-group{margin-top:10px;}
+.input-group label{
+  display:block;
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:4px;
 }
-
-/* SLIDER GENERI PREMIUM */
+.input-group input{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid #111827;
+  background:#020617;
+  color:#f9fafb;
+  font-size:14px;
+}
 .premium-genres{
   display:flex;
   flex-direction:column;
@@ -352,14 +239,12 @@ h1,h2,h3{
   max-height:260px;
   overflow-y:auto;
 }
-
 .slider-row{
   background:#020617;
   border-radius:14px;
   padding:8px 10px;
   border:1px solid #111827;
 }
-
 .slider-row-header{
   display:flex;
   justify-content:space-between;
@@ -367,19 +252,13 @@ h1,h2,h3{
   font-size:13px;
   margin-bottom:4px;
 }
-
-.slider-row input[type=range]{
-  width:100%;
-}
-
-/* PIATTAFORME PREMIUM */
+.slider-row input[type=range]{width:100%;}
 .platform-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
   margin-top:8px;
 }
-
 .platform-pill{
   padding:8px 10px;
   border-radius:14px;
@@ -391,13 +270,10 @@ h1,h2,h3{
   justify-content:space-between;
   cursor:pointer;
 }
-
 .platform-pill.selected{
   border-color:var(--accent-green);
   box-shadow:0 0 0 1px rgba(57,255,107,0.4);
 }
-
-/* RISULTATI PREMIUM */
 .premium-result{
   border-radius:18px;
   border:1px solid #374151;
@@ -408,7 +284,6 @@ h1,h2,h3{
   gap:10px;
   margin-bottom:12px;
 }
-
 .premium-poster{
   width:95px;
   height:140px;
@@ -416,15 +291,8 @@ h1,h2,h3{
   overflow:hidden;
   background:#000;
 }
-
-.premium-poster img{width:100%;height:100%;object-fit:cover}
-
-.premium-title{
-  font-size:15px;
-  font-weight:700;
-  margin-bottom:4px;
-}
-
+.premium-poster img{width:100%;height:100%;object-fit:cover;}
+.premium-title{font-size:15px;font-weight:700;margin-bottom:4px;}
 .premium-overview{
   font-size:13px;
   color:var(--muted);
@@ -432,7 +300,6 @@ h1,h2,h3{
   max-height:72px;
   overflow:hidden;
 }
-
 .stats{
   display:flex;
   flex-wrap:wrap;
@@ -440,19 +307,13 @@ h1,h2,h3{
   font-size:11px;
   margin-bottom:6px;
 }
-
 .stat-pill{
   padding:3px 8px;
   border-radius:999px;
   background:#020617;
   border:1px solid #1f2937;
 }
-
-/* LISTE (WATCHLIST, ULTIMI VISTI) */
-.simple-list{
-  margin-top:8px;
-}
-
+.simple-list{margin-top:8px;}
 .simple-item{
   padding:8px 10px;
   border-radius:14px;
@@ -465,22 +326,21 @@ h1,h2,h3{
   margin-bottom:6px;
 }
 
-/* SOCIAL */
-.share-btn{
-  font-size:13px;
+/* USCITA */
+#exitOverlay{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:40;
+  color:#f9fafb;
 }
+#exitOverlay.show{display:flex;}
 
-/* MESSAGGI */
-.message{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:6px;
-}
-.message.error{
-  color:#f97373;
-}
-
-/* INSTALL PROMPT BANNER */
+/* INSTALL BANNER */
 #installBanner{
   position:fixed;
   left:16px;
@@ -494,15 +354,12 @@ h1,h2,h3{
   align-items:center;
   justify-content:space-between;
   gap:8px;
-  z-index:40;
+  z-index:30;
 }
-#installBanner.show{display:flex}
-#installBannerText{
-  font-size:12px;
-  color:var(--muted);
-}
+#installBanner.show{display:flex;}
+#installBannerText{font-size:12px;color:var(--muted);}
 
-/* SCROLLBARS MOBILE-FRIENDLY */
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:#1f2937;border-radius:999px;}
 </style>
@@ -521,7 +378,6 @@ h1,h2,h3{
     <div class="badge">PWA · Nessuna configurazione</div>
     <div class="home-title" style="margin-top:8px;">Movie Finder</div>
     <p class="small">Scegli la modalità di utilizzo.</p>
-
     <div class="home-actions">
       <button class="btn btn-primary" id="basicModeBtn">BASIC</button>
       <button class="btn btn-secondary" id="premiumModeBtn">PREMIUM</button>
@@ -537,29 +393,17 @@ h1,h2,h3{
       </div>
       <button class="btn btn-ghost" id="backToHomeFromBasic">Indietro</button>
     </div>
-
     <p class="small" style="margin-top:6px;">Regola AND: i film devono rispettare tutti i generi selezionati.</p>
-
     <div class="genre-list" id="basicGenres">
-      <div class="genre">
-        <label><input type="checkbox" value="35"> Comico</label>
-      </div>
-      <div class="genre">
-        <label><input type="checkbox" value="28"> Azione</label>
-      </div>
-      <div class="genre">
-        <label><input type="checkbox" value="10749"> Romantico</label>
-      </div>
-      <div class="genre">
-        <label><input type="checkbox" value="16"> Cartoni animati</label>
-      </div>
+      <div class="genre"><label><input type="checkbox" value="35"> Comico</label></div>
+      <div class="genre"><label><input type="checkbox" value="28"> Azione</label></div>
+      <div class="genre"><label><input type="checkbox" value="10749"> Romantico</label></div>
+      <div class="genre"><label><input type="checkbox" value="16"> Cartoni animati</label></div>
     </div>
-
     <div class="basic-footer">
       <button class="btn btn-secondary" id="basicSearchBtn">Trova film</button>
       <span class="small">1 ricerca al giorno · 3 risultati</span>
     </div>
-
     <div class="message" id="basicInfoMsg">Contenuti VM18 esclusi automaticamente.</div>
     <div class="message error hidden" id="basicErrorMsg"></div>
   </div>
@@ -573,9 +417,7 @@ h1,h2,h3{
       </div>
       <button class="btn btn-ghost" id="basicCloseBtn">Chiudi</button>
     </div>
-
     <div class="results" id="basicResultsBox"></div>
-
     <div class="basic-footer">
       <button class="btn btn-secondary" id="basicSearchAgainBtn">Nuova ricerca</button>
       <span class="small">Limite: 1 ricerca al giorno</span>
@@ -591,23 +433,20 @@ h1,h2,h3{
       </div>
       <button class="btn btn-ghost" id="backToHomeFromPremium">Indietro</button>
     </div>
-
     <div class="input-group">
       <label for="loginEmail">Email</label>
       <input id="loginEmail" type="email" autocomplete="off" placeholder="Inserisci email">
     </div>
-
     <div class="input-group">
       <label for="loginPassword">Password</label>
       <input id="loginPassword" type="password" autocomplete="off" placeholder="Inserisci password">
     </div>
-
     <button class="btn btn-primary" id="loginBtn" style="margin-top:12px;width:100%;">Entra in PREMIUM</button>
     <p class="small" style="margin-top:8px;">Demo: email <b>maprexx@gmail.com</b>, password <b>1234</b>.</p>
     <div class="message error hidden" id="loginErrorMsg"></div>
   </div>
 
-  <!-- PREMIUM: MAIN AREA -->
+  <!-- PREMIUM: MAIN -->
   <div class="card hidden" id="premiumMainCard">
     <div class="section-header">
       <div>
@@ -616,9 +455,7 @@ h1,h2,h3{
       </div>
       <button class="btn btn-ghost" id="premiumLogoutBtn">Esci</button>
     </div>
-
-    <!-- MENU PREMIUM -->
-    <div class="tabs" style="margin-top:10px;" id="premiumTabs">
+    <div class="tabs" id="premiumTabs" style="margin-top:10px;">
       <button class="tab active" data-tab="film">Film</button>
       <button class="tab" data-tab="serie">Serie TV</button>
       <button class="tab" data-tab="trending">Trending</button>
@@ -627,10 +464,8 @@ h1,h2,h3{
       <button class="tab" data-tab="recenti">Ultimi visti</button>
     </div>
 
-    <!-- CONTENUTO PREMIUM: FILM / SERIE -->
     <div id="premiumContent">
-
-      <!-- FILM / SERIE: STEP -->
+      <!-- TAB FILM -->
       <div id="tab-film" class="premium-tab">
         <div class="step" id="stepTipoContenuto">
           <h3>Cosa vuoi cercare?</h3>
@@ -640,41 +475,25 @@ h1,h2,h3{
             <button class="btn btn-secondary" id="premiumSerieBtn">Serie TV</button>
           </div>
         </div>
-
         <div class="step hidden" id="stepGeneri">
           <h3>Preferenze generi</h3>
           <p class="small">Imposta l’intensità da 0 a 5 per ogni genere.</p>
           <div class="premium-genres" id="premiumGenreSliders"></div>
           <button class="btn btn-primary" id="stepGeneriNextBtn" style="margin-top:10px;width:100%;">Procedi</button>
         </div>
-
         <div class="step hidden" id="stepPiattaforme">
           <h3>Piattaforme streaming</h3>
-          <p class="small">Seleziona dove vuoi guardare. Puoi scegliere anche “Tutte”.</p>
+          <p class="small">Seleziona dove vuoi guardare.</p>
           <div class="platform-grid" id="premiumPlatformGrid">
-            <div class="platform-pill" data-provider="all">
-              <span>Tutte</span>
-              <span class="small">Consigliati ovunque</span>
-            </div>
-            <div class="platform-pill" data-provider="netflix">
-              <span>Netflix</span>
-            </div>
-            <div class="platform-pill" data-provider="prime">
-              <span>Prime Video</span>
-            </div>
-            <div class="platform-pill" data-provider="disney">
-              <span>Disney+</span>
-            </div>
-            <div class="platform-pill" data-provider="apple">
-              <span>Apple TV</span>
-            </div>
-            <div class="platform-pill" data-provider="now">
-              <span>NOW</span>
-            </div>
+            <div class="platform-pill" data-provider="all"><span>Tutte</span><span class="small">Consigliati ovunque</span></div>
+            <div class="platform-pill" data-provider="netflix"><span>Netflix</span></div>
+            <div class="platform-pill" data-provider="prime"><span>Prime Video</span></div>
+            <div class="platform-pill" data-provider="disney"><span>Disney+</span></div>
+            <div class="platform-pill" data-provider="apple"><span>Apple TV</span></div>
+            <div class="platform-pill" data-provider="now"><span>NOW</span></div>
           </div>
           <button class="btn btn-primary" id="stepPiattaformeSearchBtn" style="margin-top:10px;width:100%;">Cerca contenuti</button>
         </div>
-
         <div class="step hidden" id="stepRisultatiPremium">
           <h3>Risultati</h3>
           <p class="small">Ricerca illimitata con dettagli completi.</p>
@@ -683,15 +502,15 @@ h1,h2,h3{
         </div>
       </div>
 
-      <!-- TAB SERIE: reindirizza a flusso FILM/Serie -->
+      <!-- TAB SERIE (info) -->
       <div id="tab-serie" class="premium-tab hidden">
-        <p class="small">La ricerca serie TV usa lo stesso flusso di preferenze. Seleziona “Serie TV” nella prima schermata del flusso.</p>
+        <p class="small">Per le serie usa il flusso sopra e scegli "Serie TV" nella prima schermata.</p>
       </div>
 
       <!-- TAB TRENDING -->
       <div id="tab-trending" class="premium-tab hidden">
         <h3>Titoli in tendenza</h3>
-        <p class="small">I contenuti più visti della settimana su TMDB.</p>
+        <p class="small">I contenuti più visti della settimana.</p>
         <div style="display:flex;gap:8px;margin-top:8px;">
           <button class="btn btn-secondary" id="trendingFilmBtn">Trending Film</button>
           <button class="btn btn-secondary" id="trendingTvBtn">Trending Serie</button>
@@ -702,7 +521,7 @@ h1,h2,h3{
       <!-- TAB WATCHLIST -->
       <div id="tab-watchlist" class="premium-tab hidden">
         <h3>Watchlist</h3>
-        <p class="small">Titoli salvati da rivedere con calma.</p>
+        <p class="small">Titoli salvati da rivedere.</p>
         <div class="simple-list" id="watchlistBox"></div>
       </div>
 
@@ -710,58 +529,46 @@ h1,h2,h3{
       <div id="tab-social" class="premium-tab hidden">
         <h3>Social</h3>
         <p class="small">Condividi il titolo che stai per guardare.</p>
-        <button class="btn btn-primary share-btn" id="shareBtn" style="margin-top:10px;">Condividi contenuto</button>
+        <button class="btn btn-primary" id="shareBtn" style="margin-top:10px;">Condividi contenuto</button>
         <div class="message" id="shareMsg" style="margin-top:6px;"></div>
       </div>
 
-      <!-- TAB ULTIMI VISTI -->
+      <!-- TAB RECENTI -->
       <div id="tab-recenti" class="premium-tab hidden">
         <h3>Ultimi visti</h3>
-        <p class="small">Cronologia locale degli ultimi contenuti aperti.</p>
+        <p class="small">Cronologia locale degli ultimi contenuti.</p>
         <div class="simple-list" id="recentBox"></div>
       </div>
-
     </div>
   </div>
 
 </div>
 
-<!-- OVERLAY USCITA -->
+<!-- USCITA -->
 <div id="exitOverlay">
   <h2>Sta iniziando il film…</h2>
   <p class="small">Puoi chiudere l’app dal tuo dispositivo.</p>
 </div>
 
-<!-- BANNER INSTALL PWA -->
+<!-- INSTALL BANNER -->
 <div id="installBanner">
-  <div id="installBannerText">Installa Movie Finder sul tuo dispositivo per un accesso rapido.</div>
+  <div id="installBannerText">Installa Movie Finder sul tuo dispositivo.</div>
   <button class="btn btn-primary" id="installBtn" style="padding:8px 12px;font-size:12px;">Installa</button>
 </div>
 
 <script>
-// =======================
-// CONFIG TMDB E PWA
-// =======================
-
-// IMPORTANTE: Sostituisci con un endpoint backend che protegga la chiave TMDB.
-// Questo file non mostra alcuna API key all'utente.
-const API_BASE = "/tmdb-proxy"; // es. endpoint backend che inoltra le richieste a TMDB con chiave protetta.[web:28]
-
-// provider_id TMDB per Italia (esempi comuni).[web:21][web:24][web:29]
-const WATCH_PROVIDERS = {
-  netflix: 8,
-  prime: 119,
-  disney: 337,
-  apple: 2,
-  now: 326 // NOW Italia (Sky / Now)
-};
-
+// endpoint backend che nasconde la chiave TMDB.[web:28]
+const API_BASE = "/tmdb-proxy";
 const REGION = "IT";
 const LANGUAGE = "it-IT";
+const WATCH_PROVIDERS = { // id TMDB per Italia.[web:21][web:24]
+  netflix:8,
+  prime:119,
+  disney:337,
+  apple:2,
+  now:326
+};
 
-// =======================
-// ELEMENTI BASE
-// =======================
 const splashScreen = document.getElementById("splashScreen");
 const homeCard = document.getElementById("homeCard");
 const basicFiltersCard = document.getElementById("basicFiltersCard");
@@ -770,6 +577,7 @@ const premiumLoginCard = document.getElementById("premiumLoginCard");
 const premiumMainCard = document.getElementById("premiumMainCard");
 const exitOverlay = document.getElementById("exitOverlay");
 
+// HOME
 const basicModeBtn = document.getElementById("basicModeBtn");
 const premiumModeBtn = document.getElementById("premiumModeBtn");
 const backToHomeFromBasic = document.getElementById("backToHomeFromBasic");
@@ -782,14 +590,14 @@ const basicCloseBtn = document.getElementById("basicCloseBtn");
 const basicResultsBox = document.getElementById("basicResultsBox");
 const basicErrorMsg = document.getElementById("basicErrorMsg");
 
-// PREMIUM LOGIN
+// LOGIN PREMIUM
 const loginEmail = document.getElementById("loginEmail");
 const loginPassword = document.getElementById("loginPassword");
 const loginBtn = document.getElementById("loginBtn");
 const loginErrorMsg = document.getElementById("loginErrorMsg");
 const premiumLogoutBtn = document.getElementById("premiumLogoutBtn");
 
-// PREMIUM MENU
+// PREMIUM MAIN
 const premiumTabs = document.getElementById("premiumTabs");
 const premiumGenreSliders = document.getElementById("premiumGenreSliders");
 const premiumPlatformGrid = document.getElementById("premiumPlatformGrid");
@@ -816,95 +624,68 @@ const premiumNewSearchBtn = document.getElementById("premiumNewSearchBtn");
 const trendingFilmBtn = document.getElementById("trendingFilmBtn");
 const trendingTvBtn = document.getElementById("trendingTvBtn");
 
-// INSTALL BANNER
+// INSTALL
 const installBanner = document.getElementById("installBanner");
 const installBtn = document.getElementById("installBtn");
 let deferredPrompt = null;
 
-// =======================
-// SPLASH SCREEN
-// =======================
-setTimeout(()=>{
-  splashScreen.classList.add("fade-out");
-  setTimeout(()=>{ splashScreen.style.display="none"; },600);
-},2000);
+// SPLASH: parte DOPO il load, così non copre il menu.[web:49][web:59]
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    splashScreen.classList.add("fade-out");
+    setTimeout(()=>{ splashScreen.style.display="none"; },600);
+  },2000);
+});
 
-// =======================
-// NAVIGAZIONE VIEW
-// =======================
+// NAVIGAZIONE CARD
 function showCard(card){
-  [homeCard,basicFiltersCard,basicResultsCard,premiumLoginCard,premiumMainCard].forEach(c=>{
-    c.classList.add("hidden");
-  });
+  [homeCard,basicFiltersCard,basicResultsCard,premiumLoginCard,premiumMainCard].forEach(c=>c.classList.add("hidden"));
   card.classList.remove("hidden");
 }
+basicModeBtn.addEventListener("click",()=>showCard(basicFiltersCard));
+premiumModeBtn.addEventListener("click",()=>showCard(premiumLoginCard));
+backToHomeFromBasic.addEventListener("click",()=>showCard(homeCard));
+backToHomeFromPremium.addEventListener("click",()=>showCard(homeCard));
 
-basicModeBtn.addEventListener("click",()=>{
-  showCard(basicFiltersCard);
-});
-
-premiumModeBtn.addEventListener("click",()=>{
-  showCard(premiumLoginCard);
-});
-
-backToHomeFromBasic.addEventListener("click",()=>{
-  showCard(homeCard);
-});
-
-backToHomeFromPremium.addEventListener("click",()=>{
-  showCard(homeCard);
-});
-
-// =======================
-// BASIC MODE LOGICA
-// =======================
+// BASIC: LIMITE 1 RICERCA
 const BASIC_SEARCH_KEY = "movieFinder_basic_search_date";
-
 function canDoBasicSearchToday(){
   const today = new Date().toISOString().slice(0,10);
   const last = localStorage.getItem(BASIC_SEARCH_KEY);
   return last !== today;
 }
-
 function markBasicSearchDone(){
   const today = new Date().toISOString().slice(0,10);
   localStorage.setItem(BASIC_SEARCH_KEY,today);
 }
 
-basicSearchBtn.addEventListener("click", async ()=>{
+basicSearchBtn.addEventListener("click",async ()=>{
   basicErrorMsg.classList.add("hidden");
-  basicErrorMsg.textContent="";
-
+  basicErrorMsg.textContent = "";
   if(!canDoBasicSearchToday()){
-    basicErrorMsg.textContent="Hai già effettuato una ricerca oggi. Riprova domani.";
+    basicErrorMsg.textContent = "Hai già effettuato una ricerca oggi. Riprova domani.";
     basicErrorMsg.classList.remove("hidden");
     return;
   }
-
   const checked = Array.from(document.querySelectorAll("#basicGenres input:checked")).map(c=>c.value);
   if(!checked.length){
-    basicErrorMsg.textContent="Seleziona almeno un genere.";
+    basicErrorMsg.textContent = "Seleziona almeno un genere.";
     basicErrorMsg.classList.remove("hidden");
     return;
   }
-
-  // Regola AND: con discover, la combinazione è di base AND per i generi specificati.[web:32][web:38]
   const genreParam = checked.join(",");
   basicResultsBox.innerHTML = "<div class='message'>Carico i film per te…</div>";
   showCard(basicResultsCard);
-
   try{
-    const url = `${API_BASE}/discover/movie?language=${encodeURIComponent(LANGUAGE)}&region=${encodeURIComponent(REGION)}&sort_by=popularity.desc&include_adult=false&with_genres=${encodeURIComponent(genreParam)}`;
+    const url = `${API_BASE}/discover/movie?language=${encodeURIComponent(LANGUAGE)}&region=${encodeURIComponent(REGION)}&sort_by=popularity.desc&include_adult=false&with_genres=${encodeURIComponent(genreParam)}`;[web:32][web:38]
     const res = await fetch(url);
-    if(!res.ok) throw new Error("Errore rete");
+    if(!res.ok) throw new Error("rete");
     const data = await res.json();
-
     const results = (data.results || []).slice(0,3);
     if(!results.length){
       basicResultsBox.innerHTML = "<div class='message'>Nessun risultato trovato con questi generi.</div>";
       return;
     }
-
     markBasicSearchDone();
     basicResultsBox.innerHTML = "";
     for(const m of results){
@@ -916,48 +697,35 @@ basicSearchBtn.addEventListener("click", async ()=>{
     basicResultsBox.innerHTML = "<div class='message error'>Errore nel caricamento dei contenuti.</div>";
   }
 });
+basicSearchAgainBtn.addEventListener("click",()=>showCard(basicFiltersCard));
+basicCloseBtn.addEventListener("click",()=>exitOverlay.classList.add("show"));
 
-basicSearchAgainBtn.addEventListener("click",()=>{
-  showCard(basicFiltersCard);
-});
-
-basicCloseBtn.addEventListener("click",()=>{
-  exitOverlay.classList.add("show");
-});
-
-// =======================
-// BASIC: HELPERS
-// =======================
 function createBasicResultCard(movie,platforms){
   const div = document.createElement("div");
   div.className = "result";
-
   const imgUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : "";
+  const title = movie.title || movie.name || "Titolo non disponibile";
   const overview = (movie.overview || "").trim();
-
   div.innerHTML = `
-    <div class="poster">
-      ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
-    </div>
+    <div class="poster">${imgUrl?`<img src="${imgUrl}" alt="">`:""}</div>
     <div>
-      <div class="result-title">${movie.title || movie.name || "Titolo non disponibile"}</div>
+      <div class="result-title">${title}</div>
       <div class="result-overview">${overview}</div>
       <div class="platforms"></div>
     </div>
   `;
-
-  const platformsBox = div.querySelector(".platforms");
+  const box = div.querySelector(".platforms");
   if(platforms && platforms.length){
     platforms.forEach(p=>{
       const tag = document.createElement("div");
       tag.className = "platform-tag";
       const dot = document.createElement("span");
       dot.className = "platform-dot platform-"+p.key;
-      tag.appendChild(dot);
       const label = document.createElement("span");
       label.textContent = p.label;
+      tag.appendChild(dot);
       tag.appendChild(label);
-      platformsBox.appendChild(tag);
+      box.appendChild(tag);
     });
   }else{
     const tag = document.createElement("div");
@@ -965,67 +733,45 @@ function createBasicResultCard(movie,platforms){
     const label = document.createElement("span");
     label.textContent = "Piattaforme non disponibili";
     tag.appendChild(label);
-    platformsBox.appendChild(tag);
+    box.appendChild(tag);
   }
-
   return div;
 }
 
-// =======================
-// WATCH PROVIDERS TMDB
-// =======================
+// WATCH PROVIDERS TMDB.[web:21][web:24]
 async function loadWatchProviders(id,type){
   try{
     const url = `${API_BASE}/${type}/${id}/watch/providers`;
     const res = await fetch(url);
     if(!res.ok) return [];
     const data = await res.json();
-    const results = data.results || {};
-    const it = results[REGION] || {};
+    const it = (data.results || {})[REGION] || {};
     const flatrate = it.flatrate || [];
     const ids = new Set(flatrate.map(p=>p.provider_id));
-
-    const platforms = [];
-    if(ids.has(WATCH_PROVIDERS.netflix)) platforms.push({key:"netflix",label:"Netflix"});
-    if(ids.has(WATCH_PROVIDERS.prime)) platforms.push({key:"prime",label:"Prime Video"});
-    if(ids.has(WATCH_PROVIDERS.disney)) platforms.push({key:"disney",label:"Disney+"});
-    if(ids.has(WATCH_PROVIDERS.apple)) platforms.push({key:"apple",label:"Apple TV"});
-    if(ids.has(WATCH_PROVIDERS.now)) platforms.push({key:"now",label:"NOW"});
-
-    return platforms;
+    const out = [];
+    if(ids.has(WATCH_PROVIDERS.netflix)) out.push({key:"netflix",label:"Netflix"});
+    if(ids.has(WATCH_PROVIDERS.prime)) out.push({key:"prime",label:"Prime Video"});
+    if(ids.has(WATCH_PROVIDERS.disney)) out.push({key:"disney",label:"Disney+"});
+    if(ids.has(WATCH_PROVIDERS.apple)) out.push({key:"apple",label:"Apple TV"});
+    if(ids.has(WATCH_PROVIDERS.now)) out.push({key:"now",label:"NOW"});
+    return out;
   }catch(e){
     return [];
   }
 }
 
-// =======================
 // PREMIUM LOGIN
-// =======================
-function isPremiumLogged(){
-  return localStorage.getItem("movieFinder_premium_logged")==="1";
-}
-
+function isPremiumLogged(){return localStorage.getItem("movieFinder_premium_logged")==="1";}
 function setPremiumLogged(v){
-  if(v){
-    localStorage.setItem("movieFinder_premium_logged","1");
-  }else{
-    localStorage.removeItem("movieFinder_premium_logged");
-  }
+  if(v) localStorage.setItem("movieFinder_premium_logged","1");
+  else localStorage.removeItem("movieFinder_premium_logged");
 }
-
-if(isPremiumLogged()){
-  showCard(premiumMainCard);
-}else{
-  // resta su home
-}
-
+if(isPremiumLogged()){showCard(premiumMainCard);}
 loginBtn.addEventListener("click",()=>{
   loginErrorMsg.classList.add("hidden");
   loginErrorMsg.textContent = "";
-
-  const email = (loginEmail.value || "").trim();
-  const pwd = (loginPassword.value || "").trim();
-
+  const email = (loginEmail.value||"").trim();
+  const pwd = (loginPassword.value||"").trim();
   if(email==="maprexx@gmail.com" && pwd==="1234"){
     setPremiumLogged(true);
     resetPremiumFlow();
@@ -1035,38 +781,14 @@ loginBtn.addEventListener("click",()=>{
     loginErrorMsg.classList.remove("hidden");
   }
 });
-
 premiumLogoutBtn.addEventListener("click",()=>{
   setPremiumLogged(false);
   resetPremiumFlow();
   showCard(homeCard);
 });
 
-// =======================
-// PREMIUM: MENU TABS
-// =======================
-premiumTabs.addEventListener("click",(e)=>{
-  const btn = e.target.closest(".tab");
-  if(!btn) return;
-  const tab = btn.dataset.tab;
-  if(!tab) return;
-
-  Array.from(premiumTabs.querySelectorAll(".tab")).forEach(t=>t.classList.remove("active"));
-  btn.classList.add("active");
-
-  const all = document.querySelectorAll(".premium-tab");
-  all.forEach(c=>c.classList.add("hidden"));
-  document.getElementById("tab-"+tab).classList.remove("hidden");
-
-  if(tab==="watchlist") renderWatchlist();
-  if(tab==="recenti") renderRecent();
-});
-
-// =======================
-// PREMIUM: FLOW FILM/SERIE
-// =======================
-let premiumCurrentType = "movie"; // "movie" o "tv"
-
+// PREMIUM FLOW
+let premiumCurrentType = "movie";
 const PREMIUM_GENRES = [
   {id:28,name:"Azione"},
   {id:12,name:"Avventura"},
@@ -1078,8 +800,7 @@ const PREMIUM_GENRES = [
   {id:878,name:"Fantascienza"},
   {id:53,name:"Thriller"},
   {id:10751,name:"Famiglia"}
-]; // massimo 10
-
+];
 function buildGenreSliders(){
   premiumGenreSliders.innerHTML = "";
   PREMIUM_GENRES.forEach(g=>{
@@ -1094,16 +815,12 @@ function buildGenreSliders(){
       <input type="range" min="0" max="5" value="0">
     `;
     const slider = row.querySelector("input");
-    const labelValue = row.querySelector(".slider-row-header span.small");
-    slider.addEventListener("input",()=>{
-      labelValue.textContent = slider.value;
-    });
+    const lbl = row.querySelector(".slider-row-header .small");
+    slider.addEventListener("input",()=>{lbl.textContent = slider.value;});
     premiumGenreSliders.appendChild(row);
   });
 }
-
 buildGenreSliders();
-
 function resetPremiumFlow(){
   premiumCurrentType = "movie";
   stepTipoContenuto.classList.remove("hidden");
@@ -1114,32 +831,26 @@ function resetPremiumFlow(){
   premiumPlatformGrid.querySelectorAll(".platform-pill").forEach(p=>p.classList.remove("selected"));
 }
 
-// scelta tipo
 premiumFilmBtn.addEventListener("click",()=>{
   premiumCurrentType = "movie";
   stepTipoContenuto.classList.add("hidden");
   stepGeneri.classList.remove("hidden");
 });
-
 premiumSerieBtn.addEventListener("click",()=>{
   premiumCurrentType = "tv";
   stepTipoContenuto.classList.add("hidden");
   stepGeneri.classList.remove("hidden");
 });
-
-// procedi generi
 stepGeneriNextBtn.addEventListener("click",()=>{
   stepGeneri.classList.add("hidden");
   stepPiattaforme.classList.remove("hidden");
 });
 
-// selezione piattaforme
 premiumPlatformGrid.addEventListener("click",(e)=>{
   const pill = e.target.closest(".platform-pill");
   if(!pill) return;
   const key = pill.dataset.provider;
   if(key==="all"){
-    // toggle tutte
     const selected = pill.classList.toggle("selected");
     premiumPlatformGrid.querySelectorAll(".platform-pill").forEach(p=>{
       if(p!==pill) p.classList.remove("selected");
@@ -1151,43 +862,26 @@ premiumPlatformGrid.addEventListener("click",(e)=>{
   }
 });
 
-// ricerca premium
-stepPiattaformeSearchBtn.addEventListener("click", async ()=>{
+stepPiattaformeSearchBtn.addEventListener("click",async ()=>{
   premiumResultsBox.innerHTML = "<div class='message'>Sto cercando contenuti per te…</div>";
   stepRisultatiPremium.classList.remove("hidden");
-
-  // calcolo generi con peso >0
   const rows = Array.from(premiumGenreSliders.querySelectorAll(".slider-row"));
-  const preferredGenres = rows
-    .map(row=>{
-      const id = row.dataset.genreId;
-      const val = parseInt(row.querySelector("input").value,10);
-      return {id,val};
-    })
-    .filter(g=>g.val>0)
-    .sort((a,b)=>b.val-a.val);
-
-  // prendo i primi generi con peso maggiore per costruire la query
-  const genreIds = preferredGenres.map(g=>g.id).join(",");
-
-  // piattaforme selezionate
+  const preferred = rows.map(r=>{
+    return {id:r.dataset.genreId,val:parseInt(r.querySelector("input").value,10)};
+  }).filter(g=>g.val>0).sort((a,b)=>b.val-a.val);
+  const genreIds = preferred.map(g=>g.id).join(",");
   const selected = Array.from(premiumPlatformGrid.querySelectorAll(".platform-pill.selected"));
   let withProviders = "";
   if(selected.length){
-    if(selected.some(p=>p.dataset.provider==="all")){
-      withProviders = ""; // tutte
-    }else{
+    if(!selected.some(p=>p.dataset.provider==="all")){
       const ids = [];
       selected.forEach(p=>{
         const k = p.dataset.provider;
         if(WATCH_PROVIDERS[k]) ids.push(WATCH_PROVIDERS[k]);
       });
-      if(ids.length){
-        withProviders = ids.join("|");
-      }
+      if(ids.length) withProviders = ids.join("|");
     }
   }
-
   try{
     let url;
     if(premiumCurrentType==="movie"){
@@ -1199,19 +893,16 @@ stepPiattaformeSearchBtn.addEventListener("click", async ()=>{
       if(genreIds) url += `&with_genres=${encodeURIComponent(genreIds)}`;
       if(withProviders) url += `&with_watch_providers=${encodeURIComponent(withProviders)}&watch_region=${encodeURIComponent(REGION)}&with_watch_monetization_types=flatrate`;[web:29][web:35][web:38]
     }
-
     const res = await fetch(url);
-    if(!res.ok) throw new Error("Errore rete");
+    if(!res.ok) throw new Error("rete");
     const data = await res.json();
-    const results = (data.results || []).slice(0,5);
-
-    if(!results.length){
+    const list = (data.results || []).slice(0,5);
+    if(!list.length){
       premiumResultsBox.innerHTML = "<div class='message'>Nessun contenuto trovato con queste preferenze.</div>";
       return;
     }
-
     premiumResultsBox.innerHTML = "";
-    for(const item of results){
+    for(const item of list){
       const platforms = await loadWatchProviders(item.id,premiumCurrentType==="movie"?"movie":"tv");
       const node = createPremiumResultCard(item,platforms,premiumCurrentType);
       premiumResultsBox.appendChild(node);
@@ -1220,25 +911,17 @@ stepPiattaformeSearchBtn.addEventListener("click", async ()=>{
     premiumResultsBox.innerHTML = "<div class='message error'>Errore nel caricamento dei contenuti.</div>";
   }
 });
+premiumNewSearchBtn.addEventListener("click",()=>resetPremiumFlow());
 
-premiumNewSearchBtn.addEventListener("click",()=>{
-  resetPremiumFlow();
-});
-
-// =======================
-// PREMIUM: CARD RISULTATI
-// =======================
 function addToWatchlist(item,type){
   const key = "movieFinder_watchlist";
   const current = JSON.parse(localStorage.getItem(key) || "[]");
-  const exists = current.some(c=>c.id===item.id && c.type===type);
-  if(!exists){
+  if(!current.some(c=>c.id===item.id && c.type===type)){
     current.push({id:item.id,type,title:item.title||item.name||"",poster:item.poster_path||""});
     localStorage.setItem(key,JSON.stringify(current));
   }
   renderWatchlist();
 }
-
 function addToRecent(item,type){
   const key = "movieFinder_recent";
   let current = JSON.parse(localStorage.getItem(key) || "[]");
@@ -1247,23 +930,18 @@ function addToRecent(item,type){
   if(current.length>20) current = current.slice(0,20);
   localStorage.setItem(key,JSON.stringify(current));
 }
-
 function createPremiumResultCard(item,platforms,type){
   const div = document.createElement("div");
   div.className = "premium-result";
-
   const imgUrl = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : "";
-  const overview = (item.overview || "").trim();
   const title = item.title || item.name || "Titolo non disponibile";
-  const dateField = type==="movie" ? item.release_date : item.first_air_date;
+  const overview = (item.overview || "").trim();
+  const dateField = type==="movie"?item.release_date:item.first_air_date;
   const year = dateField ? String(dateField).slice(0,4) : "N/D";
   const vote = typeof item.vote_average==="number" ? item.vote_average.toFixed(1) : "N/D";
   const popularity = item.popularity!=null ? Math.round(item.popularity) : "N/D";
-
   div.innerHTML = `
-    <div class="premium-poster">
-      ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
-    </div>
+    <div class="premium-poster">${imgUrl?`<img src="${imgUrl}" alt="">`:""}</div>
     <div>
       <div class="premium-title">${title}</div>
       <div class="premium-overview">${overview}</div>
@@ -1279,41 +957,34 @@ function createPremiumResultCard(item,platforms,type){
       </div>
     </div>
   `;
-
-  const platformsBox = div.querySelector(".platforms");
+  const box = div.querySelector(".platforms");
   if(platforms && platforms.length){
     platforms.forEach(p=>{
       const tag = document.createElement("div");
       tag.className = "platform-tag";
       const dot = document.createElement("span");
       dot.className = "platform-dot platform-"+p.key;
-      tag.appendChild(dot);
       const label = document.createElement("span");
       label.textContent = p.label;
+      tag.appendChild(dot);
       tag.appendChild(label);
-      platformsBox.appendChild(tag);
+      box.appendChild(tag);
     });
   }
-
-  const [watchBtn, seenBtn] = div.querySelectorAll("button");
+  const [watchBtn,seenBtn] = div.querySelectorAll("button");
   watchBtn.addEventListener("click",()=>{
     addToWatchlist(item,type);
   });
   seenBtn.addEventListener("click",()=>{
     addToRecent(item,type);
   });
-
-  // clic ovunque per registrare come "aperto"
   div.addEventListener("click",()=>{
     addToRecent(item,type);
   });
-
   return div;
 }
 
-// =======================
 // WATCHLIST / RECENTI
-// =======================
 function renderWatchlist(){
   const key = "movieFinder_watchlist";
   const list = JSON.parse(localStorage.getItem(key) || "[]");
@@ -1322,16 +993,11 @@ function renderWatchlist(){
     watchlistBox.innerHTML = "<div class='message'>Nessun titolo in watchlist.</div>";
     return;
   }
-
   list.forEach(item=>{
     const div = document.createElement("div");
     div.className = "simple-item";
-    div.innerHTML = `
-      <span>${item.title || "Titolo non disponibile"}</span>
-      <button class="btn btn-secondary" style="padding:4px 8px;font-size:11px;">Rimuovi</button>
-    `;
-    const btn = div.querySelector("button");
-    btn.addEventListener("click",()=>{
+    div.innerHTML = `<span>${item.title||"Titolo non disponibile"}</span><button class="btn btn-secondary" style="padding:4px 8px;font-size:11px;">Rimuovi</button>`;
+    div.querySelector("button").addEventListener("click",()=>{
       const current = JSON.parse(localStorage.getItem(key) || "[]");
       const next = current.filter(c=>!(c.id===item.id && c.type===item.type));
       localStorage.setItem(key,JSON.stringify(next));
@@ -1340,7 +1006,6 @@ function renderWatchlist(){
     watchlistBox.appendChild(div);
   });
 }
-
 function renderRecent(){
   const key = "movieFinder_recent";
   const list = JSON.parse(localStorage.getItem(key) || "[]");
@@ -1349,36 +1014,42 @@ function renderRecent(){
     recentBox.innerHTML = "<div class='message'>Nessun contenuto visto di recente.</div>";
     return;
   }
-
   list.forEach(item=>{
     const div = document.createElement("div");
     div.className = "simple-item";
-    div.innerHTML = `
-      <span>${item.title || "Titolo non disponibile"}</span>
-      <span class="small">${item.type==="movie"?"Film":"Serie"}</span>
-    `;
+    div.innerHTML = `<span>${item.title||"Titolo non disponibile"}</span><span class="small">${item.type==="movie"?"Film":"Serie"}</span>`;
     recentBox.appendChild(div);
   });
 }
 
-// =======================
-// TRENDING
-// =======================
+// TABS PREMIUM
+premiumTabs.addEventListener("click",(e)=>{
+  const btn = e.target.closest(".tab");
+  if(!btn) return;
+  const tab = btn.dataset.tab;
+  if(!tab) return;
+  premiumTabs.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll(".premium-tab").forEach(c=>c.classList.add("hidden"));
+  document.getElementById("tab-"+tab).classList.remove("hidden");
+  if(tab==="watchlist") renderWatchlist();
+  if(tab==="recenti") renderRecent();
+});
+
+// TRENDING.[web:30][web:39]
 async function loadTrending(type){
   trendingResultsBox.innerHTML = "<div class='message'>Carico i contenuti in tendenza…</div>";
   try{
-    const url = `${API_BASE}/trending/${type}/week?language=${encodeURIComponent(LANGUAGE)}`;[web:30][web:36][web:39]
+    const url = `${API_BASE}/trending/${type}/week?language=${encodeURIComponent(LANGUAGE)}`;
     const res = await fetch(url);
-    if(!res.ok) throw new Error("Errore rete");
+    if(!res.ok) throw new Error("rete");
     const data = await res.json();
     const list = (data.results || []).slice(0,5);
-
-    trendingResultsBox.innerHTML = "";
     if(!list.length){
       trendingResultsBox.innerHTML = "<div class='message'>Nessun contenuto in tendenza disponibile.</div>";
       return;
     }
-
+    trendingResultsBox.innerHTML = "";
     list.forEach(item=>{
       const div = document.createElement("div");
       div.className = "result";
@@ -1386,9 +1057,7 @@ async function loadTrending(type){
       const title = item.title || item.name || "Titolo non disponibile";
       const overview = (item.overview || "").trim();
       div.innerHTML = `
-        <div class="poster">
-          ${imgUrl ? `<img src="${imgUrl}" alt="">` : ""}
-        </div>
+        <div class="poster">${imgUrl?`<img src="${imgUrl}" alt="">`:""}</div>
         <div>
           <div class="result-title">${title}</div>
           <div class="result-overview">${overview}</div>
@@ -1400,13 +1069,10 @@ async function loadTrending(type){
     trendingResultsBox.innerHTML = "<div class='message error'>Errore nel caricamento dei contenuti in tendenza.</div>";
   }
 }
-
 trendingFilmBtn.addEventListener("click",()=>loadTrending("movie"));
 trendingTvBtn.addEventListener("click",()=>loadTrending("tv"));
 
-// =======================
 // SOCIAL SHARE
-// =======================
 shareBtn.addEventListener("click",async ()=>{
   shareMsg.textContent = "";
   const key = "movieFinder_recent";
@@ -1417,7 +1083,6 @@ shareBtn.addEventListener("click",async ()=>{
   }
   const last = list[0];
   const text = `Sto per guardare "${last.title}" su Movie Finder!`;
-
   if(navigator.share){
     try{
       await navigator.share({title:"Movie Finder",text});
@@ -1430,24 +1095,21 @@ shareBtn.addEventListener("click",async ()=>{
   }
 });
 
-// =======================
-// PWA INSTALL
-// =======================
+// INSTALL PWA.[web:56]
 window.addEventListener("beforeinstallprompt",(e)=>{
   e.preventDefault();
   deferredPrompt = e;
   installBanner.classList.add("show");
 });
-
 installBtn.addEventListener("click",async ()=>{
   if(!deferredPrompt) return;
   deferredPrompt.prompt();
-  const result = await deferredPrompt.userChoice;
+  await deferredPrompt.userChoice;
   deferredPrompt = null;
   installBanner.classList.remove("show");
 });
 
-// registrazione service worker di base
+// SERVICE WORKER
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>{
     navigator.serviceWorker.register("sw.js").catch(()=>{});
