@@ -11,7 +11,6 @@
 --bg0:#050813;
 --bg1:#0b1020;
 --card:#111827;
---line:#1f2937;
 --text:#e5e7eb;
 --muted:#9ca3af;
 --y:#d9ff2f;
@@ -240,7 +239,7 @@ justify-content:center;
 
 <div class="card hidden" id="premiumMenu">
   <h2>PREMIUM</h2>
-  <p class="small">Seleziona Film o Serie TV. Poi slider. Poi piattaforme.</p>
+  <p class="small">Film o Serie TV. Poi slider. Poi piattaforme. Poi risultati con statistiche e piattaforme.</p>
 
   <div class="row">
     <button class="btn primary" id="pickMovie">Film</button>
@@ -295,8 +294,9 @@ justify-content:center;
 
 <div class="card hidden" id="results">
   <h2>Risultati</h2>
+  <div class="small" id="resultsMsg"></div>
   <div class="results" id="resultsBox"></div>
-  <div class="row">
+  <div class="row" style="margin-top:12px">
     <button class="btn secondary" id="homeFromResults">Home</button>
   </div>
 </div>
@@ -317,14 +317,13 @@ const LS_PROV_TV="mf_premium_prov_tv";
 const MAX_SLIDERS=10;
 const MAX_PROVIDERS=12;
 
-/* Priorità provider in cima */
 const PRIORITY_PROVIDER_IDS = [
-8,    /* Netflix */
-119,  /* Amazon Prime Video */
-337,  /* Disney Plus */
-350,  /* Apple TV */
-2,    /* Apple iTunes */
-531   /* Paramount Plus */
+8,    // Netflix
+119,  // Amazon Prime Video
+337,  // Disney+
+350,  // Apple TV
+2,    // Apple iTunes
+531   // Paramount+
 ];
 
 const el=(id)=>document.getElementById(id);
@@ -375,7 +374,6 @@ function escapeHtml(s){
 return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
-/* uscita sfumata */
 function startExitFade(){
 const f=el("fadeOut");
 f.classList.remove("show");
@@ -387,7 +385,6 @@ f.classList.add("show");
 }
 el("exitBtn").addEventListener("click", ()=>{ try{ window.close(); }catch(e){} });
 
-/* TMDB helper */
 async function tmdb(path, params, useLang=true){
 const url=new URL("https://api.themoviedb.org/3"+path);
 url.searchParams.set("api_key", API_KEY);
@@ -454,6 +451,7 @@ msg.textContent="Hai già fatto la ricerca di oggi.";
 return;
 }
 show("results");
+el("resultsMsg").textContent="";
 const box=el("resultsBox");
 box.innerHTML="Carico...";
 
@@ -469,7 +467,7 @@ with_genres:genres
 box.innerHTML="";
 const list=(d.results||[]);
 if(!list.length){ box.innerHTML="Nessun risultato"; return; }
-list.slice(0,3).forEach(m=>renderCard(box,m,true,false));
+list.slice(0,3).forEach(m=>renderCard(box,m,true,false,"movie"));
 setBasicCount(1);
 }catch(e){
 box.innerHTML=escapeHtml(e.message||"Errore");
@@ -528,15 +526,6 @@ show("providers");
 });
 
 /* PROVIDERS */
-async function ensureProviders(){
-if(state.type==="movie" && state.providersMovie.length) return;
-if(state.type==="tv" && state.providersTv.length) return;
-
-const list=await loadProviders(state.type);
-if(state.type==="movie") state.providersMovie=list;
-else state.providersTv=list;
-}
-
 function prioritizeProviders(list){
 const byId=new Map(list.map(p=>[p.id,p]));
 const top=[];
@@ -544,6 +533,15 @@ PRIORITY_PROVIDER_IDS.forEach(id=>{ if(byId.has(id)) top.push(byId.get(id)); });
 const topIds=new Set(top.map(p=>p.id));
 const rest=list.filter(p=>!topIds.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name));
 return top.concat(rest);
+}
+
+async function ensureProviders(){
+if(state.type==="movie" && state.providersMovie.length) return;
+if(state.type==="tv" && state.providersTv.length) return;
+
+const list=await loadProviders(state.type);
+if(state.type==="movie") state.providersMovie=list;
+else state.providersTv=list;
 }
 
 async function loadProviders(type){
@@ -612,15 +610,17 @@ return {it,s};
 
 async function premiumSearch(){
 saveWeights();
-if(!state.weights.length){
-el("provMsg").textContent="Alza almeno uno slider.";
-return;
-}
 show("results");
+el("resultsMsg").textContent="";
 const box=el("resultsBox");
 box.innerHTML="Carico...";
 
 try{
+if(!state.weights.length){
+box.innerHTML="Alza almeno uno slider.";
+return;
+}
+
 const sel=getSelectedProviders();
 const prov = sel.length ? sel.join("|") : "";
 
@@ -632,7 +632,8 @@ with_watch_providers:prov,
 with_watch_monetization_types:"flatrate|rent|buy"
 });
 
-let items=(d.results||[]).slice(0,80);
+let items=(d.results||[]).slice(0,120);
+
 const ids=state.weights.map(x=>x.id);
 items=filterAND(items, ids);
 items=score(items, state.weights);
@@ -644,9 +645,11 @@ return;
 }
 
 items.slice(0,5).forEach(m=>{
-renderCard(box,m,false,true);
-enhancePremiumCard(m.id, state.type);
+renderCard(box,m,false,true,state.type);
+setTimeout(()=>{ enhancePremiumCard(m.id, state.type); }, 0);
 });
+
+el("resultsMsg").textContent="Mostro 5 risultati. Statistiche e piattaforme si caricano dopo.";
 }catch(e){
 box.innerHTML=escapeHtml(e.message||"Errore");
 }
@@ -654,6 +657,7 @@ box.innerHTML=escapeHtml(e.message||"Errore");
 
 /* TRENDING */
 async function loadTrending(type){
+show("trending");
 const box=el("trendBox");
 box.innerHTML="Carico...";
 try{
@@ -662,8 +666,8 @@ const list=(d.results||[]);
 box.innerHTML="";
 if(!list.length){ box.innerHTML="Nessun dato"; return; }
 list.slice(0,5).forEach(m=>{
-renderCard(box,m,false,true);
-enhancePremiumCard(m.id, type);
+renderCard(box,m,false,true,type);
+setTimeout(()=>{ enhancePremiumCard(m.id, type); }, 0);
 });
 }catch(e){
 box.innerHTML=escapeHtml(e.message||"Errore trending");
@@ -671,7 +675,7 @@ box.innerHTML=escapeHtml(e.message||"Errore trending");
 }
 
 /* RENDER CARD */
-function renderCard(container,m,brief,isPremium){
+function renderCard(container,m,brief,isPremium,type){
 const title=m.title||m.name||"Titolo";
 const overview=m.overview ? (brief ? m.overview.substring(0,140)+"..." : m.overview) : "";
 const poster=m.poster_path ? IMG+m.poster_path : "";
@@ -679,12 +683,13 @@ const poster=m.poster_path ? IMG+m.poster_path : "";
 const card=document.createElement("div");
 card.className="result";
 card.dataset.mid=String(m.id);
-card.dataset.mtype=(m.title ? "movie" : "tv");
+card.dataset.type=type;
 
 card.innerHTML=`
 <div class="poster">${poster?`<img src="${poster}" alt="">`:"Locandina non disponibile"}</div>
 <div class="meta">
   <h3>${escapeHtml(title)}</h3>
+
   ${isPremium ? `
   <div class="stats" data-stats="1">
     <span class="badge"><span>Voto</span> <strong data-vote>-</strong></span>
@@ -696,6 +701,7 @@ card.innerHTML=`
     <span class="provText">Piattaforme: controllo...</span>
   </div>
   ` : ``}
+
   <p class="small">${escapeHtml(overview)}</p>
   <div class="row">
     <button class="btn secondary" data-a="watch">Guarda</button>
@@ -707,9 +713,9 @@ card.querySelector('[data-a="watch"]').addEventListener("click", startExitFade);
 container.appendChild(card);
 }
 
-/* STATISTICHE E PROVIDER SOTTO LA LOCANDINA PREMIUM */
+/* STATISTICHE E PROVIDER */
 async function enhancePremiumCard(id, type){
-const cards=[...document.querySelectorAll(`.result[data-mid="${id}"]`)];
+const cards=[...document.querySelectorAll(`.result[data-mid="${id}"][data-type="${type}"]`)];
 if(!cards.length) return;
 
 try{
@@ -734,7 +740,12 @@ if(type==="movie" && typeof details.runtime==="number") rt = details.runtime+"m"
 if(type==="tv" && Array.isArray(details.episode_run_time) && details.episode_run_time.length) rt = details.episode_run_time[0]+"m";
 if(runtime) runtime.textContent = rt;
 });
-}catch(e){}
+}catch(e){
+cards.forEach(c=>{
+const row=c.querySelector('[data-stats="1"]');
+if(row) row.innerHTML=`<span class="badge"><span>Dati</span> <strong>non disponibili</strong></span>`;
+});
+}
 
 try{
 const prov = await tmdb("/"+type+"/"+id+"/watch/providers", {}, false);
@@ -767,7 +778,12 @@ d.innerHTML=`<img src="${p.logo}" alt="">`;
 row.appendChild(d);
 });
 });
-}catch(e){}
+}catch(e){
+cards.forEach(c=>{
+const row=c.querySelector('[data-provrow]');
+if(row) row.innerHTML=`<span class="provText">Piattaforme: errore.</span>`;
+});
+}
 }
 </script>
 
