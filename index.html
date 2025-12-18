@@ -36,7 +36,7 @@ border:1px solid var(--line);
 }
 h1,h2,h3{margin:0 0 10px}
 .small{color:var(--muted);font-size:13px;line-height:1.35}
-.row{display:flex;gap:10px;flex-wrap:wrap}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .btn{
 padding:14px 20px;
 border-radius:999px;
@@ -72,10 +72,15 @@ width:90px;height:135px;
 background:#000;
 border-radius:12px;
 overflow:hidden;
+display:flex;align-items:center;justify-content:center;
+color:rgba(229,231,235,.55);
+font-size:11px;
+text-align:center;
+padding:6px;
 }
 .poster img{width:100%;height:100%;object-fit:cover}
 
-/* SPLASH 2 SECONDI */
+/* splash 2 secondi */
 .splash{
 position:fixed;inset:0;
 display:flex;
@@ -102,23 +107,46 @@ margin-bottom:12px;
 .splashTitle{font-weight:1000;font-size:22px;margin-bottom:6px}
 .splashSub{color:var(--muted);font-size:13px}
 
-/* USCITA SFUMATA */
+/* uscita sfumata */
 .fadeOut{
 position:fixed;inset:0;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:350;
+z-index:400;
 background:#000;
 opacity:0;
 pointer-events:none;
 transition:opacity .75s ease;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
 padding:20px;
 text-align:center;
 }
 .fadeOut.show{opacity:1;pointer-events:auto}
 .fadeText{font-size:22px;font-weight:1000;margin-bottom:14px}
+
+/* provider chips */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{
+border:1px solid rgba(255,255,255,.16);
+border-radius:999px;
+padding:8px 10px;
+cursor:pointer;
+user-select:none;
+background:rgba(255,255,255,.03);
+color:var(--muted);
+font-size:12px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+.chip img{width:22px;height:22px;border-radius:8px;border:1px solid rgba(255,255,255,.12)}
+.chip.active{
+border-color:rgba(57,255,107,.55);
+background:rgba(57,255,107,.12);
+color:var(--text);
+}
+hr{border:none;border-top:1px solid rgba(255,255,255,.10);margin:14px 0}
 </style>
 </head>
 
@@ -133,7 +161,7 @@ text-align:center;
 <div class="fadeOut" id="fadeOut">
   <div class="fadeText">Sta iniziando il film...</div>
   <button class="btn primary" id="exitBtn">Esci dalla app</button>
-  <div class="small" style="margin-top:10px">Se non si chiude da solo, chiudi tu la scheda.</div>
+  <div class="small" style="margin-top:10px">Se non si chiude, chiudi tu la scheda.</div>
 </div>
 
 <div class="card hidden" id="home">
@@ -147,7 +175,7 @@ text-align:center;
 
 <div class="card hidden" id="basic">
   <h2>BASIC</h2>
-  <p class="small">1 ricerca al giorno, 3 film</p>
+  <p class="small">1 ricerca al giorno, 3 film. AND tra generi. No VM18.</p>
 
   <div class="genre"><label><input type="checkbox" value="35"> Comico</label></div>
   <div class="genre"><label><input type="checkbox" value="28"> Azione</label></div>
@@ -162,26 +190,49 @@ text-align:center;
   <div class="small" id="basicMsg" style="margin-top:10px"></div>
 </div>
 
-<div class="card hidden" id="premium">
+<div class="card hidden" id="premiumMenu">
   <h2>PREMIUM</h2>
-  <p class="small">Demo Premium attiva. Trending separato. Slider base.</p>
+  <p class="small">Scegli cosa vuoi cercare.</p>
 
   <div class="row">
-    <button class="btn primary" id="typeMovie">Film</button>
-    <button class="btn primary" id="typeTv">Serie TV</button>
+    <button class="btn primary" id="pickMovie">Film</button>
+    <button class="btn primary" id="pickTv">Serie TV</button>
+    <button class="btn secondary" id="homeFromPremiumMenu">Home</button>
   </div>
 
-  <h3 style="margin-top:12px">Preferenze</h3>
-  <div class="genre">Comico <input type="range" min="0" max="5" value="0" data-g="35"></div>
-  <div class="genre">Azione <input type="range" min="0" max="5" value="0" data-g="28"></div>
-  <div class="genre">Romantico <input type="range" min="0" max="5" value="0" data-g="10749"></div>
-  <div class="genre">Animazione <input type="range" min="0" max="5" value="0" data-g="16"></div>
+  <hr>
 
   <div class="row">
-    <button class="btn primary" id="premiumSearch">Cerca</button>
     <button class="btn secondary" id="openTrending">Trending</button>
-    <button class="btn secondary" id="homeFromPremium">Home</button>
   </div>
+</div>
+
+<div class="card hidden" id="sliders">
+  <h2>Slider Premium</h2>
+  <p class="small">Max 10 slider. Metti i valori da 0 a 5. La ricerca usa AND.</p>
+
+  <div id="sliderBox"></div>
+
+  <div class="row" style="margin-top:12px">
+    <button class="btn primary" id="goProviders">Procedi</button>
+    <button class="btn secondary" id="backToPremiumMenu">Indietro</button>
+  </div>
+
+  <div class="small" id="sliderMsg" style="margin-top:10px"></div>
+</div>
+
+<div class="card hidden" id="providers">
+  <h2>Piattaforme</h2>
+  <p class="small">Seleziona le piattaforme. Le più comuni stanno sopra. Se non selezioni nulla, uso tutte.</p>
+
+  <div class="chips" id="provChips"></div>
+
+  <div class="row" style="margin-top:12px">
+    <button class="btn primary" id="premiumSearch">Cerca</button>
+    <button class="btn secondary" id="backToSliders">Indietro</button>
+  </div>
+
+  <div class="small" id="provMsg" style="margin-top:10px"></div>
 </div>
 
 <div class="card hidden" id="trending">
@@ -205,12 +256,44 @@ text-align:center;
 <script>
 const API_KEY="f8ecb75282e8dcea2d4845598cc7d030";
 const IMG="https://image.tmdb.org/t/p/w500";
-let currentType="movie";
+const IMG_PROVIDER="https://image.tmdb.org/t/p/w92";
+const REGION="IT";
 
 const LS_DATE="mf_basic_date";
 const LS_COUNT="mf_basic_count";
+const LS_TYPE="mf_premium_type";
+const LS_WEIGHTS="mf_premium_weights";
+const LS_PROV_MOVIE="mf_premium_prov_movie";
+const LS_PROV_TV="mf_premium_prov_tv";
+
+const COMMON_PROVIDERS=[8,119,337,350,531,2]; 
+const MAX_SLIDERS=10;
+const MAX_PROVIDERS=12;
 
 const el=(id)=>document.getElementById(id);
+
+const state={
+type: localStorage.getItem(LS_TYPE) || "movie",
+weights: loadJSON(LS_WEIGHTS, []),
+provMovie: loadJSON(LS_PROV_MOVIE, []),
+provTv: loadJSON(LS_PROV_TV, []),
+providersMovie: [],
+providersTv: []
+};
+
+function loadJSON(k,def){
+try{ const v=JSON.parse(localStorage.getItem(k)||""); return v ?? def; }catch(e){ return def; }
+}
+function saveJSON(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+function hideAll(){
+["home","basic","premiumMenu","sliders","providers","trending","results"].forEach(id=>el(id).classList.add("hidden"));
+}
+function show(id){
+hideAll();
+el(id).classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
+}
 
 function todayKey(){
 const d=new Date();
@@ -231,13 +314,8 @@ localStorage.setItem(LS_DATE,todayKey());
 localStorage.setItem(LS_COUNT,String(n));
 }
 
-function hideAll(){
-["home","basic","premium","trending","results"].forEach(id=>el(id).classList.add("hidden"));
-}
-function show(id){
-hideAll();
-el(id).classList.remove("hidden");
-window.scrollTo({top:0,behavior:"smooth"});
+function escapeHtml(s){
+return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
 function startExitFade(){
@@ -246,7 +324,6 @@ f.classList.remove("show");
 requestAnimationFrame(()=>{
 requestAnimationFrame(()=>{
 f.classList.add("show");
-setTimeout(()=>{ try{ window.close(); }catch(e){} }, 900);
 });
 });
 }
@@ -257,7 +334,7 @@ function render(container,m,brief){
 const div=document.createElement("div");
 div.className="result";
 div.innerHTML=`
-<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}" alt="">`:""}</div>
+<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}" alt="">`:"Locandina non disponibile"}</div>
 <div>
 <h3>${escapeHtml(m.title||m.name||"Titolo")}</h3>
 <p class="small">${escapeHtml(m.overview?(brief?m.overview.substring(0,140)+"...":m.overview):"")}</p>
@@ -267,37 +344,63 @@ div.querySelector('[data-a="watch"]').addEventListener("click", startExitFade);
 container.appendChild(div);
 }
 
-function escapeHtml(s){
-return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+async function tmdb(path, params, useLang=true){
+const url=new URL("https://api.themoviedb.org/3"+path);
+url.searchParams.set("api_key", API_KEY);
+if(useLang) url.searchParams.set("language","it-IT");
+if(params){
+for(const [k,v] of Object.entries(params)){
+if(v===undefined || v===null || v==="") continue;
+url.searchParams.set(k, String(v));
+}
+}
+const r=await fetch(url.toString());
+const txt=await r.text();
+if(!r.ok) throw new Error("TMDB "+r.status+" "+txt);
+return JSON.parse(txt);
 }
 
-/* SPLASH: 2 secondi poi mostra HOME */
+/* splash 2 secondi poi home */
 window.addEventListener("load", ()=>{
 hideAll();
-el("home").classList.add("hidden");
 setTimeout(()=>{
 el("splash").classList.add("hide");
 show("home");
 }, 2000);
 });
 
+/* navigazione */
 el("basicGo").addEventListener("click", ()=>show("basic"));
-el("premiumGo").addEventListener("click", ()=>show("premium"));
+el("premiumGo").addEventListener("click", ()=>show("premiumMenu"));
 
 el("homeFromBasic").addEventListener("click", ()=>show("home"));
-el("homeFromPremium").addEventListener("click", ()=>show("home"));
+el("homeFromPremiumMenu").addEventListener("click", ()=>show("home"));
 el("homeFromTrending").addEventListener("click", ()=>show("home"));
 el("homeFromResults").addEventListener("click", ()=>show("home"));
-
-el("typeMovie").addEventListener("click", ()=>{ currentType="movie"; });
-el("typeTv").addEventListener("click", ()=>{ currentType="tv"; });
 
 el("openTrending").addEventListener("click", ()=>show("trending"));
 el("trendMovieBtn").addEventListener("click", ()=>loadTrending("movie"));
 el("trendTvBtn").addEventListener("click", ()=>loadTrending("tv"));
 
+el("backToPremiumMenu").addEventListener("click", ()=>show("premiumMenu"));
+el("backToSliders").addEventListener("click", ()=>show("sliders"));
+
+/* premium tipo */
+el("pickMovie").addEventListener("click", async()=>{
+state.type="movie";
+localStorage.setItem(LS_TYPE,"movie");
+await loadSliderGenres();
+show("sliders");
+});
+el("pickTv").addEventListener("click", async()=>{
+state.type="tv";
+localStorage.setItem(LS_TYPE,"tv");
+await loadSliderGenres();
+show("sliders");
+});
+
+/* BASIC */
 el("basicSearch").addEventListener("click", searchBasic);
-el("premiumSearch").addEventListener("click", searchPremium);
 
 async function searchBasic(){
 const msg=el("basicMsg");
@@ -311,58 +414,211 @@ const box=el("resultsBox");
 box.innerHTML="Carico...";
 
 const genres=[...document.querySelectorAll('#basic input[type="checkbox"]:checked')].map(x=>x.value).join(",");
-if(!genres){box.innerHTML="Seleziona un genere";return;}
+if(!genres){ box.innerHTML="Seleziona almeno un genere"; return; }
 
 try{
-const r=await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=it-IT&with_genres=${genres}&include_adult=false&sort_by=popularity.desc`);
-const d=await r.json();
+const d=await tmdb("/discover/movie",{
+sort_by:"popularity.desc",
+include_adult:"false",
+with_genres:genres
+});
 box.innerHTML="";
 const list=(d.results||[]);
-if(!list.length){box.innerHTML="Nessun risultato";return;}
+if(!list.length){ box.innerHTML="Nessun risultato"; return; }
 list.slice(0,3).forEach(m=>render(box,m,true));
 setBasicCount(1);
 }catch(e){
-box.innerHTML="Errore caricamento";
+box.innerHTML=escapeHtml(e.message||"Errore");
 }
 }
 
-async function searchPremium(){
+/* SLIDER: carico generi da TMDB e costruisco 10 slider */
+async function loadSliderGenres(){
+el("sliderMsg").textContent="";
+el("sliderBox").innerHTML="Carico...";
+try{
+const d=await tmdb("/genre/"+state.type+"/list",{});
+const all=(d.genres||[]).sort((a,b)=>a.name.localeCompare(b.name));
+const picked=all.slice(0,MAX_SLIDERS);
+
+el("sliderBox").innerHTML="";
+picked.forEach(g=>{
+const existing=state.weights.find(x=>x.id===g.id);
+const v=existing?existing.w:0;
+
+const wrap=document.createElement("div");
+wrap.className="genre";
+wrap.innerHTML=`
+<div class="small">${escapeHtml(g.name)} <strong id="v_${g.id}">${v}</strong></div>
+<input type="range" min="0" max="5" value="${v}" data-g="${g.id}">
+`;
+wrap.querySelector("input").addEventListener("input",(ev)=>{
+wrap.querySelector("#v_"+g.id).textContent=ev.target.value;
+saveWeights();
+});
+el("sliderBox").appendChild(wrap);
+});
+saveWeights();
+}catch(e){
+el("sliderBox").innerHTML=escapeHtml(e.message||"Errore");
+}
+}
+
+function saveWeights(){
+const w=[...document.querySelectorAll('#sliderBox input[type="range"]')]
+.map(r=>({id:parseInt(r.dataset.g,10), w:parseInt(r.value,10)}))
+.filter(x=>x.w>0);
+state.weights=w;
+saveJSON(LS_WEIGHTS,w);
+}
+
+el("goProviders").addEventListener("click", async()=>{
+saveWeights();
+if(!state.weights.length){
+el("sliderMsg").textContent="Alza almeno uno slider.";
+return;
+}
+await ensureProviders();
+renderProviderChips();
+show("providers");
+});
+
+/* provider: carico lista, metto comuni sopra, massimo 12 */
+async function ensureProviders(){
+if(state.type==="movie" && state.providersMovie.length) return;
+if(state.type==="tv" && state.providersTv.length) return;
+
+const list=await loadProviders(state.type);
+if(state.type==="movie") state.providersMovie=list;
+else state.providersTv=list;
+}
+
+async function loadProviders(type){
+const d=await tmdb("/watch/providers/"+type,{watch_region:REGION},false);
+const raw=(d.results||[])
+.filter(p=>p && p.provider_id && p.provider_name && p.logo_path)
+.map(p=>({id:p.provider_id,name:p.provider_name,logo:IMG_PROVIDER+p.logo_path}));
+
+const byId=new Map(raw.map(p=>[p.id,p]));
+const top=[];
+COMMON_PROVIDERS.forEach(id=>{ if(byId.has(id)) top.push(byId.get(id)); });
+const topIds=new Set(top.map(p=>p.id));
+const rest=raw.filter(p=>!topIds.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name));
+
+return top.concat(rest).slice(0,MAX_PROVIDERS);
+}
+
+function getSelectedProviders(){
+return state.type==="movie" ? state.provMovie : state.provTv;
+}
+function setSelectedProviders(arr){
+if(state.type==="movie"){
+state.provMovie=arr;
+saveJSON(LS_PROV_MOVIE,arr);
+}else{
+state.provTv=arr;
+saveJSON(LS_PROV_TV,arr);
+}
+}
+
+function renderProviderChips(){
+const list = state.type==="movie" ? state.providersMovie : state.providersTv;
+const sel = getSelectedProviders();
+
+el("provChips").innerHTML="";
+list.forEach(p=>{
+const c=document.createElement("div");
+c.className="chip"+(sel.includes(p.id)?" active":"");
+c.innerHTML=`${p.logo?`<img src="${p.logo}" alt="">`:""}<span>${escapeHtml(p.name)}</span>`;
+c.addEventListener("click", ()=>{
+let current=getSelectedProviders();
+if(current.includes(p.id)) current=current.filter(x=>x!==p.id);
+else current=current.concat([p.id]);
+setSelectedProviders(current);
+renderProviderChips();
+});
+el("provChips").appendChild(c);
+});
+
+const current=getSelectedProviders();
+el("provMsg").textContent=current.length ? ("Selezionate: "+current.length) : "Nessuna selezione. Uso tutte.";
+}
+
+/* premium search con provider + region IT */
+el("premiumSearch").addEventListener("click", premiumSearch);
+
+function filterAND(items, ids){
+if(!ids.length) return items;
+return items.filter(it=>{
+const g=it.genre_ids||[];
+return ids.every(x=>g.includes(x));
+});
+}
+
+function score(items, weights){
+const map=new Map(weights.map(w=>[w.id,w.w]));
+return items.map(it=>{
+let s=0;
+(it.genre_ids||[]).forEach(gid=>{ if(map.has(gid)) s+=map.get(gid); });
+return {it,s};
+}).sort((a,b)=>b.s-a.s).map(x=>x.it);
+}
+
+async function premiumSearch(){
+saveWeights();
+if(!state.weights.length){
+el("provMsg").textContent="Alza almeno uno slider.";
+return;
+}
 show("results");
 const box=el("resultsBox");
 box.innerHTML="Carico...";
 
-const sliders=[...document.querySelectorAll('#premium input[type="range"]')]
-.filter(r=>parseInt(r.value,10)>0).map(r=>r.dataset.g).join(",");
-
-if(!sliders){box.innerHTML="Alza almeno uno slider";return;}
-
 try{
-const r=await fetch(`https://api.themoviedb.org/3/discover/${currentType}?api_key=${API_KEY}&language=it-IT&with_genres=${sliders}&include_adult=true&sort_by=popularity.desc`);
-const d=await r.json();
+const sel=getSelectedProviders();
+const prov = sel.length ? sel.join("|") : "";
+
+const d=await tmdb("/discover/"+state.type,{
+sort_by:"popularity.desc",
+include_adult:"true",
+watch_region:REGION,
+with_watch_providers:prov,
+with_watch_monetization_types:"flatrate|rent|buy"
+});
+
+let items=(d.results||[]).slice(0,80);
+
+const ids=state.weights.map(x=>x.id);
+items=filterAND(items, ids);
+items=score(items, state.weights);
+
 box.innerHTML="";
-const list=(d.results||[]);
-if(!list.length){box.innerHTML="Nessun risultato";return;}
-list.slice(0,5).forEach(m=>render(box,m,false));
+if(!items.length){
+box.innerHTML="Nessun risultato. Cambia slider o piattaforme.";
+return;
+}
+items.slice(0,5).forEach(m=>render(box,m,false));
 }catch(e){
-box.innerHTML="Errore caricamento";
+box.innerHTML=escapeHtml(e.message||"Errore");
 }
 }
 
+/* trending corretto con 2 bottoni */
 async function loadTrending(type){
 const box=el("trendBox");
 box.innerHTML="Carico...";
 try{
-const r=await fetch(`https://api.themoviedb.org/3/trending/${type}/week?api_key=${API_KEY}`);
-const d=await r.json();
-box.innerHTML="";
+const d=await tmdb("/trending/"+type+"/week",{},false);
 const list=(d.results||[]);
-if(!list.length){box.innerHTML="Nessun dato";return;}
+box.innerHTML="";
+if(!list.length){ box.innerHTML="Nessun dato"; return; }
 list.slice(0,5).forEach(m=>render(box,m,false));
 }catch(e){
-box.innerHTML="Errore trending";
+box.innerHTML=escapeHtml(e.message||"Errore trending");
 }
 }
 </script>
 
 </body>
 </html>
+```0
