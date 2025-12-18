@@ -17,22 +17,25 @@
 --y:#d9ff2f;
 --g:#39ff6b;
 --blue:#1e40af;
---r:20px;
+--r:22px;
 }
 *{box-sizing:border-box}
 body{
 margin:0;
 font-family:system-ui,Arial;
-background:linear-gradient(180deg,var(--bg0),var(--bg1));
+background:
+radial-gradient(900px 600px at 30% 18%, rgba(217,255,47,.12), transparent 55%),
+radial-gradient(900px 600px at 80% 26%, rgba(57,255,107,.10), transparent 55%),
+linear-gradient(180deg,var(--bg0),var(--bg1));
 color:var(--text);
 padding:16px;
 }
 .card{
-background:var(--card);
+background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
 border-radius:var(--r);
 padding:18px;
 margin-bottom:16px;
-border:1px solid var(--line);
+border:1px solid rgba(255,255,255,.12);
 }
 h1,h2,h3{margin:0 0 10px}
 .small{color:var(--muted);font-size:13px;line-height:1.35}
@@ -50,35 +53,14 @@ color:var(--blue);
 }
 .secondary{
 background:transparent;
-border:1px solid #374151;
+border:1px solid rgba(255,255,255,.22);
 color:#fff;
 }
 .hidden{display:none}
 .genre{margin:10px 0}
 input[type=checkbox]{width:20px;height:20px;accent-color:var(--g)}
 input[type=range]{width:100%}
-.results{margin-top:10px}
-.result{
-border:1px solid #374151;
-border-radius:16px;
-padding:10px;
-display:grid;
-grid-template-columns:90px 1fr;
-gap:12px;
-margin-bottom:12px;
-}
-.poster{
-width:90px;height:135px;
-background:#000;
-border-radius:12px;
-overflow:hidden;
-display:flex;align-items:center;justify-content:center;
-color:rgba(229,231,235,.55);
-font-size:11px;
-text-align:center;
-padding:6px;
-}
-.poster img{width:100%;height:100%;object-fit:cover}
+hr{border:none;border-top:1px solid rgba(255,255,255,.10);margin:14px 0}
 
 /* splash 2 secondi */
 .splash{
@@ -125,7 +107,54 @@ text-align:center;
 .fadeOut.show{opacity:1;pointer-events:auto}
 .fadeText{font-size:22px;font-weight:1000;margin-bottom:14px}
 
-/* provider chips */
+/* risultati stile app */
+.results{margin-top:12px;display:grid;gap:12px}
+.result{
+border:1px solid rgba(255,255,255,.14);
+border-radius:18px;
+padding:12px;
+display:grid;
+grid-template-columns:118px 1fr;
+gap:12px;
+background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+}
+.poster{
+width:118px;height:176px;
+background:rgba(0,0,0,.35);
+border-radius:14px;
+overflow:hidden;
+display:flex;align-items:center;justify-content:center;
+color:rgba(229,231,235,.55);
+font-size:11px;
+text-align:center;
+padding:8px;
+border:1px solid rgba(255,255,255,.10);
+}
+.poster img{width:100%;height:100%;object-fit:cover}
+.meta h3{margin:0 0 8px;font-size:16px;line-height:1.15}
+.meta .small{margin:0 0 10px}
+
+/* statistiche premium */
+.stats{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin:8px 0 10px;
+}
+.badge{
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:6px 10px;
+border-radius:999px;
+border:1px solid rgba(255,255,255,.14);
+background:rgba(255,255,255,.03);
+color:var(--muted);
+font-size:12px;
+}
+.badge strong{color:var(--text)}
+
+/* provider chips selezione */
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .chip{
 border:1px solid rgba(255,255,255,.16);
@@ -146,7 +175,26 @@ border-color:rgba(57,255,107,.55);
 background:rgba(57,255,107,.12);
 color:var(--text);
 }
-hr{border:none;border-top:1px solid rgba(255,255,255,.10);margin:14px 0}
+
+/* provider sotto ogni risultato premium */
+.provRow{
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+align-items:center;
+margin-top:8px;
+}
+.provIcon{
+width:26px;height:26px;border-radius:9px;
+border:1px solid rgba(255,255,255,.14);
+background:rgba(0,0,0,.25);
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.provIcon img{width:100%;height:100%;object-fit:cover}
+.provText{color:var(--muted);font-size:12px}
 </style>
 </head>
 
@@ -192,7 +240,7 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.10);margin:14px 0}
 
 <div class="card hidden" id="premiumMenu">
   <h2>PREMIUM</h2>
-  <p class="small">Scegli cosa vuoi cercare.</p>
+  <p class="small">Seleziona Film o Serie TV. Poi slider. Poi piattaforme.</p>
 
   <div class="row">
     <button class="btn primary" id="pickMovie">Film</button>
@@ -209,7 +257,7 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.10);margin:14px 0}
 
 <div class="card hidden" id="sliders">
   <h2>Slider Premium</h2>
-  <p class="small">Max 10 slider. Metti i valori da 0 a 5. La ricerca usa AND.</p>
+  <p class="small">Massimo 10 slider. Valori 0 a 5. AND sui generi con valore maggiore di 0.</p>
 
   <div id="sliderBox"></div>
 
@@ -223,7 +271,7 @@ hr{border:none;border-top:1px solid rgba(255,255,255,.10);margin:14px 0}
 
 <div class="card hidden" id="providers">
   <h2>Piattaforme</h2>
-  <p class="small">Seleziona le piattaforme. Le più comuni stanno sopra. Se non selezioni nulla, uso tutte.</p>
+  <p class="small">Seleziona le piattaforme. Netflix e Prime in cima. Se non selezioni nulla, uso tutte.</p>
 
   <div class="chips" id="provChips"></div>
 
@@ -266,9 +314,18 @@ const LS_WEIGHTS="mf_premium_weights";
 const LS_PROV_MOVIE="mf_premium_prov_movie";
 const LS_PROV_TV="mf_premium_prov_tv";
 
-const COMMON_PROVIDERS=[8,119,337,350,531,2]; 
 const MAX_SLIDERS=10;
 const MAX_PROVIDERS=12;
+
+/* Priorità provider in cima */
+const PRIORITY_PROVIDER_IDS = [
+8,    /* Netflix */
+119,  /* Amazon Prime Video */
+337,  /* Disney Plus */
+350,  /* Apple TV */
+2,    /* Apple iTunes */
+531   /* Paramount Plus */
+];
 
 const el=(id)=>document.getElementById(id);
 
@@ -318,6 +375,7 @@ function escapeHtml(s){
 return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
+/* uscita sfumata */
 function startExitFade(){
 const f=el("fadeOut");
 f.classList.remove("show");
@@ -327,23 +385,9 @@ f.classList.add("show");
 });
 });
 }
-
 el("exitBtn").addEventListener("click", ()=>{ try{ window.close(); }catch(e){} });
 
-function render(container,m,brief){
-const div=document.createElement("div");
-div.className="result";
-div.innerHTML=`
-<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}" alt="">`:"Locandina non disponibile"}</div>
-<div>
-<h3>${escapeHtml(m.title||m.name||"Titolo")}</h3>
-<p class="small">${escapeHtml(m.overview?(brief?m.overview.substring(0,140)+"...":m.overview):"")}</p>
-<button class="btn secondary" data-a="watch">Guarda</button>
-</div>`;
-div.querySelector('[data-a="watch"]').addEventListener("click", startExitFade);
-container.appendChild(div);
-}
-
+/* TMDB helper */
 async function tmdb(path, params, useLang=true){
 const url=new URL("https://api.themoviedb.org/3"+path);
 url.searchParams.set("api_key", API_KEY);
@@ -425,14 +469,14 @@ with_genres:genres
 box.innerHTML="";
 const list=(d.results||[]);
 if(!list.length){ box.innerHTML="Nessun risultato"; return; }
-list.slice(0,3).forEach(m=>render(box,m,true));
+list.slice(0,3).forEach(m=>renderCard(box,m,true,false));
 setBasicCount(1);
 }catch(e){
 box.innerHTML=escapeHtml(e.message||"Errore");
 }
 }
 
-/* SLIDER: carico generi da TMDB e costruisco 10 slider */
+/* SLIDER */
 async function loadSliderGenres(){
 el("sliderMsg").textContent="";
 el("sliderBox").innerHTML="Carico...";
@@ -483,7 +527,7 @@ renderProviderChips();
 show("providers");
 });
 
-/* provider: carico lista, metto comuni sopra, massimo 12 */
+/* PROVIDERS */
 async function ensureProviders(){
 if(state.type==="movie" && state.providersMovie.length) return;
 if(state.type==="tv" && state.providersTv.length) return;
@@ -493,19 +537,22 @@ if(state.type==="movie") state.providersMovie=list;
 else state.providersTv=list;
 }
 
+function prioritizeProviders(list){
+const byId=new Map(list.map(p=>[p.id,p]));
+const top=[];
+PRIORITY_PROVIDER_IDS.forEach(id=>{ if(byId.has(id)) top.push(byId.get(id)); });
+const topIds=new Set(top.map(p=>p.id));
+const rest=list.filter(p=>!topIds.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name));
+return top.concat(rest);
+}
+
 async function loadProviders(type){
 const d=await tmdb("/watch/providers/"+type,{watch_region:REGION},false);
 const raw=(d.results||[])
 .filter(p=>p && p.provider_id && p.provider_name && p.logo_path)
 .map(p=>({id:p.provider_id,name:p.provider_name,logo:IMG_PROVIDER+p.logo_path}));
 
-const byId=new Map(raw.map(p=>[p.id,p]));
-const top=[];
-COMMON_PROVIDERS.forEach(id=>{ if(byId.has(id)) top.push(byId.get(id)); });
-const topIds=new Set(top.map(p=>p.id));
-const rest=raw.filter(p=>!topIds.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name));
-
-return top.concat(rest).slice(0,MAX_PROVIDERS);
+return prioritizeProviders(raw).slice(0,MAX_PROVIDERS);
 }
 
 function getSelectedProviders(){
@@ -544,7 +591,7 @@ const current=getSelectedProviders();
 el("provMsg").textContent=current.length ? ("Selezionate: "+current.length) : "Nessuna selezione. Uso tutte.";
 }
 
-/* premium search con provider + region IT */
+/* PREMIUM SEARCH */
 el("premiumSearch").addEventListener("click", premiumSearch);
 
 function filterAND(items, ids){
@@ -554,7 +601,6 @@ const g=it.genre_ids||[];
 return ids.every(x=>g.includes(x));
 });
 }
-
 function score(items, weights){
 const map=new Map(weights.map(w=>[w.id,w.w]));
 return items.map(it=>{
@@ -587,7 +633,6 @@ with_watch_monetization_types:"flatrate|rent|buy"
 });
 
 let items=(d.results||[]).slice(0,80);
-
 const ids=state.weights.map(x=>x.id);
 items=filterAND(items, ids);
 items=score(items, state.weights);
@@ -597,13 +642,17 @@ if(!items.length){
 box.innerHTML="Nessun risultato. Cambia slider o piattaforme.";
 return;
 }
-items.slice(0,5).forEach(m=>render(box,m,false));
+
+items.slice(0,5).forEach(m=>{
+renderCard(box,m,false,true);
+enhancePremiumCard(m.id, state.type);
+});
 }catch(e){
 box.innerHTML=escapeHtml(e.message||"Errore");
 }
 }
 
-/* trending corretto con 2 bottoni */
+/* TRENDING */
 async function loadTrending(type){
 const box=el("trendBox");
 box.innerHTML="Carico...";
@@ -612,10 +661,113 @@ const d=await tmdb("/trending/"+type+"/week",{},false);
 const list=(d.results||[]);
 box.innerHTML="";
 if(!list.length){ box.innerHTML="Nessun dato"; return; }
-list.slice(0,5).forEach(m=>render(box,m,false));
+list.slice(0,5).forEach(m=>{
+renderCard(box,m,false,true);
+enhancePremiumCard(m.id, type);
+});
 }catch(e){
 box.innerHTML=escapeHtml(e.message||"Errore trending");
 }
+}
+
+/* RENDER CARD */
+function renderCard(container,m,brief,isPremium){
+const title=m.title||m.name||"Titolo";
+const overview=m.overview ? (brief ? m.overview.substring(0,140)+"..." : m.overview) : "";
+const poster=m.poster_path ? IMG+m.poster_path : "";
+
+const card=document.createElement("div");
+card.className="result";
+card.dataset.mid=String(m.id);
+card.dataset.mtype=(m.title ? "movie" : "tv");
+
+card.innerHTML=`
+<div class="poster">${poster?`<img src="${poster}" alt="">`:"Locandina non disponibile"}</div>
+<div class="meta">
+  <h3>${escapeHtml(title)}</h3>
+  ${isPremium ? `
+  <div class="stats" data-stats="1">
+    <span class="badge"><span>Voto</span> <strong data-vote>-</strong></span>
+    <span class="badge"><span>Voti</span> <strong data-votes>-</strong></span>
+    <span class="badge"><span>Anno</span> <strong data-year>-</strong></span>
+    <span class="badge"><span>Durata</span> <strong data-runtime>-</strong></span>
+  </div>
+  <div class="provRow" data-provrow="1">
+    <span class="provText">Piattaforme: controllo...</span>
+  </div>
+  ` : ``}
+  <p class="small">${escapeHtml(overview)}</p>
+  <div class="row">
+    <button class="btn secondary" data-a="watch">Guarda</button>
+  </div>
+</div>
+`;
+
+card.querySelector('[data-a="watch"]').addEventListener("click", startExitFade);
+container.appendChild(card);
+}
+
+/* STATISTICHE E PROVIDER SOTTO LA LOCANDINA PREMIUM */
+async function enhancePremiumCard(id, type){
+const cards=[...document.querySelectorAll(`.result[data-mid="${id}"]`)];
+if(!cards.length) return;
+
+try{
+const details = await tmdb("/"+type+"/"+id, {}, true);
+
+cards.forEach(c=>{
+const vote = c.querySelector('[data-vote]');
+const votes = c.querySelector('[data-votes]');
+const year = c.querySelector('[data-year]');
+const runtime = c.querySelector('[data-runtime]');
+
+if(vote) vote.textContent = (details.vote_average!=null) ? String(Math.round(details.vote_average*10)/10) : "-";
+if(votes) votes.textContent = (details.vote_count!=null) ? String(details.vote_count) : "-";
+
+let y="-";
+if(type==="movie" && details.release_date) y = details.release_date.slice(0,4);
+if(type==="tv" && details.first_air_date) y = details.first_air_date.slice(0,4);
+if(year) year.textContent = y;
+
+let rt="-";
+if(type==="movie" && typeof details.runtime==="number") rt = details.runtime+"m";
+if(type==="tv" && Array.isArray(details.episode_run_time) && details.episode_run_time.length) rt = details.episode_run_time[0]+"m";
+if(runtime) runtime.textContent = rt;
+});
+}catch(e){}
+
+try{
+const prov = await tmdb("/"+type+"/"+id+"/watch/providers", {}, false);
+const it = prov && prov.results && prov.results[REGION] ? prov.results[REGION] : null;
+
+let list=[];
+if(it){
+const add=(arr)=>{ if(Array.isArray(arr)) arr.forEach(p=>{ if(p && p.provider_id && p.provider_name && p.logo_path) list.push(p); }); };
+add(it.flatrate); add(it.rent); add(it.buy);
+}
+const unique=new Map();
+list.forEach(p=>{ if(!unique.has(p.provider_id)) unique.set(p.provider_id,p); });
+
+let providers=[...unique.values()].map(p=>({id:p.provider_id,name:p.provider_name,logo:IMG_PROVIDER+p.logo_path}));
+providers=prioritizeProviders(providers).slice(0,8);
+
+cards.forEach(c=>{
+const row=c.querySelector('[data-provrow]');
+if(!row) return;
+row.innerHTML="";
+if(!providers.length){
+row.innerHTML=`<span class="provText">Piattaforme: non trovate per IT.</span>`;
+return;
+}
+providers.forEach(p=>{
+const d=document.createElement("div");
+d.className="provIcon";
+d.title=p.name;
+d.innerHTML=`<img src="${p.logo}" alt="">`;
+row.appendChild(d);
+});
+});
+}catch(e){}
 }
 </script>
 
