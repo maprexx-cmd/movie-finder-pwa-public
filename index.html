@@ -4,275 +4,93 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Movie Finder</title>
-
 <style>
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-  color: #fff;
+ margin:0;
+ font-family: Arial, sans-serif;
+ background: linear-gradient(180deg,#0b1020,#02040a);
+ color:#fff;
 }
-
-.hidden { display: none; }
-
-.screen {
-  padding: 24px;
-  max-width: 420px;
-  margin: auto;
+.container {
+ max-width:420px;
+ margin:auto;
+ padding:20px;
 }
-
-h1 {
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-h2 {
-  margin-top: 0;
-}
-
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border-radius: 999px;
-  border: none;
-  font-size: 16px;
+ width:100%;
+ padding:16px;
+ border:none;
+ border-radius:30px;
+ font-size:16px;
+ margin-top:12px;
+ cursor:pointer;
 }
-
-.btn-main {
-  background: #d9f75e;
-  color: #003;
+.primary {
+ background:#c8ff3d;
+ color:#0b1020;
 }
-
-.btn-secondary {
-  background: #111827;
-  color: #fff;
-  border: 1px solid #1f2937;
+.secondary {
+ background:#1b1f2e;
+ color:#fff;
 }
-
-.card {
-  background: #020617;
-  border-radius: 16px;
-  padding: 16px;
-  margin-top: 16px;
-  border: 1px solid #1f2937;
-}
-
+.hidden { display:none; }
 .fade {
-  animation: fadeOut 1.2s forwards;
+ animation: fadeout 2s forwards;
 }
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-  }
+@keyframes fadeout {
+ to { opacity:0; }
 }
-
-.checkbox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+.card {
+ background:#11162a;
+ border-radius:16px;
+ padding:16px;
+ margin-top:16px;
 }
-
-.slider {
-  margin-top: 14px;
-}
-
-input[type=range] {
-  width: 100%;
+.poster {
+ width:100%;
+ border-radius:12px;
 }
 </style>
 </head>
-
 <body>
-
-<!-- SPLASH -->
-<div id="splash" class="screen">
-  <h1>Movie Finder</h1>
-  <p style="text-align:center;">COSA VUOI GUARDARE OGGI?</p>
+<div id="splash" class="container">
+ <h1>Movie Finder</h1>
+ <p>COSA VUOI GUARDARE OGGI?</p>
 </div>
-
-<!-- HOME -->
-<div id="home" class="screen hidden">
-  <h1>Movie Finder</h1>
-
-  <button class="btn-main" onclick="enterBasic()">BASIC</button>
-  <button class="btn-secondary" onclick="enterPremium()">PREMIUM</button>
-
-  <div class="card">
-    <b>BASIC</b><br>
-    3 risultati al giorno<br>
-    Solo film<br>
-    Generi base<br>
-    Trama breve
-  </div>
-
-  <div class="card">
-    <b>PREMIUM</b><br>
-    Film e serie TV<br>
-    Slider avanzati<br>
-    Trending<br>
-    Watchlist
-  </div>
+<div id="home" class="container hidden">
+ <button class="primary" onclick="enterBasic()">BASIC</button>
+ <button class="secondary" onclick="enterPremium()">PREMIUM</button> <label><input type="checkbox"> Romantico</label><br>
+ <label><input type="checkbox"> Cartoni animati</label>
+ <button class="primary" onclick="showResults()">Trova film</button>
 </div>
-
-<!-- BASIC -->
-<div id="basic" class="screen hidden">
-  <h2>Cosa guardi oggi?</h2>
-
-  <div class="checkbox"><input type="checkbox" value="Comico">Comico</div>
-  <div class="checkbox"><input type="checkbox" value="Azione">Azione</div>
-  <div class="checkbox"><input type="checkbox" value="Romantico">Romantico</div>
-  <div class="checkbox"><input type="checkbox" value="Cartoni">Cartoni animati</div>
-
-  <button class="btn-main" onclick="showBasicResults()">Trova film</button>
+<div id="results" class="container hidden">
+ <div class="card">
+ <img class="poster" src="https://via.placeholder.com/300x450">
+ <h3>Titolo di esempio</h3>
+ <p>Trama breve ed essenziale.</p>
+ </div>
+ <button class="secondary" onclick="exitApp()">Esci</button>
 </div>
-
-<!-- BASIC RESULTS -->
-<div id="basicResults" class="screen hidden">
-  <h2>Ti proponiamo</h2>
-
-  <div class="card">
-    <b>Film 1</b><br>
-    Trama breve essenziale.
-  </div>
-
-  <div class="card">
-    <b>Film 2</b><br>
-    Trama breve essenziale.
-  </div>
-
-  <div class="card">
-    <b>Film 3</b><br>
-    Trama breve essenziale.
-  </div>
-
-  <button class="btn-secondary" onclick="exitApp()">Chiudi</button>
-</div>
-
-<!-- PREMIUM LOGIN -->
-<div id="premiumLogin" class="screen hidden">
-  <h2>Accesso Premium</h2>
-
-  <input id="email" placeholder="Email" style="width:100%;padding:10px;">
-  <input id="password" type="password" placeholder="Password" style="width:100%;padding:10px;margin-top:8px;">
-
-  <button class="btn-main" onclick="checkPremium()">Entra</button>
-  <button class="btn-secondary" onclick="goHome()">Indietro</button>
-</div>
-
-<!-- PREMIUM MENU -->
-<div id="premiumMenu" class="screen hidden">
-  <h2>Premium</h2>
-
-  <button class="btn-main" onclick="openPremiumSearch()">Film</button>
-  <button class="btn-main" onclick="openPremiumSearch()">Serie TV</button>
-
-  <button class="btn-secondary" onclick="openTrending()">Trending</button>
-</div>
-
-<!-- PREMIUM SEARCH -->
-<div id="premiumSearch" class="screen hidden">
-  <h2>Preferenze</h2>
-
-  <div class="slider">Comico <input type="range" min="0" max="5"></div>
-  <div class="slider">Azione <input type="range" min="0" max="5"></div>
-  <div class="slider">Drammatico <input type="range" min="0" max="5"></div>
-  <div class="slider">Fantascienza <input type="range" min="0" max="5"></div>
-
-  <button class="btn-main" onclick="showPremiumResults()">Procedi</button>
-</div>
-
-<!-- PREMIUM RESULTS -->
-<div id="premiumResults" class="screen hidden">
-  <h2>Risultati Premium</h2>
-
-  <div class="card">
-    <b>Film Premium</b><br>
-    Trama estesa e dettagliata.<br>
-    ⭐ 8.2 | 🔥 Trending
-  </div>
-
-  <button class="btn-secondary" onclick="exitApp()">Chiudi</button>
-</div>
-
-<!-- TRENDING -->
-<div id="trending" class="screen hidden">
-  <h2>Più visti della settimana</h2>
-
-  <div class="card">Titolo 1</div>
-  <div class="card">Titolo 2</div>
-  <div class="card">Titolo 3</div>
-  <div class="card">Titolo 4</div>
-  <div class="card">Titolo 5</div>
-
-  <button class="btn-secondary" onclick="goHome()">Indietro</button>
-</div>
-
 <script>
-setTimeout(() => {
-  document.getElementById('splash').classList.add('fade');
-  setTimeout(() => {
-    document.getElementById('splash').classList.add('hidden');
-    document.getElementById('home').classList.remove('hidden');
-  }, 1200);
-}, 2000);
-
-function hideAll() {
-  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+setTimeout(()=>{
+ document.getElementById("splash").classList.add("hidden");
+ document.getElementById("home").classList.remove("hidden");
+},2000);
+function enterBasic(){
+ document.getElementById("home").classList.add("hidden");
+ document.getElementById("basic").classList.remove("hidden");
 }
-
-function goHome() {
-  hideAll();
-  document.getElementById('home').classList.remove('hidden');
+function enterPremium(){
+ alert("Premium attivo in versione completa");
 }
-
-function enterBasic() {
-  hideAll();
-  document.getElementById('basic').classList.remove('hidden');
+function showResults(){
+ document.getElementById("basic").classList.add("hidden");
+ document.getElementById("results").classList.remove("hidden");
 }
-
-function showBasicResults() {
-  hideAll();
-  document.getElementById('basicResults').classList.remove('hidden');
-}
-
-function enterPremium() {
-  hideAll();
-  document.getElementById('premiumLogin').classList.remove('hidden');
-}
-
-function checkPremium() {
-  const e = document.getElementById('email').value;
-  const p = document.getElementById('password').value;
-  if (e === "maprexx@gmail.com" && p === "1234") {
-    hideAll();
-    document.getElementById('premiumMenu').classList.remove('hidden');
-  } else {
-    alert("Credenziali non valide");
-  }
-}
-
-function openPremiumSearch() {
-  hideAll();
-  document.getElementById('premiumSearch').classList.remove('hidden');
-}
-
-function showPremiumResults() {
-  hideAll();
-  document.getElementById('premiumResults').classList.remove('hidden');
-}
-
-function openTrending() {
-  hideAll();
-  document.getElementById('trending').classList.remove('hidden');
-}
-
-function exitApp() {
-  document.body.classList.add('fade');
+function exitApp(){
+ document.body.classList.add("fade");
+ setTimeout(()=>{ window.close(); },2000);
 }
 </script>
-
 </body>
 </html>
