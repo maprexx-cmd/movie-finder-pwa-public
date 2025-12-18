@@ -6,155 +6,271 @@
 <title>Movie Finder</title>
 
 <style>
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  background:radial-gradient(circle at top,#101828,#020617);
-  color:#fff;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #fff;
 }
-.container{
-  max-width:420px;
-  margin:auto;
-  padding:20px;
+
+.hidden { display: none; }
+
+.screen {
+  padding: 24px;
+  max-width: 420px;
+  margin: auto;
 }
-.card{
-  background:rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:20px;
+
+h1 {
+  text-align: center;
+  margin-bottom: 8px;
 }
-h1{
-  margin:0 0 10px 0;
+
+h2 {
+  margin-top: 0;
 }
-.subtitle{
-  opacity:0.7;
-  margin-bottom:20px;
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
 }
-button{
-  width:100%;
-  padding:14px;
-  border-radius:999px;
-  border:none;
-  font-size:16px;
-  cursor:pointer;
+
+.btn-main {
+  background: #d9f75e;
+  color: #003;
 }
-.primary{
-  background:linear-gradient(135deg,#d9ff3f,#7dff3f);
-  color:#102a00;
-  font-weight:600;
+
+.btn-secondary {
+  background: #111827;
+  color: #fff;
+  border: 1px solid #1f2937;
 }
-.secondary{
-  background:transparent;
-  border:1px solid rgba(255,255,255,0.2);
-  color:#fff;
+
+.card {
+  background: #020617;
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 16px;
+  border: 1px solid #1f2937;
 }
-.genres label{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
+
+.fade {
+  animation: fadeOut 1.2s forwards;
 }
-.result{
-  display:none;
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
 }
-.poster{
-  width:100%;
-  border-radius:12px;
-  margin-bottom:10px;
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
-.fade{
-  position:fixed;
-  inset:0;
-  background:black;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:22px;
-  z-index:10;
+
+.slider {
+  margin-top: 14px;
+}
+
+input[type=range] {
+  width: 100%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-  <!-- HOME -->
-  <div class="card" id="home">
-    <h1>Movie Finder</h1>
-    <div class="subtitle">Cosa vuoi guardare oggi?</div>
-    <button class="primary" onclick="openBasic()">BASIC</button>
-    <br><br>
-    <button class="secondary" onclick="alert('Premium in arrivo')">PREMIUM</button>
-  </div>
-
-  <!-- BASIC -->
-  <div class="card" id="basic" style="display:none">
-    <h2>Cosa guardi oggi?</h2>
-
-    <div class="genres">
-      <label><input type="checkbox" value="35"> Comico</label>
-      <label><input type="checkbox" value="28"> Azione</label>
-      <label><input type="checkbox" value="10749"> Romantico</label>
-      <label><input type="checkbox" value="16"> Cartoni animati</label>
-    </div>
-
-    <button class="primary" onclick="search()">Trova film</button>
-  </div>
-
-  <!-- RISULTATI -->
-  <div class="card result" id="results">
-    <h2 id="title"></h2>
-    <img id="poster" class="poster">
-    <p id="overview"></p>
-    <button class="secondary" onclick="exitApp()">Chiudi</button>
-  </div>
-
+<!-- SPLASH -->
+<div id="splash" class="screen">
+  <h1>Movie Finder</h1>
+  <p style="text-align:center;">COSA VUOI GUARDARE OGGI?</p>
 </div>
 
-<!-- FADE -->
-<div class="fade" id="fade">
-  Sta iniziando il film…
+<!-- HOME -->
+<div id="home" class="screen hidden">
+  <h1>Movie Finder</h1>
+
+  <button class="btn-main" onclick="enterBasic()">BASIC</button>
+  <button class="btn-secondary" onclick="enterPremium()">PREMIUM</button>
+
+  <div class="card">
+    <b>BASIC</b><br>
+    3 risultati al giorno<br>
+    Solo film<br>
+    Generi base<br>
+    Trama breve
+  </div>
+
+  <div class="card">
+    <b>PREMIUM</b><br>
+    Film e serie TV<br>
+    Slider avanzati<br>
+    Trending<br>
+    Watchlist
+  </div>
+</div>
+
+<!-- BASIC -->
+<div id="basic" class="screen hidden">
+  <h2>Cosa guardi oggi?</h2>
+
+  <div class="checkbox"><input type="checkbox" value="Comico">Comico</div>
+  <div class="checkbox"><input type="checkbox" value="Azione">Azione</div>
+  <div class="checkbox"><input type="checkbox" value="Romantico">Romantico</div>
+  <div class="checkbox"><input type="checkbox" value="Cartoni">Cartoni animati</div>
+
+  <button class="btn-main" onclick="showBasicResults()">Trova film</button>
+</div>
+
+<!-- BASIC RESULTS -->
+<div id="basicResults" class="screen hidden">
+  <h2>Ti proponiamo</h2>
+
+  <div class="card">
+    <b>Film 1</b><br>
+    Trama breve essenziale.
+  </div>
+
+  <div class="card">
+    <b>Film 2</b><br>
+    Trama breve essenziale.
+  </div>
+
+  <div class="card">
+    <b>Film 3</b><br>
+    Trama breve essenziale.
+  </div>
+
+  <button class="btn-secondary" onclick="exitApp()">Chiudi</button>
+</div>
+
+<!-- PREMIUM LOGIN -->
+<div id="premiumLogin" class="screen hidden">
+  <h2>Accesso Premium</h2>
+
+  <input id="email" placeholder="Email" style="width:100%;padding:10px;">
+  <input id="password" type="password" placeholder="Password" style="width:100%;padding:10px;margin-top:8px;">
+
+  <button class="btn-main" onclick="checkPremium()">Entra</button>
+  <button class="btn-secondary" onclick="goHome()">Indietro</button>
+</div>
+
+<!-- PREMIUM MENU -->
+<div id="premiumMenu" class="screen hidden">
+  <h2>Premium</h2>
+
+  <button class="btn-main" onclick="openPremiumSearch()">Film</button>
+  <button class="btn-main" onclick="openPremiumSearch()">Serie TV</button>
+
+  <button class="btn-secondary" onclick="openTrending()">Trending</button>
+</div>
+
+<!-- PREMIUM SEARCH -->
+<div id="premiumSearch" class="screen hidden">
+  <h2>Preferenze</h2>
+
+  <div class="slider">Comico <input type="range" min="0" max="5"></div>
+  <div class="slider">Azione <input type="range" min="0" max="5"></div>
+  <div class="slider">Drammatico <input type="range" min="0" max="5"></div>
+  <div class="slider">Fantascienza <input type="range" min="0" max="5"></div>
+
+  <button class="btn-main" onclick="showPremiumResults()">Procedi</button>
+</div>
+
+<!-- PREMIUM RESULTS -->
+<div id="premiumResults" class="screen hidden">
+  <h2>Risultati Premium</h2>
+
+  <div class="card">
+    <b>Film Premium</b><br>
+    Trama estesa e dettagliata.<br>
+    ⭐ 8.2 | 🔥 Trending
+  </div>
+
+  <button class="btn-secondary" onclick="exitApp()">Chiudi</button>
+</div>
+
+<!-- TRENDING -->
+<div id="trending" class="screen hidden">
+  <h2>Più visti della settimana</h2>
+
+  <div class="card">Titolo 1</div>
+  <div class="card">Titolo 2</div>
+  <div class="card">Titolo 3</div>
+  <div class="card">Titolo 4</div>
+  <div class="card">Titolo 5</div>
+
+  <button class="btn-secondary" onclick="goHome()">Indietro</button>
 </div>
 
 <script>
-const API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
-const IMG = "https://image.tmdb.org/t/p/w500";
+setTimeout(() => {
+  document.getElementById('splash').classList.add('fade');
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('home').classList.remove('hidden');
+  }, 1200);
+}, 2000);
 
-function openBasic(){
-  document.getElementById("home").style.display="none";
-  document.getElementById("basic").style.display="block";
+function hideAll() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
 }
 
-function search(){
-  const checked=[...document.querySelectorAll("input:checked")].map(c=>c.value);
-  if(checked.length===0){ alert("Seleziona almeno un genere"); return; }
-
-  fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=it-IT&with_genres=${checked.join(",")}&include_adult=false`)
-    .then(r=>r.json())
-    .then(d=>{
-      if(!d.results || d.results.length===0){
-        alert("Nessun risultato trovato");
-        return;
-      }
-      const m=d.results[Math.floor(Math.random()*d.results.length)];
-      document.getElementById("basic").style.display="none";
-      document.getElementById("results").style.display="block";
-      document.getElementById("title").innerText=m.title;
-      document.getElementById("poster").src=m.poster_path?IMG+m.poster_path:"";
-      document.getElementById("overview").innerText=m.overview.split(".")[0]+".";
-    });
+function goHome() {
+  hideAll();
+  document.getElementById('home').classList.remove('hidden');
 }
 
-function exitApp(){
-  const f=document.getElementById("fade");
-  f.style.display="flex";
-  setTimeout(()=>{
-    f.style.display="none";
-    document.getElementById("results").style.display="none";
-    document.getElementById("home").style.display="block";
-  },2000);
+function enterBasic() {
+  hideAll();
+  document.getElementById('basic').classList.remove('hidden');
+}
+
+function showBasicResults() {
+  hideAll();
+  document.getElementById('basicResults').classList.remove('hidden');
+}
+
+function enterPremium() {
+  hideAll();
+  document.getElementById('premiumLogin').classList.remove('hidden');
+}
+
+function checkPremium() {
+  const e = document.getElementById('email').value;
+  const p = document.getElementById('password').value;
+  if (e === "maprexx@gmail.com" && p === "1234") {
+    hideAll();
+    document.getElementById('premiumMenu').classList.remove('hidden');
+  } else {
+    alert("Credenziali non valide");
+  }
+}
+
+function openPremiumSearch() {
+  hideAll();
+  document.getElementById('premiumSearch').classList.remove('hidden');
+}
+
+function showPremiumResults() {
+  hideAll();
+  document.getElementById('premiumResults').classList.remove('hidden');
+}
+
+function openTrending() {
+  hideAll();
+  document.getElementById('trending').classList.remove('hidden');
+}
+
+function exitApp() {
+  document.body.classList.add('fade');
 }
 </script>
 
