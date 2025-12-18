@@ -11,7 +11,6 @@
       --bg0:#050813;
       --bg1:#0b1020;
       --card:rgba(255,255,255,.03);
-      --card2:rgba(255,255,255,.02);
       --text:#e5e7eb;
       --muted:#9ca3af;
       --line:rgba(255,255,255,.10);
@@ -50,14 +49,13 @@
     }
     .brand h1{margin:0;font-size:22px;letter-spacing:.2px}
     .brand .sub{color:var(--muted);margin-top:2px;font-size:13px}
-    .grid{display:grid;grid-template-columns:1fr;gap:14px;}
-    @media(min-width:920px){.grid{grid-template-columns:1.15fr .85fr}}
     .card{
       background:linear-gradient(180deg, var(--card), rgba(255,255,255,.015));
       border:1px solid var(--line);
       border-radius:var(--r);
       box-shadow:var(--shadow);
       padding:18px;
+      margin-bottom:14px;
     }
     h2{margin:0 0 10px;font-size:20px}
     h3{margin:0 0 8px;font-size:15px}
@@ -68,7 +66,6 @@
       border-radius:999px;
       padding:12px 16px;
       font-weight:1000;
-      letter-spacing:.2px;
       cursor:pointer;
       background:rgba(255,255,255,.02);
       color:var(--text);
@@ -82,6 +79,7 @@
       box-shadow:0 18px 45px rgba(217,255,47,.18);
     }
     .btnGhost{background:rgba(255,255,255,.02)}
+    .btnSmall{padding:10px 12px;font-weight:1000}
     .btnDanger{border:1px solid rgba(255,255,255,.16);color:#ffb4b4}
     .pill{
       display:inline-flex;align-items:center;gap:8px;
@@ -93,21 +91,7 @@
     }
     .pill strong{color:var(--text)}
     .divider{height:1px;background:var(--line);margin:14px 0}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
-    .tab{
-      padding:10px 12px;border-radius:999px;border:1px solid var(--line);
-      background:rgba(255,255,255,.02);color:var(--text);
-      cursor:pointer;font-weight:1000;font-size:13px;
-    }
-    .tabActive{
-      border:none;
-      background:linear-gradient(90deg, rgba(217,255,47,.95), rgba(57,255,107,.78));
-      color:var(--blue);
-    }
-    .choiceList{display:grid;gap:10px;margin:10px 0 14px}
-    .choiceItem{border:1px solid var(--line);background:rgba(255,255,255,.02);border-radius:16px;padding:12px;}
-    .choiceItem ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.35}
-    .formRow{display:grid;gap:8px;margin-top:10px}
+    .small{font-size:12px;color:var(--muted);line-height:1.35}
     .input{
       width:100%;
       padding:12px 12px;
@@ -117,8 +101,6 @@
       color:var(--text);
       outline:none;
     }
-    .input::placeholder{color:rgba(229,231,235,.55)}
-    .small{font-size:12px;color:var(--muted);line-height:1.35}
     .toggleRow{
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       margin-top:10px;padding:10px 12px;border:1px solid var(--line);
@@ -126,9 +108,9 @@
     }
     .toggleRow span{color:var(--muted);font-size:13px}
     .toggleRow input{width:22px;height:22px;accent-color:var(--g);}
-    .genres{display:grid;gap:8px;margin-top:10px;max-height:360px;overflow:auto;padding-right:4px;}
+    .genres{display:grid;gap:8px;margin-top:10px;max-height:380px;overflow:auto;padding-right:4px;}
     .genreRow{
-      display:grid;grid-template-columns:1.3fr .7fr;gap:10px;align-items:center;
+      display:grid;grid-template-columns:1.35fr .65fr;gap:10px;align-items:center;
       border:1px solid var(--line);background:rgba(255,255,255,.02);
       border-radius:14px;padding:10px 12px;
     }
@@ -143,16 +125,13 @@
       font-size:12px;
     }
     input[type="range"]{width:100%}
+
     .providersPick{
       border:1px solid var(--line);
       background:rgba(0,0,0,.10);
       border-radius:16px;
       padding:12px;
       margin-top:10px;
-    }
-    .provHead{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-      margin-bottom:10px;
     }
     .provList{display:flex;gap:8px;flex-wrap:wrap}
     .provChip{
@@ -172,6 +151,7 @@
       background:rgba(57,255,107,.12);
       color:var(--text);
     }
+
     .results{display:grid;gap:12px;margin-top:10px;}
     .resultCard{
       border:1px solid var(--line);
@@ -195,8 +175,6 @@
     .poster img{width:100%;height:100%;object-fit:cover;display:block}
     .meta h3{margin:0 0 6px;font-size:16px;line-height:1.15}
     .meta .o{margin:0 0 8px;color:var(--muted);font-size:13px;line-height:1.35}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{font-size:12px;color:var(--muted);border:1px solid var(--line);background:rgba(0,0,0,.12);padding:7px 10px;border-radius:999px;}
     .providersBox{
       margin-top:8px;
       border:1px solid var(--line);
@@ -230,7 +208,9 @@
     }
     .provLogo img{width:100%;height:100%;object-fit:cover;display:block}
     .provEmpty{font-size:12px;color:var(--muted);}
+
     .hidden{display:none}
+
     .splash{
       position:fixed;inset:0;display:grid;place-items:center;
       background:
@@ -250,6 +230,7 @@
     }
     .splashTitle{font-size:22px;margin:0 0 6px}
     .splashAsk{font-size:14px;color:var(--muted);margin:0}
+
     .fadeOut{
       position:fixed;inset:0;background:#000;
       opacity:0;pointer-events:none;
@@ -260,6 +241,9 @@
     }
     .fadeOut.show{opacity:1;pointer-events:auto}
     .fadeText{text-align:center;font-weight:1000;font-size:22px;color:var(--text);margin-bottom:14px}
+
+    .page{display:none}
+    .page.show{display:block}
   </style>
 </head>
 
@@ -295,197 +279,307 @@
       <div class="logo">MF</div>
       <div>
         <h1>Movie Finder</h1>
-        <div class="sub">Basic e Premium. Slider e piattaforme. Trending e social.</div>
+        <div class="sub">Pagine separate. Provider più comuni in alto. Generi ridotti di default.</div>
       </div>
     </div>
 
-    <div class="grid">
+    <!-- PAGINA: HOME -->
+    <div class="page show" id="pageHome">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Benvenuta</h2>
+          <span class="pill" id="planPill"><strong>Basic</strong> attivo</span>
+        </div>
+        <p>Seleziona il piano. Poi premi Cosa guardi oggi.</p>
+
+        <div class="row">
+          <button class="btn btnPrimary" id="goPlanBtn">Scegli piano</button>
+          <button class="btn btnGhost" id="goSettingsBtn">Impostazioni</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row">
+          <button class="btn btnPrimary" id="goMainBtn">Cosa guardi oggi?</button>
+        </div>
+
+        <div class="small" style="margin-top:10px">
+          Nota: la disponibilità streaming dipende da TMDB per regione IT.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: PIANO -->
+    <div class="page" id="pagePlan">
       <div class="card">
         <div class="row" style="justify-content:space-between">
           <h2>Piano</h2>
-          <span class="pill" id="planPill"><strong>Basic</strong> attivo</span>
+          <button class="btn btnGhost btnSmall" id="backFromPlanBtn">Indietro</button>
         </div>
 
-        <div class="tabs">
-          <button class="tab tabActive" id="tabBasic">Basic</button>
-          <button class="tab" id="tabPremium">Premium</button>
+        <div class="row">
+          <button class="btn btnPrimary" id="tabBasic">Basic</button>
+          <button class="btn btnGhost" id="tabPremium">Premium</button>
         </div>
 
-        <div class="choiceList" id="planInfo"></div>
+        <div class="divider"></div>
+
+        <div id="planInfo"></div>
+
+        <div class="divider"></div>
 
         <div class="toggleRow">
           <span>Mostra solo disponibili online</span>
           <input type="checkbox" id="onlyOnlineToggle" checked>
         </div>
 
-        <div class="divider"></div>
-
-        <div id="premiumGate" class="hidden">
+        <div id="premiumGate" class="hidden" style="margin-top:12px">
           <div class="pill"><strong>Premium</strong> accesso</div>
-          <div class="formRow">
+
+          <div class="row" style="margin-top:10px">
             <button class="btn btnPrimary" id="payBtn">Vai al pagamento Play Store</button>
             <button class="btn btnGhost" id="alreadyBtn">Ho già Premium</button>
-
-            <div id="loginBox" class="hidden">
-              <input class="input" id="loginEmail" placeholder="Email">
-              <input class="input" id="loginPass" type="password" placeholder="Password">
-              <div class="row">
-                <button class="btn btnPrimary" id="loginBtn">Accedi</button>
-                <button class="btn btnGhost" id="logoutBtn">Esci</button>
-              </div>
-              <div class="small" id="loginMsg"></div>
-              <div class="small">Demo Premium: maprexx@gmail.com e password 1234</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <button class="btn btnPrimary" id="goBtn">Cosa guardi oggi?</button>
-        </div>
-
-        <div class="divider"></div>
-
-        <div id="basicPanel">
-          <div class="pill"><strong>Basic</strong> 1 ricerca al giorno. 3 risultati. VM18 escluso.</div>
-          <div class="small" style="margin-top:8px">Selezioni multiple. La ricerca usa AND.</div>
-          <div class="genres" id="basicGenres"></div>
-          <div class="row" style="margin-top:10px">
-            <button class="btn btnPrimary" id="basicSearchBtn">Trova film</button>
-          </div>
-          <div class="results" id="basicResults" style="display:none"></div>
-        </div>
-
-        <div id="premiumPanel" class="hidden">
-          <div class="tabs" id="premiumTabs">
-            <button class="tab tabActive" data-sec="premFilm">Film</button>
-            <button class="tab" data-sec="premTv">Serie TV</button>
-            <button class="tab" data-sec="premTrending">Trending</button>
-            <button class="tab" data-sec="premSocial">Social</button>
-            <button class="tab" data-sec="premLast">Ultimi visti</button>
-            <button class="tab" data-sec="premWatch">Watchlist</button>
           </div>
 
-          <div id="premFilm" class="premSec">
-            <div class="pill"><strong>Film</strong> Slider 0 a 5. 5 risultati. Illimitato. AND.</div>
-            <div class="genres" id="premFilmGenres"></div>
-
-            <div class="providersPick">
-              <div class="provHead">
-                <div class="pill"><strong>Piattaforme</strong> Seleziona o lascia Tutte</div>
-                <div class="row">
-                  <button class="btn btnGhost" id="filmAllProvBtn">Tutte</button>
-                  <button class="btn btnGhost" id="filmClearProvBtn">Svuota</button>
-                </div>
-              </div>
-              <div class="provList" id="premFilmProvList"></div>
-              <div class="small" id="premFilmProvMsg"></div>
-            </div>
-
+          <div class="hidden" id="loginBox" style="margin-top:10px">
+            <input class="input" id="loginEmail" placeholder="Email">
+            <input class="input" id="loginPass" type="password" placeholder="Password" style="margin-top:8px">
             <div class="row" style="margin-top:10px">
-              <button class="btn btnPrimary" id="premFilmSearchBtn">Cerca film</button>
+              <button class="btn btnPrimary" id="loginBtn">Accedi</button>
+              <button class="btn btnGhost" id="logoutBtn">Esci</button>
             </div>
-            <div class="results" id="premFilmResults"></div>
+            <div class="small" id="loginMsg" style="margin-top:8px"></div>
+            <div class="small">Demo Premium: maprexx@gmail.com e password 1234</div>
           </div>
-
-          <div id="premTv" class="premSec hidden">
-            <div class="pill"><strong>Serie TV</strong> Slider 0 a 5. 5 risultati. Illimitato. AND.</div>
-            <div class="genres" id="premTvGenres"></div>
-
-            <div class="providersPick">
-              <div class="provHead">
-                <div class="pill"><strong>Piattaforme</strong> Seleziona o lascia Tutte</div>
-                <div class="row">
-                  <button class="btn btnGhost" id="tvAllProvBtn">Tutte</button>
-                  <button class="btn btnGhost" id="tvClearProvBtn">Svuota</button>
-                </div>
-              </div>
-              <div class="provList" id="premTvProvList"></div>
-              <div class="small" id="premTvProvMsg"></div>
-            </div>
-
-            <div class="row" style="margin-top:10px">
-              <button class="btn btnPrimary" id="premTvSearchBtn">Cerca serie TV</button>
-            </div>
-            <div class="results" id="premTvResults"></div>
-          </div>
-
-          <div id="premTrending" class="premSec hidden">
-            <div class="pill"><strong>Trending</strong> Top 5 della settimana (TMDB). Film o serie.</div>
-            <div class="row" style="margin-top:10px">
-              <button class="btn btnPrimary" id="loadTrendingBtn">Carica trending</button>
-              <button class="btn btnGhost" id="toggleTrendingBtn">Mostra: Film</button>
-            </div>
-            <div class="results" id="trendingResults"></div>
-            <div class="small" style="margin-top:10px">
-              Nota: TMDB non fornisce i “più visti per piattaforma”. Qui usiamo Trending TMDB e filtri piattaforme.
-            </div>
-          </div>
-
-          <div id="premSocial" class="premSec hidden">
-            <div class="pill"><strong>Social</strong> Condividi ultimo visto o la app.</div>
-            <div class="formRow" style="margin-top:10px">
-              <input class="input" id="socialMsg" placeholder="Messaggio opzionale">
-              <div class="row">
-                <button class="btn btnPrimary" id="shareLastBtn">Condividi ultimo visto</button>
-                <button class="btn btnGhost" id="shareAppBtn">Condividi la app</button>
-              </div>
-              <div class="small" id="shareHint">Se non si apre la condivisione, copia e incolla.</div>
-              <textarea class="input hidden" id="shareFallback" rows="4"></textarea>
-            </div>
-          </div>
-
-          <div id="premLast" class="premSec hidden">
-            <div class="pill"><strong>Ultimi visti</strong> Lista locale sul telefono.</div>
-            <div class="row" style="margin-top:10px">
-              <button class="btn btnGhost" id="clearLastBtn">Svuota lista</button>
-            </div>
-            <div class="results" id="lastResults"></div>
-          </div>
-
-          <div id="premWatch" class="premSec hidden">
-            <div class="pill"><strong>Watchlist</strong> Lista locale. Versione Play Store può sincronizzare con account.</div>
-            <div class="row" style="margin-top:10px">
-              <button class="btn btnGhost" id="clearWatchBtn">Svuota watchlist</button>
-            </div>
-            <div class="results" id="watchResults"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Impostazioni</h2>
-        <p>Se la chiave API è già presente, non toccare nulla.</p>
-        <div class="formRow">
-          <input class="input" id="apiKeyInput" placeholder="TMDB API key">
-          <div class="row">
-            <button class="btn btnPrimary" id="saveKeyBtn">Salva chiave</button>
-            <button class="btn btnGhost" id="clearKeyBtn">Rimuovi chiave</button>
-            <button class="btn btnDanger" id="resetBtn">Reset app</button>
-          </div>
-          <div class="small" id="keyStatus"></div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="choiceItem">
-          <h3>Cose importanti</h3>
-          <ul>
-            <li>Originali Netflix e Prime Video inclusi, se presenti in TMDB</li>
-            <li>Disponibilità streaming dipende dalla regione IT su TMDB</li>
-            <li>Basic: trama breve, 3 risultati, 1 ricerca al giorno, no VM18</li>
-            <li>Premium: login demo, slider completi, piattaforme, trending, social, watchlist</li>
-          </ul>
         </div>
       </div>
     </div>
+
+    <!-- PAGINA: BASIC GENRES -->
+    <div class="page" id="pageBasic">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Basic, filtri</h2>
+          <button class="btn btnGhost btnSmall" id="backFromBasicBtn">Indietro</button>
+        </div>
+        <div class="pill"><strong>Basic</strong> 1 ricerca al giorno. 3 risultati. VM18 escluso.</div>
+        <div class="small" style="margin-top:8px">Selezioni multiple. La ricerca usa AND.</div>
+
+        <div class="genres" id="basicGenres"></div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnPrimary" id="basicSearchBtn">Cerca film</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: PREMIUM MENU -->
+    <div class="page" id="pagePremiumMenu">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Premium</h2>
+          <button class="btn btnGhost btnSmall" id="backFromPremiumMenuBtn">Indietro</button>
+        </div>
+
+        <div class="row">
+          <button class="btn btnPrimary" id="goPremFilmBtn">Film</button>
+          <button class="btn btnPrimary" id="goPremTvBtn">Serie TV</button>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnGhost" id="goTrendingBtn">Trending</button>
+          <button class="btn btnGhost" id="goSocialBtn">Social</button>
+          <button class="btn btnGhost" id="goLastBtn">Ultimi visti</button>
+          <button class="btn btnGhost" id="goWatchBtn">Watchlist</button>
+        </div>
+
+        <div class="small" style="margin-top:12px">
+          Per i provider: mostro prima quelli più comuni. Se vuoi, apri Mostra altri.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: PREMIUM FILM -->
+    <div class="page" id="pagePremFilm">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Premium, film</h2>
+          <button class="btn btnGhost btnSmall" id="backFromPremFilmBtn">Indietro</button>
+        </div>
+
+        <div class="pill"><strong>Film</strong> Slider 0 a 5. AND. 5 risultati.</div>
+        <div class="small" style="margin-top:8px">Mostro pochi generi. Se vuoi, apri Mostra tutti.</div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnGhost btnSmall" id="toggleAllGenresFilmBtn">Mostra tutti i generi</button>
+          <button class="btn btnPrimary btnSmall" id="goProvidersFilmBtn">Scegli piattaforme</button>
+        </div>
+
+        <div class="genres" id="premFilmGenres"></div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnPrimary" id="premFilmSearchBtn">Cerca</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: PREMIUM TV -->
+    <div class="page" id="pagePremTv">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Premium, serie TV</h2>
+          <button class="btn btnGhost btnSmall" id="backFromPremTvBtn">Indietro</button>
+        </div>
+
+        <div class="pill"><strong>Serie TV</strong> Slider 0 a 5. AND. 5 risultati.</div>
+        <div class="small" style="margin-top:8px">Mostro pochi generi. Se vuoi, apri Mostra tutti.</div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnGhost btnSmall" id="toggleAllGenresTvBtn">Mostra tutti i generi</button>
+          <button class="btn btnPrimary btnSmall" id="goProvidersTvBtn">Scegli piattaforme</button>
+        </div>
+
+        <div class="genres" id="premTvGenres"></div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnPrimary" id="premTvSearchBtn">Cerca</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: PROVIDERS -->
+    <div class="page" id="pageProviders">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Piattaforme</h2>
+          <button class="btn btnGhost btnSmall" id="backFromProvidersBtn">Indietro</button>
+        </div>
+
+        <div class="pill" id="providersForPill"><strong>Film</strong> piattaforme</div>
+        <div class="small" style="margin-top:8px">
+          Prima mostro le più comuni. Poi puoi aprire Mostra altri.
+        </div>
+
+        <div class="providersPick" style="margin-top:10px">
+          <div class="row">
+            <button class="btn btnGhost btnSmall" id="provAllBtn">Tutte</button>
+            <button class="btn btnGhost btnSmall" id="provClearBtn">Svuota</button>
+            <button class="btn btnGhost btnSmall" id="provToggleMoreBtn">Mostra altri</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="small">Comuni</div>
+          <div class="provList" id="provCommonList" style="margin-top:8px"></div>
+
+          <div class="divider"></div>
+
+          <div class="small">Altri</div>
+          <div class="provList hidden" id="provMoreList" style="margin-top:8px"></div>
+
+          <div class="small" id="provMsg" style="margin-top:10px"></div>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button class="btn btnPrimary" id="provDoneBtn">Fatto</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: RISULTATI -->
+    <div class="page" id="pageResults">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Risultati</h2>
+          <button class="btn btnGhost btnSmall" id="backFromResultsBtn">Indietro</button>
+        </div>
+        <div class="results" id="resultsBox"></div>
+      </div>
+    </div>
+
+    <!-- PAGINA: TRENDING -->
+    <div class="page" id="pageTrending">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Trending</h2>
+          <button class="btn btnGhost btnSmall" id="backFromTrendingBtn">Indietro</button>
+        </div>
+
+        <div class="row">
+          <button class="btn btnPrimary" id="loadTrendingBtn">Carica</button>
+          <button class="btn btnGhost" id="toggleTrendingBtn">Mostra: Film</button>
+        </div>
+
+        <div class="results" id="trendingResults" style="margin-top:10px"></div>
+
+        <div class="small" style="margin-top:10px">
+          Nota: TMDB non dà i “più visti per piattaforma”. Qui uso Trending TMDB e loghi provider.
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGINA: SOCIAL -->
+    <div class="page" id="pageSocial">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Social</h2>
+          <button class="btn btnGhost btnSmall" id="backFromSocialBtn">Indietro</button>
+        </div>
+
+        <input class="input" id="socialMsg" placeholder="Messaggio opzionale">
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnPrimary" id="shareLastBtn">Condividi ultimo visto</button>
+          <button class="btn btnGhost" id="shareAppBtn">Condividi la app</button>
+        </div>
+        <div class="small" id="shareHint" style="margin-top:10px">Se non si apre la condivisione, copia e incolla.</div>
+        <textarea class="input hidden" id="shareFallback" rows="4" style="margin-top:8px"></textarea>
+      </div>
+    </div>
+
+    <!-- PAGINA: LISTE -->
+    <div class="page" id="pageLists">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2 id="listsTitle">Liste</h2>
+          <button class="btn btnGhost btnSmall" id="backFromListsBtn">Indietro</button>
+        </div>
+
+        <div class="row">
+          <button class="btn btnGhost" id="listsClearBtn">Svuota</button>
+        </div>
+
+        <div class="results" id="listsBox" style="margin-top:10px"></div>
+      </div>
+    </div>
+
+    <!-- PAGINA: SETTINGS -->
+    <div class="page" id="pageSettings">
+      <div class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2>Impostazioni</h2>
+          <button class="btn btnGhost btnSmall" id="backFromSettingsBtn">Indietro</button>
+        </div>
+
+        <p>Se la chiave è già presente, non toccare nulla.</p>
+        <input class="input" id="apiKeyInput" placeholder="TMDB API key">
+        <div class="row" style="margin-top:10px">
+          <button class="btn btnPrimary" id="saveKeyBtn">Salva</button>
+          <button class="btn btnGhost" id="clearKeyBtn">Rimuovi</button>
+          <button class="btn btnDanger" id="resetBtn">Reset app</button>
+        </div>
+        <div class="small" id="keyStatus" style="margin-top:10px"></div>
+      </div>
+    </div>
+
   </div>
 
 <script>
   const APP_URL = "https://maprexx-cmd.github.io/movie-finder-pwa-public/";
   const REGION = "IT";
-
   const IMG_POSTER = "https://image.tmdb.org/t/p/w500";
   const IMG_PROVIDER = "https://image.tmdb.org/t/p/w92";
+
+  const DEMO_EMAIL = "maprexx@gmail.com";
+  const DEMO_PASS = "1234";
 
   const LS = {
     apiKey:"mf_tmdb_key",
@@ -511,8 +605,27 @@
     providersMovie: [],
     providersTv: [],
     selProvMovie: loadIntArray(LS.selectedProvMovie),
-    selProvTv: loadIntArray(LS.selectedProvTv)
+    selProvTv: loadIntArray(LS.selectedProvTv),
+    providersMode: "movie",
+    showAllGenresFilm: false,
+    showAllGenresTv: false,
+    listMode: "last"
   };
+
+  // Provider preferiti in alto. Se TMDB non li ha per IT, li ignoro.
+  const PREFERRED_PROVIDER_IDS = [
+    8,    // Netflix
+    119,  // Amazon Prime Video
+    337,  // Disney Plus
+    350,  // Apple TV Plus
+    531,  // Paramount Plus
+    2,    // Apple TV (store)
+    384,  // HBO Max (se presente IT)
+    15    // Hulu (probabile non IT, ignora)
+  ];
+
+  // Mostro pochi generi di default
+  const TOP_GENRE_COUNT = 14;
 
   function loadIntArray(key){
     try{
@@ -526,6 +639,12 @@
 
   function safeText(s){
     return (s || "").replaceAll("<","&lt;").replaceAll(">","&gt;");
+  }
+
+  function showPage(id){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("show"));
+    el(id).classList.add("show");
+    window.scrollTo({top:0, behavior:"smooth"});
   }
 
   function todayKey(){
@@ -555,7 +674,7 @@
     if(!state.apiKey) throw new Error("Manca la TMDB API key.");
     const url = new URL("https://api.themoviedb.org/3"+path);
     url.searchParams.set("api_key", state.apiKey);
-    if(params && params.language !== false) url.searchParams.set("language","it-IT");
+    if(!(params && params.language === false)) url.searchParams.set("language","it-IT");
     if(params){
       for(const [k,v] of Object.entries(params)){
         if(k==="language") continue;
@@ -661,54 +780,9 @@
     return t.slice(0,140).trim()+"...";
   }
 
-  function buildResultCard(item, type, premium){
-    const title = item.title || item.name || "Titolo";
-    const overview = shortOverview(item.overview, premium);
-    const poster = item.poster_path ? (IMG_POSTER + item.poster_path) : "";
-    const posterHtml = poster ? `<img src="${poster}" alt="Locandina">` : `Locandina non disponibile`;
-
-    const year = (item.release_date || item.first_air_date || "").slice(0,4);
-    const rating = (typeof item.vote_average === "number") ? item.vote_average.toFixed(1) : "";
-    const chips = [];
-    if(year) chips.push("Anno "+year);
-    if(rating) chips.push("Voto "+rating);
-    chips.push(type === "tv" ? "Serie TV" : "Film");
-
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = `
-      <div class="resultCard">
-        <div class="poster">${posterHtml}</div>
-        <div class="meta">
-          <h3>${safeText(title)}</h3>
-          <p class="o">${safeText(overview)}</p>
-          <div class="chips">${chips.map(c => `<span class="chip">${safeText(c)}</span>`).join("")}</div>
-          ${buildProvidersBox()}
-          <div class="divider"></div>
-          <div class="row">
-            <button class="btn btnPrimary" data-act="watch">Guarda</button>
-            <button class="btn btnGhost" data-act="saveLast">Ultimi visti</button>
-            <button class="btn btnGhost" data-act="saveWatch">Watchlist</button>
-            <button class="btn btnGhost" data-act="share">Condividi</button>
-          </div>
-        </div>
-      </div>
-    `;
-    const card = wrapper.firstElementChild;
-
-    card.querySelector('[data-act="watch"]').onclick = () => triggerExitFade();
-    card.querySelector('[data-act="saveLast"]').onclick = () => addLastViewed(item, type);
-    card.querySelector('[data-act="saveWatch"]').onclick = () => addWatchlist(item, type);
-    card.querySelector('[data-act="share"]').onclick = () => shareTitle(item, type);
-
-    fillProvidersBox(card, type, item.id);
-
-    return card;
-  }
-
   function triggerExitFade(){
     el("fadeOut").classList.add("show");
   }
-
   el("exitNowBtn").onclick = () => { try{ window.close(); }catch(e){} };
 
   function addLastViewed(item, type){
@@ -718,7 +792,6 @@
     const filtered = list.filter(x => !(x.id===entry.id && x.type===entry.type));
     filtered.unshift(entry);
     localStorage.setItem(LS.lastViewed, JSON.stringify(filtered.slice(0, 30)));
-    renderLastViewed();
   }
 
   function addWatchlist(item, type){
@@ -728,50 +801,6 @@
     const filtered = list.filter(x => !(x.id===entry.id && x.type===entry.type));
     filtered.unshift(entry);
     localStorage.setItem(LS.watchlist, JSON.stringify(filtered.slice(0, 60)));
-    renderWatchlist();
-  }
-
-  function renderListInto(containerId, storageKey){
-    const box = el(containerId);
-    if(!box) return;
-    const list = JSON.parse(localStorage.getItem(storageKey) || "[]");
-    if(!list.length){
-      box.innerHTML = `<div class="small">Vuoto.</div>`;
-      return;
-    }
-    box.innerHTML = "";
-    for(const x of list){
-      const fake = {
-        id:x.id,
-        title: x.type==="movie" ? x.title : undefined,
-        name: x.type==="tv" ? x.title : undefined,
-        poster_path:x.poster_path,
-        overview:""
-      };
-      box.appendChild(buildResultCard(fake, x.type, true));
-    }
-  }
-
-  function renderLastViewed(){ renderListInto("lastResults", LS.lastViewed); }
-  function renderWatchlist(){ renderListInto("watchResults", LS.watchlist); }
-
-  function applyOnlyOnlineFilter(container){
-    if(!container) return;
-    const cards = Array.from(container.querySelectorAll(".resultCard"));
-    for(const c of cards){
-      if(!state.onlyOnline){
-        c.style.display = "";
-        continue;
-      }
-      const ok = c.dataset.onlineOk === "1";
-      c.style.display = ok ? "" : "none";
-    }
-  }
-
-  function limitVisible(container, max){
-    if(!container) return;
-    const cards = Array.from(container.querySelectorAll(".resultCard")).filter(c => c.style.display !== "none");
-    cards.forEach((c,i)=>{ if(i>=max) c.style.display="none"; });
   }
 
   async function shareWithFallback(payload){
@@ -823,15 +852,70 @@
     shareWithFallback({ title:"Movie Finder", text, url:APP_URL });
   }
 
+  function buildResultCard(item, type, premium){
+    const title = item.title || item.name || "Titolo";
+    const overview = shortOverview(item.overview, premium);
+    const poster = item.poster_path ? (IMG_POSTER + item.poster_path) : "";
+    const posterHtml = poster ? `<img src="${poster}" alt="Locandina">` : `Locandina non disponibile`;
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = `
+      <div class="resultCard">
+        <div class="poster">${posterHtml}</div>
+        <div class="meta">
+          <h3>${safeText(title)}</h3>
+          <p class="o">${safeText(overview)}</p>
+          ${buildProvidersBox()}
+          <div class="divider"></div>
+          <div class="row">
+            <button class="btn btnPrimary" data-act="watch">Guarda</button>
+            <button class="btn btnGhost" data-act="saveLast">Ultimi visti</button>
+            <button class="btn btnGhost" data-act="saveWatch">Watchlist</button>
+            <button class="btn btnGhost" data-act="share">Condividi</button>
+          </div>
+        </div>
+      </div>
+    `;
+    const card = wrapper.firstElementChild;
+
+    card.querySelector('[data-act="watch"]').onclick = () => triggerExitFade();
+    card.querySelector('[data-act="saveLast"]').onclick = () => { addLastViewed(item, type); alert("Salvato in Ultimi visti."); };
+    card.querySelector('[data-act="saveWatch"]').onclick = () => { addWatchlist(item, type); alert("Aggiunto in Watchlist."); };
+    card.querySelector('[data-act="share"]').onclick = () => shareTitle(item, type);
+
+    fillProvidersBox(card, type, item.id);
+
+    return card;
+  }
+
+  function applyOnlyOnlineFilter(container){
+    if(!container) return;
+    const cards = Array.from(container.querySelectorAll(".resultCard"));
+    for(const c of cards){
+      if(!state.onlyOnline){
+        c.style.display = "";
+        continue;
+      }
+      const ok = c.dataset.onlineOk === "1";
+      c.style.display = ok ? "" : "none";
+    }
+  }
+
+  function limitVisible(container, max){
+    if(!container) return;
+    const cards = Array.from(container.querySelectorAll(".resultCard")).filter(c => c.style.display !== "none");
+    cards.forEach((c,i)=>{ if(i>=max) c.style.display="none"; });
+  }
+
   function planInfoHtml(plan){
     if(plan==="basic"){
       return `
-        <div class="choiceItem">
+        <div class="card" style="margin:0">
           <h3>Versione BASIC, gratuita</h3>
-          <ul>
+          <ul style="margin:0;padding-left:18px;color:var(--muted);line-height:1.35">
             <li>Solo film, nessuna serie TV</li>
             <li>Una ricerca al giorno, 3 risultati</li>
-            <li>Filtri essenziali: comico, azione, romantico, cartoni animati</li>
+            <li>Filtri: comico, azione, romantico, cartoni animati</li>
             <li>Esclusione contenuti VM18</li>
             <li>Disponibilità streaming con loghi</li>
             <li>Trama molto breve</li>
@@ -841,14 +925,14 @@
       `;
     }
     return `
-      <div class="choiceItem">
+      <div class="card" style="margin:0">
         <h3>Versione PREMIUM</h3>
-        <ul>
+        <ul style="margin:0;padding-left:18px;color:var(--muted);line-height:1.35">
           <li>Film e serie TV</li>
           <li>Nessun limite di ricerche giornaliere</li>
-          <li>Accesso a tutti i generi con slider 0 a 5</li>
+          <li>Slider 0 a 5 per i generi</li>
           <li>Filtro piattaforme selezionabili</li>
-          <li>Accesso ai contenuti VM18</li>
+          <li>Contenuti VM18</li>
           <li>Trama estesa</li>
           <li>Watchlist, trending, social, ultimi visti</li>
         </ul>
@@ -866,28 +950,22 @@
     localStorage.setItem(LS.plan, plan);
 
     el("planInfo").innerHTML = planInfoHtml(plan);
-    el("tabBasic").classList.toggle("tabActive", plan==="basic");
-    el("tabPremium").classList.toggle("tabActive", plan==="premium");
+    el("tabBasic").classList.toggle("btnPrimary", plan==="basic");
+    el("tabBasic").classList.toggle("btnGhost", plan!=="basic");
+    el("tabPremium").classList.toggle("btnPrimary", plan==="premium");
+    el("tabPremium").classList.toggle("btnGhost", plan!=="premium");
 
-    el("basicPanel").classList.toggle("hidden", plan!=="basic");
     el("premiumGate").classList.toggle("hidden", plan!=="premium");
-    el("premiumPanel").classList.toggle("hidden", !(plan==="premium" && state.premiumActive));
 
     el("planPill").innerHTML = plan==="basic"
       ? "<strong>Basic</strong> attivo"
       : ("<strong>Premium</strong> " + (state.premiumActive ? "attivo" : "bloccato"));
-
-    el("basicResults").style.display = "none";
-    el("basicResults").innerHTML = "";
   }
 
   function setPremiumActive(active){
     state.premiumActive = active;
     localStorage.setItem(LS.premiumActive, active ? "1" : "0");
     setPlan("premium");
-    if(active){
-      ensurePremiumDataLoaded();
-    }
   }
 
   function buildBasicGenres(){
@@ -905,40 +983,40 @@
       row.innerHTML = `
         <div class="genreName">
           <div>${safeText(g.name)}</div>
-          <div class="badge" id="b_b_${g.id}">No</div>
+          <div class="badge" id="b_basic_${g.id}">No</div>
         </div>
-        <div>
-          <input type="checkbox" id="b_c_${g.id}" style="width:22px;height:22px;accent-color:var(--g)">
+        <div style="display:flex;justify-content:flex-end">
+          <input type="checkbox" id="c_basic_${g.id}" style="width:22px;height:22px;accent-color:var(--g)">
         </div>
       `;
       box.appendChild(row);
-      const c = row.querySelector("#b_c_"+g.id);
-      const b = row.querySelector("#b_b_"+g.id);
+      const c = row.querySelector("#c_basic_"+g.id);
+      const b = row.querySelector("#b_basic_"+g.id);
       c.addEventListener("change", ()=> b.textContent = c.checked ? "Si" : "No");
     }
   }
 
   async function basicSearch(){
-    const out = el("basicResults");
-    out.style.display = "grid";
+    const out = el("resultsBox");
     out.innerHTML = `<div class="small">Carico...</div>`;
 
     const count = getBasicCount();
     if(count >= 1){
       out.innerHTML = `<div class="small">Hai già fatto la ricerca di oggi.</div>`;
+      showPage("pageResults");
       return;
     }
 
     const selected = [];
     el("basicGenres").querySelectorAll('input[type="checkbox"]').forEach(ch=>{
       if(ch.checked){
-        const id = parseInt(ch.id.replace("b_c_",""),10);
+        const id = parseInt(ch.id.replace("c_basic_",""),10);
         if(Number.isFinite(id)) selected.push(id);
       }
     });
 
     if(!selected.length){
-      out.innerHTML = `<div class="small">Seleziona almeno un genere.</div>`;
+      alert("Seleziona almeno un genere.");
       return;
     }
 
@@ -949,7 +1027,7 @@
         include_adult:"false",
         sort_by:"popularity.desc",
         page:1,
-        with_genres:selected.join(","), 
+        with_genres:selected.join(","),
         watch_region:REGION,
         with_watch_monetization_types:"flatrate|rent|buy"
       });
@@ -959,6 +1037,7 @@
 
       if(!list.length){
         out.innerHTML = `<div class="small">Nessun risultato.</div>`;
+        showPage("pageResults");
         return;
       }
 
@@ -966,13 +1045,16 @@
         out.appendChild(buildResultCard(item, "movie", false));
       }
 
+      showPage("pageResults");
+
       setTimeout(()=>{
         applyOnlyOnlineFilter(out);
         limitVisible(out, 3);
-      }, 1000);
+      }, 1100);
 
     }catch(e){
       out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
+      showPage("pageResults");
     }
   }
 
@@ -1011,94 +1093,6 @@
     });
   }
 
-  async function ensurePremiumDataLoaded(){
-    if(!state.apiKey) return;
-
-    if(!state.providersMovie.length){
-      state.providersMovie = await loadProviders("movie");
-      renderProviderPicker("movie");
-    }
-    if(!state.providersTv.length){
-      state.providersTv = await loadProviders("tv");
-      renderProviderPicker("tv");
-    }
-
-    const movieBox = el("premFilmGenres");
-    const tvBox = el("premTvGenres");
-
-    if(movieBox.childElementCount===0){
-      const mg = await tmdb("/genre/movie/list", {});
-      movieBox.innerHTML="";
-      (mg.genres||[]).forEach(g=>buildSliderRow(movieBox,g));
-    }
-    if(tvBox.childElementCount===0){
-      const tg = await tmdb("/genre/tv/list", {});
-      tvBox.innerHTML="";
-      (tg.genres||[]).forEach(g=>buildSliderRow(tvBox,g));
-    }
-
-    renderLastViewed();
-    renderWatchlist();
-  }
-
-  function renderProviderPicker(type){
-    const list = type==="movie" ? state.providersMovie : state.providersTv;
-    const boxId = type==="movie" ? "premFilmProvList" : "premTvProvList";
-    const msgId = type==="movie" ? "premFilmProvMsg" : "premTvProvMsg";
-    const box = el(boxId);
-    const msg = el(msgId);
-
-    const selected = type==="movie" ? state.selProvMovie : state.selProvTv;
-
-    box.innerHTML = "";
-    msg.textContent = "Se non selezioni nulla, vale Tutte.";
-
-    const sorted = [...list].sort((a,b)=>a.name.localeCompare(b.name));
-
-    for(const p of sorted){
-      const chip = document.createElement("div");
-      chip.className = "provChip"+(selected.includes(p.id) ? " active" : "");
-      chip.dataset.pid = String(p.id);
-      chip.innerHTML = `${p.logo ? `<img src="${p.logo}" alt="">` : ""}<span>${safeText(p.name)}</span>`;
-      chip.onclick = () => {
-        const id = parseInt(chip.dataset.pid,10);
-        let sel = type==="movie" ? state.selProvMovie : state.selProvTv;
-        if(sel.includes(id)) sel = sel.filter(x=>x!==id); else sel = sel.concat([id]);
-        if(type==="movie"){
-          state.selProvMovie = sel;
-          saveIntArray(LS.selectedProvMovie, sel);
-        }else{
-          state.selProvTv = sel;
-          saveIntArray(LS.selectedProvTv, sel);
-        }
-        chip.classList.toggle("active");
-      };
-      box.appendChild(chip);
-    }
-  }
-
-  function setProvidersAll(type){
-    if(type==="movie"){
-      state.selProvMovie = [];
-      saveIntArray(LS.selectedProvMovie, []);
-    }else{
-      state.selProvTv = [];
-      saveIntArray(LS.selectedProvTv, []);
-    }
-    renderProviderPicker(type);
-  }
-
-  function setProvidersClear(type){
-    if(type==="movie"){
-      state.selProvMovie = [];
-      saveIntArray(LS.selectedProvMovie, []);
-    }else{
-      state.selProvTv = [];
-      saveIntArray(LS.selectedProvTv, []);
-    }
-    renderProviderPicker(type);
-  }
-
   function scoreItems(items, weights){
     const map = new Map(weights.map(w=>[w.id,w.w]));
     return items.map(it=>{
@@ -1111,19 +1105,112 @@
     }).sort((a,b)=>b.s-a.s).map(x=>x.it);
   }
 
+  async function ensurePremiumDataLoaded(){
+    if(!state.apiKey) return;
+
+    if(!state.providersMovie.length) state.providersMovie = await loadProviders("movie");
+    if(!state.providersTv.length) state.providersTv = await loadProviders("tv");
+
+    await ensureGenresLoaded("movie");
+    await ensureGenresLoaded("tv");
+  }
+
+  async function ensureGenresLoaded(type){
+    const box = type==="movie" ? el("premFilmGenres") : el("premTvGenres");
+    const showAll = type==="movie" ? state.showAllGenresFilm : state.showAllGenresTv;
+
+    const data = await tmdb(`/genre/${type}/list`, {});
+    const all = (data.genres || []).slice().sort((a,b)=>a.name.localeCompare(b.name));
+
+    const top = all.slice(0, TOP_GENRE_COUNT);
+    const use = showAll ? all : top;
+
+    box.innerHTML = "";
+    use.forEach(g=>buildSliderRow(box,g));
+  }
+
+  function splitProviders(list){
+    const common = [];
+    const more = [];
+
+    const byId = new Map(list.map(p=>[p.id,p]));
+    for(const id of PREFERRED_PROVIDER_IDS){
+      if(byId.has(id)) common.push(byId.get(id));
+    }
+
+    const commonIds = new Set(common.map(p=>p.id));
+    const rest = list.filter(p=>!commonIds.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name));
+
+    // Limito “altri” per non esplodere la UI
+    rest.forEach(p=>more.push(p));
+    return {common, more};
+  }
+
+  function renderProvidersPage(){
+    const type = state.providersMode;
+    const list = type==="movie" ? state.providersMovie : state.providersTv;
+    const sel = type==="movie" ? state.selProvMovie : state.selProvTv;
+
+    el("providersForPill").innerHTML = type==="movie"
+      ? "<strong>Film</strong> piattaforme"
+      : "<strong>Serie TV</strong> piattaforme";
+
+    const {common, more} = splitProviders(list);
+
+    el("provCommonList").innerHTML = "";
+    el("provMoreList").innerHTML = "";
+
+    const mkChip = (p) => {
+      const chip = document.createElement("div");
+      chip.className = "provChip"+(sel.includes(p.id) ? " active" : "");
+      chip.dataset.pid = String(p.id);
+      chip.innerHTML = `${p.logo ? `<img src="${p.logo}" alt="">` : ""}<span>${safeText(p.name)}</span>`;
+      chip.onclick = () => {
+        const id = parseInt(chip.dataset.pid,10);
+        let current = type==="movie" ? state.selProvMovie : state.selProvTv;
+
+        if(current.includes(id)) current = current.filter(x=>x!==id);
+        else current = current.concat([id]);
+
+        if(type==="movie"){
+          state.selProvMovie = current;
+          saveIntArray(LS.selectedProvMovie, current);
+        }else{
+          state.selProvTv = current;
+          saveIntArray(LS.selectedProvTv, current);
+        }
+        chip.classList.toggle("active");
+        updateProvMsg();
+      };
+      return chip;
+    };
+
+    common.forEach(p=>el("provCommonList").appendChild(mkChip(p)));
+    more.forEach(p=>el("provMoreList").appendChild(mkChip(p)));
+
+    updateProvMsg();
+  }
+
+  function updateProvMsg(){
+    const type = state.providersMode;
+    const sel = type==="movie" ? state.selProvMovie : state.selProvTv;
+    el("provMsg").textContent = sel.length ? ("Selezionate: "+sel.length) : "Nessuna selezione. Uso tutte.";
+  }
+
   async function premiumSearch(type){
-    const out = type==="movie" ? el("premFilmResults") : el("premTvResults");
+    const out = el("resultsBox");
     out.innerHTML = `<div class="small">Carico...</div>`;
 
     try{
       const genreBox = type==="movie" ? el("premFilmGenres") : el("premTvGenres");
       const weights = getSliderSelections(genreBox);
       if(!weights.length){
-        out.innerHTML = `<div class="small">Alza almeno uno slider.</div>`;
+        alert("Alza almeno uno slider.");
         return;
       }
 
       const selectedIds = weights.map(x=>x.id);
+
       const selectedProviders = type==="movie" ? state.selProvMovie : state.selProvTv;
       const provParam = selectedProviders.length ? selectedProviders.join("|") : "";
 
@@ -1133,8 +1220,7 @@
         include_adult:"true",
         watch_region:REGION,
         with_watch_providers:provParam,
-        with_watch_monetization_types:"flatrate|rent|buy",
-        with_genres:selectedIds.join("|")
+        with_watch_monetization_types:"flatrate|rent|buy"
       });
 
       let items = (data.results || []).slice(0, 80);
@@ -1144,15 +1230,17 @@
       out.innerHTML = "";
 
       if(!items.length){
-        out.innerHTML = `<div class="small">Nessun risultato. Abbassa qualche slider o togli filtri piattaforme.</div>`;
+        out.innerHTML = `<div class="small">Nessun risultato. Cambia slider o piattaforme.</div>`;
+        showPage("pageResults");
         return;
       }
 
-      const top = items.slice(0, 12);
-      for(const item of top){
+      for(const item of items.slice(0, 12)){
         out.appendChild(buildResultCard(item, type, true));
         addLastViewed(item, type);
       }
+
+      showPage("pageResults");
 
       setTimeout(()=>{
         applyOnlyOnlineFilter(out);
@@ -1161,6 +1249,7 @@
 
     }catch(e){
       out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
+      showPage("pageResults");
     }
   }
 
@@ -1191,15 +1280,24 @@
     }
   }
 
-  function showPremiumSection(secId){
-    document.querySelectorAll(".premSec").forEach(s=>{
-      s.classList.toggle("hidden", s.id !== secId);
-    });
-    el("premiumTabs").querySelectorAll(".tab").forEach(t=>{
-      t.classList.toggle("tabActive", t.getAttribute("data-sec") === secId);
-    });
-    if(secId==="premLast") renderLastViewed();
-    if(secId==="premWatch") renderWatchlist();
+  function renderList(storageKey){
+    const box = el("listsBox");
+    const list = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    if(!list.length){
+      box.innerHTML = `<div class="small">Vuoto.</div>`;
+      return;
+    }
+    box.innerHTML = "";
+    for(const x of list){
+      const fake = {
+        id:x.id,
+        title: x.type==="movie" ? x.title : undefined,
+        name: x.type==="tv" ? x.title : undefined,
+        poster_path:x.poster_path,
+        overview:""
+      };
+      box.appendChild(buildResultCard(fake, x.type, true));
+    }
   }
 
   function resetApp(){
@@ -1210,33 +1308,49 @@
   function init(){
     setTimeout(()=> el("splash").classList.add("splashHidden"), 2000);
 
-    el("planInfo").innerHTML = planInfoHtml(state.plan);
-
     el("onlyOnlineToggle").checked = state.onlyOnline;
     el("onlyOnlineToggle").addEventListener("change", ()=>{
       state.onlyOnline = el("onlyOnlineToggle").checked;
       localStorage.setItem(LS.onlyOnline, state.onlyOnline ? "1" : "0");
     });
 
-    el("tabBasic").onclick = ()=>{ setPlan("basic"); };
-    el("tabPremium").onclick = ()=>{ setPlan("premium"); };
+    el("goPlanBtn").onclick = ()=> showPage("pagePlan");
+    el("goSettingsBtn").onclick = ()=> showPage("pageSettings");
 
-    el("payBtn").onclick = ()=>{
-      alert("Qui è PWA. Il pagamento reale arriva nella app Play Store con Google Play Billing.");
+    el("goMainBtn").onclick = async ()=>{
+      if(state.plan==="basic"){
+        showPage("pageBasic");
+        return;
+      }
+      if(!state.premiumActive){
+        showPage("pagePlan");
+        alert("Premium bloccato. Accedi prima.");
+        return;
+      }
+      await ensurePremiumDataLoaded();
+      showPage("pagePremiumMenu");
     };
 
+    el("backFromPlanBtn").onclick = ()=> showPage("pageHome");
+    el("backFromSettingsBtn").onclick = ()=> showPage("pageHome");
+
+    el("tabBasic").onclick = ()=> setPlan("basic");
+    el("tabPremium").onclick = ()=> setPlan("premium");
+
+    el("payBtn").onclick = ()=> alert("Qui è PWA. Il pagamento reale arriva nella app Play Store con Google Play Billing.");
     el("alreadyBtn").onclick = ()=>{
       el("loginBox").classList.remove("hidden");
       el("loginMsg").textContent = "Inserisci email e password.";
-      el("loginEmail").value = "maprexx@gmail.com";
     };
 
-    el("loginBtn").onclick = ()=>{
+    el("loginBtn").onclick = async ()=>{
       const email = (el("loginEmail").value || "").trim().toLowerCase();
       const pass = (el("loginPass").value || "").trim();
-      if(email==="maprexx@gmail.com" && pass==="1234"){
+      if(email===DEMO_EMAIL && pass===DEMO_PASS){
         el("loginMsg").textContent = "Premium attivo.";
         setPremiumActive(true);
+        await ensurePremiumDataLoaded();
+        showPage("pagePremiumMenu");
       }else{
         el("loginMsg").textContent = "Credenziali non valide.";
       }
@@ -1247,29 +1361,120 @@
       setPremiumActive(false);
     };
 
-    el("goBtn").onclick = ()=>{
-      if(state.plan==="basic"){
-        window.scrollTo({top:0, behavior:"smooth"});
-        return;
-      }
-      if(!state.premiumActive){
-        alert("Premium bloccato. Accedi prima.");
-        return;
-      }
-      el("premiumPanel").classList.remove("hidden");
-      showPremiumSection("premFilm");
-      window.scrollTo({top:0, behavior:"smooth"});
+    el("backFromBasicBtn").onclick = ()=> showPage("pageHome");
+    el("basicSearchBtn").onclick = ()=> basicSearch();
+
+    el("backFromPremiumMenuBtn").onclick = ()=> showPage("pageHome");
+
+    el("goPremFilmBtn").onclick = ()=> showPage("pagePremFilm");
+    el("goPremTvBtn").onclick = ()=> showPage("pagePremTv");
+    el("goTrendingBtn").onclick = ()=> showPage("pageTrending");
+    el("goSocialBtn").onclick = ()=> showPage("pageSocial");
+    el("goLastBtn").onclick = ()=>{
+      state.listMode = "last";
+      el("listsTitle").textContent = "Ultimi visti";
+      el("listsClearBtn").onclick = ()=> { localStorage.removeItem(LS.lastViewed); renderList(LS.lastViewed); };
+      renderList(LS.lastViewed);
+      showPage("pageLists");
+    };
+    el("goWatchBtn").onclick = ()=>{
+      state.listMode = "watch";
+      el("listsTitle").textContent = "Watchlist";
+      el("listsClearBtn").onclick = ()=> { localStorage.removeItem(LS.watchlist); renderList(LS.watchlist); };
+      renderList(LS.watchlist);
+      showPage("pageLists");
     };
 
-    el("basicSearchBtn").onclick = ()=> basicSearch();
+    el("backFromPremFilmBtn").onclick = ()=> showPage("pagePremiumMenu");
+    el("backFromPremTvBtn").onclick = ()=> showPage("pagePremiumMenu");
+
+    el("toggleAllGenresFilmBtn").onclick = async ()=>{
+      state.showAllGenresFilm = !state.showAllGenresFilm;
+      el("toggleAllGenresFilmBtn").textContent = state.showAllGenresFilm ? "Mostra meno generi" : "Mostra tutti i generi";
+      await ensureGenresLoaded("movie");
+    };
+    el("toggleAllGenresTvBtn").onclick = async ()=>{
+      state.showAllGenresTv = !state.showAllGenresTv;
+      el("toggleAllGenresTvBtn").textContent = state.showAllGenresTv ? "Mostra meno generi" : "Mostra tutti i generi";
+      await ensureGenresLoaded("tv");
+    };
+
+    el("goProvidersFilmBtn").onclick = async ()=>{
+      await ensurePremiumDataLoaded();
+      state.providersMode = "movie";
+      renderProvidersPage();
+      showPage("pageProviders");
+    };
+    el("goProvidersTvBtn").onclick = async ()=>{
+      await ensurePremiumDataLoaded();
+      state.providersMode = "tv";
+      renderProvidersPage();
+      showPage("pageProviders");
+    };
+
+    el("provAllBtn").onclick = ()=>{
+      if(state.providersMode==="movie"){
+        state.selProvMovie = [];
+        saveIntArray(LS.selectedProvMovie, []);
+      }else{
+        state.selProvTv = [];
+        saveIntArray(LS.selectedProvTv, []);
+      }
+      renderProvidersPage();
+    };
+
+    el("provClearBtn").onclick = ()=>{
+      if(state.providersMode==="movie"){
+        state.selProvMovie = [];
+        saveIntArray(LS.selectedProvMovie, []);
+      }else{
+        state.selProvTv = [];
+        saveIntArray(LS.selectedProvTv, []);
+      }
+      renderProvidersPage();
+    };
+
+    el("provToggleMoreBtn").onclick = ()=>{
+      const more = el("provMoreList");
+      const open = !more.classList.contains("hidden");
+      more.classList.toggle("hidden", open);
+      el("provToggleMoreBtn").textContent = open ? "Mostra altri" : "Nascondi altri";
+    };
+
+    el("provDoneBtn").onclick = ()=>{
+      showPage(state.providersMode==="movie" ? "pagePremFilm" : "pagePremTv");
+    };
+
+    el("backFromProvidersBtn").onclick = ()=>{
+      showPage(state.providersMode==="movie" ? "pagePremFilm" : "pagePremTv");
+    };
+
+    el("premFilmSearchBtn").onclick = ()=> premiumSearch("movie");
+    el("premTvSearchBtn").onclick = ()=> premiumSearch("tv");
+
+    el("backFromResultsBtn").onclick = ()=>{
+      if(state.plan==="basic") showPage("pageBasic");
+      else showPage("pagePremiumMenu");
+    };
+
+    el("backFromTrendingBtn").onclick = ()=> showPage("pagePremiumMenu");
+    el("loadTrendingBtn").onclick = ()=> loadTrending();
+    el("toggleTrendingBtn").onclick = ()=>{
+      state.trendingType = state.trendingType === "movie" ? "tv" : "movie";
+      el("toggleTrendingBtn").textContent = state.trendingType === "movie" ? "Mostra: Film" : "Mostra: Serie TV";
+    };
+
+    el("backFromSocialBtn").onclick = ()=> showPage("pagePremiumMenu");
+    el("shareLastBtn").onclick = ()=> shareLastViewed();
+    el("shareAppBtn").onclick = ()=> shareApp();
+
+    el("backFromListsBtn").onclick = ()=> showPage("pagePremiumMenu");
 
     el("saveKeyBtn").onclick = async ()=>{
       state.apiKey = (el("apiKeyInput").value || "").trim();
       localStorage.setItem(LS.apiKey, state.apiKey);
       renderKeyStatus();
-      if(state.premiumActive && state.plan==="premium"){
-        await ensurePremiumDataLoaded();
-      }
+      if(state.premiumActive) await ensurePremiumDataLoaded();
     };
 
     el("clearKeyBtn").onclick = ()=>{
@@ -1280,52 +1485,17 @@
 
     el("resetBtn").onclick = ()=> resetApp();
 
-    el("premiumTabs").addEventListener("click", (ev)=>{
-      const btn = ev.target.closest("button");
-      if(!btn) return;
-      const sec = btn.getAttribute("data-sec");
-      if(!sec) return;
-      showPremiumSection(sec);
-    });
-
-    el("premFilmSearchBtn").onclick = ()=> premiumSearch("movie");
-    el("premTvSearchBtn").onclick = ()=> premiumSearch("tv");
-
-    el("filmAllProvBtn").onclick = ()=> setProvidersAll("movie");
-    el("filmClearProvBtn").onclick = ()=> setProvidersClear("movie");
-    el("tvAllProvBtn").onclick = ()=> setProvidersAll("tv");
-    el("tvClearProvBtn").onclick = ()=> setProvidersClear("tv");
-
-    el("loadTrendingBtn").onclick = ()=> loadTrending();
-    el("toggleTrendingBtn").onclick = ()=>{
-      state.trendingType = state.trendingType === "movie" ? "tv" : "movie";
-      el("toggleTrendingBtn").textContent = state.trendingType === "movie" ? "Mostra: Film" : "Mostra: Serie TV";
-    };
-
-    el("shareLastBtn").onclick = ()=> shareLastViewed();
-    el("shareAppBtn").onclick = ()=> shareApp();
-
-    el("clearLastBtn").onclick = ()=>{
-      localStorage.removeItem(LS.lastViewed);
-      renderLastViewed();
-    };
-    el("clearWatchBtn").onclick = ()=>{
-      localStorage.removeItem(LS.watchlist);
-      renderWatchlist();
-    };
-
     buildBasicGenres();
     renderKeyStatus();
+    el("planInfo").innerHTML = planInfoHtml(state.plan);
     setPlan(state.plan);
 
     if(state.premiumActive){
       setPlan("premium");
-      ensurePremiumDataLoaded();
     }
   }
 
   init();
 </script>
-
 </body>
 </html>
