@@ -2,60 +2,74 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
 <title>Movie Finder</title>
 
 <style>
+:root{
+--bg0:#050813;
+--bg1:#0b1020;
+--card:rgba(255,255,255,.04);
+--line:rgba(255,255,255,.12);
+--text:#e5e7eb;
+--muted:#9ca3af;
+--y:#d9ff2f;
+--g:#39ff6b;
+--blue:#1e40af;
+--r:22px;
+}
+*{box-sizing:border-box}
 body{
 margin:0;
-font-family:system-ui;
-background:linear-gradient(180deg,#050813,#0b1020);
-color:#e5e7eb;
+font-family:system-ui,Arial;
+background:linear-gradient(180deg,var(--bg0),var(--bg1));
+color:var(--text);
 padding:16px;
 }
 .card{
-background:rgba(255,255,255,.04);
-border-radius:22px;
+background:linear-gradient(180deg,var(--card),rgba(255,255,255,.02));
+border-radius:var(--r);
 padding:18px;
 margin-bottom:16px;
-border:1px solid rgba(255,255,255,.12);
+border:1px solid var(--line);
 }
 h1,h2,h3{margin:0 0 10px}
-.small{font-size:13px;color:#9ca3af}
+.small{color:var(--muted);font-size:13px;line-height:1.35}
+.row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
 padding:14px 20px;
 border-radius:999px;
-border:none;
+border:1px solid var(--line);
+background:transparent;
+color:var(--text);
 font-weight:900;
 cursor:pointer;
 }
-.main{
-background:linear-gradient(90deg,#d9ff2f,#39ff6b);
-color:#1e40af;
-}
-.secondary{
-background:transparent;
-border:1px solid rgba(255,255,255,.2);
-color:#fff;
+.primary{
+border:none;
+background:linear-gradient(90deg,var(--y),var(--g));
+color:var(--blue);
 }
 .hidden{display:none}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.genre{margin-bottom:12px}
-input[type=checkbox]{width:20px;height:20px}
+.genre{margin:10px 0}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--g)}
 input[type=range]{width:100%}
+.results{margin-top:10px}
 .result{
-border:1px solid rgba(255,255,255,.12);
-border-radius:18px;
+border:1px solid var(--line);
+border-radius:16px;
 padding:10px;
 display:grid;
 grid-template-columns:90px 1fr;
 gap:12px;
 margin-bottom:12px;
+background:rgba(255,255,255,.02);
 }
 .poster{
 width:90px;height:135px;
 background:#000;
-border-radius:14px;
+border-radius:12px;
 overflow:hidden;
 }
 .poster img{width:100%;height:100%;object-fit:cover}
@@ -67,9 +81,44 @@ display:none;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-z-index:10;
+z-index:99;
+padding:20px;
 }
 .fade.show{display:flex}
+.pill{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.02);
+color:var(--muted);
+font-size:12px;
+margin-bottom:10px;
+}
+.pill strong{color:var(--text)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{
+border:1px solid var(--line);
+border-radius:999px;
+padding:8px 10px;
+cursor:pointer;
+user-select:none;
+background:rgba(255,255,255,.02);
+color:var(--muted);
+font-size:12px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+.chip img{width:22px;height:22px;border-radius:8px;border:1px solid rgba(255,255,255,.12)}
+.chip.active{
+border-color:rgba(57,255,107,.45);
+background:rgba(57,255,107,.12);
+color:var(--text);
+}
+hr{border:none;border-top:1px solid var(--line);margin:14px 0}
 </style>
 </head>
 
@@ -79,157 +128,626 @@ z-index:10;
 <h1>Movie Finder</h1>
 <p class="small">COSA VUOI GUARDARE OGGI?</p>
 <div class="row">
-<button class="btn main" onclick="openBasic()">Versione BASIC</button>
-<button class="btn secondary" onclick="openPremium()">Versione PREMIUM</button>
+<button class="btn primary" id="basicBtn">Versione BASIC</button>
+<button class="btn" id="premiumBtn">Versione PREMIUM</button>
 </div>
+</div>
+
+<div class="card hidden" id="planInfo">
+<h2>Piani</h2>
+
+<div class="pill"><strong>BASIC</strong> gratuita</div>
+<div class="small">
+Solo film. 1 ricerca al giorno. 3 risultati. Filtri essenziali. No VM18. Trama breve. Nessuna registrazione.
+</div>
+
+<hr>
+
+<div class="pill"><strong>PREMIUM</strong> a pagamento</div>
+<div class="small">
+Film e serie TV. Ricerche illimitate. Slider 0 a 5. Tutti i generi. VM18 incluso. Trama estesa. Watchlist. Social. Trending.
+</div>
+
+<hr>
+
+<div class="row">
+<button class="btn primary" id="goBasicFromInfo">Usa BASIC</button>
+<button class="btn" id="goPremiumFromInfo">Entra in PREMIUM</button>
+<button class="btn" id="backHome1">Indietro</button>
+</div>
+
+<div class="small" style="margin-top:10px">
+Demo Premium: email maprexx@gmail.com e password 1234
+</div>
+</div>
+
+<div class="card hidden" id="login">
+<h2>Accesso Premium</h2>
+<p class="small">In Play Store il pagamento lo gestirà Google. Qui facciamo una demo per provare.</p>
+
+<input id="email" placeholder="Email" style="width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.15);color:var(--text);outline:none">
+<div style="height:10px"></div>
+<input id="pass" type="password" placeholder="Password" style="width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.15);color:var(--text);outline:none">
+
+<div class="row" style="margin-top:12px">
+<button class="btn primary" id="loginBtn">Accedi</button>
+<button class="btn" id="backHome2">Indietro</button>
+</div>
+
+<div class="small" id="loginMsg" style="margin-top:10px"></div>
 </div>
 
 <div class="card hidden" id="basic">
-<h2>BASIC, gratuita</h2>
-<p class="small">3 film, 1 ricerca al giorno</p>
+<h2>BASIC</h2>
+<p class="small">Seleziona generi. Ricerca AND. 3 film.</p>
 
-<div class="genre">
-<label><input type="checkbox" value="35"> Comico</label>
-</div>
-<div class="genre">
-<label><input type="checkbox" value="28"> Azione</label>
-</div>
-<div class="genre">
-<label><input type="checkbox" value="10749"> Romantico</label>
-</div>
-<div class="genre">
-<label><input type="checkbox" value="16"> Cartoni animati</label>
-</div>
+<div class="genre"><label><input type="checkbox" value="35"> Comico</label></div>
+<div class="genre"><label><input type="checkbox" value="28"> Azione</label></div>
+<div class="genre"><label><input type="checkbox" value="10749"> Romantico</label></div>
+<div class="genre"><label><input type="checkbox" value="16"> Cartoni animati</label></div>
 
-<button class="btn main" onclick="searchBasic()">Trova film</button>
-</div>
-
-<div class="card hidden" id="premium">
-<h2>PREMIUM</h2>
-<p class="small">Slider 0–5, risultati illimitati</p>
-
-<h3>Tipo</h3>
 <div class="row">
-<button class="btn secondary" onclick="setType('movie')">Film</button>
-<button class="btn secondary" onclick="setType('tv')">Serie TV</button>
+<button class="btn primary" id="basicSearch">Trova film</button>
+<button class="btn" id="backHome3">Home</button>
 </div>
 
-<h3>Preferenze</h3>
-
-<div class="genre">Comico
-<input type="range" min="0" max="5" value="0" data-genre="35">
-</div>
-<div class="genre">Azione
-<input type="range" min="0" max="5" value="0" data-genre="28">
-</div>
-<div class="genre">Romantico
-<input type="range" min="0" max="5" value="0" data-genre="10749">
-</div>
-<div class="genre">Animazione
-<input type="range" min="0" max="5" value="0" data-genre="16">
+<div class="small" id="basicMsg" style="margin-top:10px"></div>
 </div>
 
-<button class="btn main" onclick="searchPremium()">Procedi</button>
+<div class="card hidden" id="premiumMenu">
+<h2>PREMIUM</h2>
+<div class="pill"><strong>Premium</strong> attivo</div>
+<p class="small">Scegli cosa vuoi cercare.</p>
+
+<div class="row">
+<button class="btn primary" id="pickMovie">Film</button>
+<button class="btn primary" id="pickTv">Serie TV</button>
+</div>
+
+<hr>
+
+<div class="row">
+<button class="btn" id="openTrending">Trending</button>
+<button class="btn" id="openSocial">Social</button>
+<button class="btn" id="openLast">Ultimi visti</button>
+<button class="btn" id="openWatch">Watchlist</button>
+<button class="btn" id="backHome4">Home</button>
+</div>
+</div>
+
+<div class="card hidden" id="sliders">
+<h2>Slider Premium</h2>
+<p class="small">Massimo 10 slider. Valori 0 a 5. AND sui generi selezionati.</p>
+
+<div id="sliderBox"></div>
+
+<div class="row" style="margin-top:12px">
+<button class="btn primary" id="goProviders">Procedi</button>
+<button class="btn" id="backToMenu">Indietro</button>
+</div>
+
+<div class="small" id="sliderMsg" style="margin-top:10px"></div>
+</div>
+
+<div class="card hidden" id="providers">
+<h2>Piattaforme</h2>
+<p class="small">Seleziona le piattaforme. Le più comuni stanno sopra.</p>
+
+<div class="chips" id="provChips"></div>
+
+<div class="row" style="margin-top:12px">
+<button class="btn primary" id="premiumSearch">Cerca</button>
+<button class="btn" id="backToSliders">Indietro</button>
+</div>
+
+<div class="small" id="provMsg" style="margin-top:10px"></div>
 </div>
 
 <div class="card hidden" id="results">
 <h2>Risultati</h2>
-<div id="res"></div>
+<div class="results" id="resultsBox"></div>
+<div class="row" style="margin-top:12px">
+<button class="btn" id="backFromResults">Indietro</button>
+<button class="btn" id="homeFromResults">Home</button>
+</div>
+</div>
+
+<div class="card hidden" id="lists">
+<h2 id="listTitle">Lista</h2>
+<div class="results" id="listBox"></div>
+<div class="row" style="margin-top:12px">
+<button class="btn" id="clearList">Svuota</button>
+<button class="btn" id="backFromList">Indietro</button>
+</div>
+</div>
+
+<div class="card hidden" id="social">
+<h2>Social</h2>
+<p class="small">Condividi l’ultimo visto o la app.</p>
+
+<input id="socialText" placeholder="Messaggio opzionale" style="width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.15);color:var(--text);outline:none">
+
+<div class="row" style="margin-top:12px">
+<button class="btn primary" id="shareLast">Condividi ultimo visto</button>
+<button class="btn" id="shareApp">Condividi la app</button>
+<button class="btn" id="backFromSocial">Indietro</button>
+</div>
+
+<textarea id="shareFallback" class="hidden" rows="4" style="margin-top:10px;width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.15);color:var(--text);outline:none"></textarea>
+<div class="small" id="shareMsg" style="margin-top:10px"></div>
+</div>
+
+<div class="card hidden" id="trending">
+<h2>Trending</h2>
+<p class="small">I 5 titoli trending della settimana da TMDB.</p>
+
+<div class="row">
+<button class="btn primary" id="loadTrending">Carica</button>
+<button class="btn" id="toggleTrending">Mostra: Film</button>
+<button class="btn" id="backFromTrending">Indietro</button>
+</div>
+
+<div class="results" id="trendBox" style="margin-top:12px"></div>
 </div>
 
 <div class="fade" id="fade">
 <h2>Sta iniziando il film...</h2>
-<button class="btn main" onclick="window.close()">Esci dall'app</button>
+<button class="btn primary" id="exitBtn">Esci dall’app</button>
 </div>
 
 <script>
-const API="f8ecb75282e8dcea2d4845598cc7d030";
+const API_KEY="f8ecb75282e8dcea2d4845598cc7d030";
 const IMG="https://image.tmdb.org/t/p/w500";
-let currentType="movie";
+const IMG_PROVIDER="https://image.tmdb.org/t/p/w92";
+const REGION="IT";
+const APP_URL="https://maprexx-cmd.github.io/movie-finder-pwa-public/";
 
-function openBasic(){
-hideAll();
-document.getElementById("basic").classList.remove("hidden");
-}
+const DEMO_EMAIL="maprexx@gmail.com";
+const DEMO_PASS="1234";
 
-function openPremium(){
-hideAll();
-document.getElementById("premium").classList.remove("hidden");
+const LS={
+basicDate:"mf_basic_date",
+basicCount:"mf_basic_count",
+premium:"mf_premium_active",
+last:"mf_last_viewed",
+watch:"mf_watchlist",
+provMovie:"mf_sel_prov_movie",
+provTv:"mf_sel_prov_tv",
+type:"mf_type",
+weights:"mf_weights"
+};
+
+const el=id=>document.getElementById(id);
+
+const state={
+premium:localStorage.getItem(LS.premium)==="1",
+type:localStorage.getItem(LS.type)||"movie",
+weights:loadJSON(LS.weights,[]),
+provMovie:loadJSON(LS.provMovie,[]),
+provTv:loadJSON(LS.provTv,[]),
+providersMovie:[],
+providersTv:[],
+trendType:"movie"
+};
+
+const COMMON_PROVIDERS=[8,119,337,350,531,2];
+const MAX_SLIDERS=10;
+const MAX_PROVIDER_CHIPS=10;
+
+function loadJSON(k,def){
+try{const x=JSON.parse(localStorage.getItem(k)||"");return x??def}catch(e){return def}
 }
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
 function hideAll(){
-["home","basic","premium","results"].forEach(id=>{
-document.getElementById(id).classList.add("hidden");
+["home","planInfo","login","basic","premiumMenu","sliders","providers","results","lists","social","trending"].forEach(id=>{
+el(id).classList.add("hidden");
 });
 }
-
-async function searchBasic(){
+function show(id){
 hideAll();
-document.getElementById("results").classList.remove("hidden");
-const res=document.getElementById("res");
-res.innerHTML="Carico...";
-
-const genres=[...document.querySelectorAll('#basic input:checked')]
-.map(x=>x.value).join(",");
-
-if(!genres){
-res.innerHTML="Seleziona almeno un genere";
-return;
+el(id).classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
 }
 
-const url=`https://api.themoviedb.org/3/discover/movie?api_key=${API}&language=it-IT&sort_by=popularity.desc&with_genres=${genres}&include_adult=false`;
-const r=await fetch(url);
-const d=await r.json();
-
-res.innerHTML="";
-d.results.slice(0,3).forEach(m=>render(m));
+function todayKey(){
+const d=new Date();
+return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function getBasicCount(){
+const t=todayKey();
+const dt=localStorage.getItem(LS.basicDate);
+if(dt!==t){
+localStorage.setItem(LS.basicDate,t);
+localStorage.setItem(LS.basicCount,"0");
+return 0;
+}
+return parseInt(localStorage.getItem(LS.basicCount)||"0",10);
+}
+function setBasicCount(n){
+localStorage.setItem(LS.basicDate,todayKey());
+localStorage.setItem(LS.basicCount,String(n));
 }
 
-function setType(t){currentType=t}
-
-async function searchPremium(){
-hideAll();
-document.getElementById("results").classList.remove("hidden");
-const res=document.getElementById("res");
-res.innerHTML="Carico...";
-
-const sliders=[...document.querySelectorAll('#premium input[type=range]')]
-.filter(r=>r.value>0)
-.map(r=>r.dataset.genre).join(",");
-
-if(!sliders){
-res.innerHTML="Alza almeno uno slider";
-return;
+async function tmdb(path, params, lang=true){
+const url=new URL("https://api.themoviedb.org/3"+path);
+url.searchParams.set("api_key",API_KEY);
+if(lang) url.searchParams.set("language","it-IT");
+if(params){
+for(const [k,v] of Object.entries(params)){
+if(v===undefined||v===null||v==="") continue;
+url.searchParams.set(k,String(v));
+}
+}
+const r=await fetch(url.toString());
+const txt=await r.text();
+if(!r.ok) throw new Error("TMDB "+r.status+" "+txt);
+return JSON.parse(txt);
 }
 
-const url=`https://api.themoviedb.org/3/discover/${currentType}?api_key=${API}&language=it-IT&sort_by=popularity.desc&with_genres=${sliders}&include_adult=true`;
-const r=await fetch(url);
-const d=await r.json();
-
-res.innerHTML="";
-d.results.slice(0,5).forEach(m=>render(m));
+function shortBasic(t){
+t=(t||"").trim();
+if(!t) return "Trama non disponibile.";
+return t.length<=140?t:t.slice(0,140).trim()+"...";
+}
+function longPremium(t){
+t=(t||"").trim();
+if(!t) return "Trama non disponibile.";
+return t;
 }
 
-function render(m){
-const res=document.getElementById("res");
+function addToList(key,item,type){
+const title=item.title||item.name||"Titolo";
+const entry={id:item.id,type,title,poster_path:item.poster_path||"",ts:Date.now()};
+const list=loadJSON(key,[]);
+const filtered=list.filter(x=>!(x.id===entry.id && x.type===entry.type));
+filtered.unshift(entry);
+saveJSON(key,filtered.slice(0,60));
+}
+
+function renderResult(container,item,type,premium){
+const title=item.title||item.name||"Titolo";
+const overview=premium?longPremium(item.overview):shortBasic(item.overview);
+const poster=item.poster_path?IMG+item.poster_path:"";
 const div=document.createElement("div");
 div.className="result";
 div.innerHTML=`
-<div class="poster">
-${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}
-</div>
+<div class="poster">${poster?`<img src="${poster}" alt="">`:""}</div>
 <div>
-<h3>${m.title||m.name}</h3>
-<p class="small">${m.overview?m.overview.substring(0,180)+"...":""}</p>
-<button class="btn secondary" onclick="end()">Guarda</button>
-</div>`;
-res.appendChild(div);
+<h3>${escapeHtml(title)}</h3>
+<p class="small">${escapeHtml(overview)}</p>
+<div class="row">
+<button class="btn" data-a="watch">Guarda</button>
+${premium?`<button class="btn" data-a="last">Ultimi visti</button>
+<button class="btn" data-a="save">Watchlist</button>
+<button class="btn" data-a="share">Condividi</button>`:""}
+</div>
+</div>
+`;
+div.querySelector('[data-a="watch"]').addEventListener("click",()=>el("fade").classList.add("show"));
+if(premium){
+div.querySelector('[data-a="last"]').addEventListener("click",()=>{addToList(LS.last,item,type);alert("Salvato in Ultimi visti");});
+div.querySelector('[data-a="save"]').addEventListener("click",()=>{addToList(LS.watch,item,type);alert("Aggiunto in Watchlist");});
+div.querySelector('[data-a="share"]').addEventListener("click",()=>shareTitle(title));
+}
+container.appendChild(div);
 }
 
-function end(){
-document.getElementById("fade").classList.add("show");
+function escapeHtml(s){
+return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
+
+function shareTitle(title){
+const msg=(el("socialText").value||"").trim();
+const base="Sto usando Movie Finder. Sto guardando: "+title+".";
+const text=msg?msg+"\n"+base:base;
+shareAny(text);
+}
+
+async function shareAny(text){
+const payload={title:"Movie Finder",text:text,url:APP_URL};
+el("shareFallback").classList.add("hidden");
+el("shareMsg").textContent="";
+try{
+if(navigator.share){
+await navigator.share(payload);
+el("shareMsg").textContent="Condivisione inviata.";
+return;
+}
+}catch(e){}
+el("shareFallback").classList.remove("hidden");
+el("shareFallback").value=text+"\n"+APP_URL;
+el("shareFallback").focus();
+el("shareFallback").select();
+el("shareMsg").textContent="Copia e incolla questo testo.";
+}
+
+async function basicSearch(){
+el("basicMsg").textContent="";
+if(getBasicCount()>=1){
+el("basicMsg").textContent="Hai già fatto la ricerca di oggi.";
+return;
+}
+const genres=[...document.querySelectorAll("#basic input[type=checkbox]:checked")].map(x=>x.value);
+if(!genres.length){
+el("basicMsg").textContent="Seleziona almeno un genere.";
+return;
+}
+show("results");
+el("resultsBox").innerHTML="Carico...";
+try{
+const d=await tmdb("/discover/movie",{sort_by:"popularity.desc",include_adult:"false",with_genres:genres.join(",")});
+const list=(d.results||[]);
+el("resultsBox").innerHTML="";
+if(!list.length){
+el("resultsBox").innerHTML="Nessun risultato";
+return;
+}
+list.slice(0,3).forEach(m=>renderResult(el("resultsBox"),m,"movie",false));
+setBasicCount(1);
+}catch(e){
+el("resultsBox").innerHTML=escapeHtml(e.message||"Errore");
+}
+}
+
+async function ensureProviders(){
+if(!state.providersMovie.length) state.providersMovie=await loadProviders("movie");
+if(!state.providersTv.length) state.providersTv=await loadProviders("tv");
+}
+
+async function loadProviders(type){
+const d=await tmdb("/watch/providers/"+type,{watch_region:REGION},false);
+const list=(d.results||[])
+.filter(p=>p&&p.provider_id&&p.provider_name&&p.logo_path)
+.map(p=>({id:p.provider_id,name:p.provider_name,logo:IMG_PROVIDER+p.logo_path}));
+return prioritizeProviders(list);
+}
+
+function prioritizeProviders(list){
+const byId=new Map(list.map(p=>[p.id,p]));
+const common=[];
+COMMON_PROVIDERS.forEach(id=>{if(byId.has(id)) common.push(byId.get(id));});
+const commonIds=new Set(common.map(p=>p.id));
+const rest=list.filter(p=>!commonIds.has(p.id)).sort((a,b)=>a.name.localeCompare(b.name));
+return common.concat(rest).slice(0,MAX_PROVIDER_CHIPS);
+}
+
+async function loadSliderGenres(){
+el("sliderBox").innerHTML="Carico...";
+try{
+const d=await tmdb("/genre/"+state.type+"/list",{});
+const all=(d.genres||[]).sort((a,b)=>a.name.localeCompare(b.name));
+const picked=all.slice(0,MAX_SLIDERS);
+el("sliderBox").innerHTML="";
+picked.forEach(g=>{
+const old=state.weights.find(x=>x.id===g.id);
+const v=old?old.w:0;
+const wrap=document.createElement("div");
+wrap.className="genre";
+wrap.innerHTML=`
+<div class="small">${escapeHtml(g.name)} <strong id="b_${g.id}">${v}</strong></div>
+<input type="range" min="0" max="5" value="${v}" data-g="${g.id}">
+`;
+wrap.querySelector("input").addEventListener("input",(ev)=>{
+wrap.querySelector("#b_"+g.id).textContent=ev.target.value;
+saveWeights();
+});
+el("sliderBox").appendChild(wrap);
+});
+saveWeights();
+}catch(e){
+el("sliderBox").innerHTML=escapeHtml(e.message||"Errore");
+}
+}
+
+function saveWeights(){
+const w=[...document.querySelectorAll('#sliderBox input[type="range"]')]
+.map(r=>({id:parseInt(r.dataset.g,10),w:parseInt(r.value,10)}))
+.filter(x=>x.w>0);
+state.weights=w;
+saveJSON(LS.weights,w);
+}
+
+function renderProviderChips(){
+const list=state.type==="movie"?state.providersMovie:state.providersTv;
+const sel=state.type==="movie"?state.provMovie:state.provTv;
+el("provChips").innerHTML="";
+list.forEach(p=>{
+const c=document.createElement("div");
+c.className="chip"+(sel.includes(p.id)?" active":"");
+c.innerHTML=`${p.logo?`<img src="${p.logo}" alt="">`:""}<span>${escapeHtml(p.name)}</span>`;
+c.addEventListener("click",()=>{
+let current=state.type==="movie"?state.provMovie:state.provTv;
+if(current.includes(p.id)) current=current.filter(x=>x!==p.id);
+else current=current.concat([p.id]);
+if(state.type==="movie"){state.provMovie=current;saveJSON(LS.provMovie,current);}
+else{state.provTv=current;saveJSON(LS.provTv,current);}
+renderProviderChips();
+});
+el("provChips").appendChild(c);
+});
+const current=state.type==="movie"?state.provMovie:state.provTv;
+el("provMsg").textContent=current.length?"Selezionate: "+current.length:"Nessuna selezione. Uso tutte.";
+}
+
+function filterAND(items,ids){
+if(!ids.length) return items;
+return items.filter(it=>{
+const g=it.genre_ids||[];
+return ids.every(x=>g.includes(x));
+});
+}
+
+function score(items,weights){
+const map=new Map(weights.map(w=>[w.id,w.w]));
+return items.map(it=>{
+let s=0;
+(it.genre_ids||[]).forEach(gid=>{if(map.has(gid)) s+=map.get(gid)});
+return {it,s};
+}).sort((a,b)=>b.s-a.s).map(x=>x.it);
+}
+
+async function premiumSearch(){
+if(!state.premium){
+alert("Premium non attivo.");
+show("login");
+return;
+}
+saveWeights();
+if(!state.weights.length){
+el("provMsg").textContent="Alza almeno uno slider.";
+return;
+}
+show("results");
+el("resultsBox").innerHTML="Carico...";
+try{
+const ids=state.weights.map(x=>x.id);
+const sel=state.type==="movie"?state.provMovie:state.provTv;
+const prov=sel.length?sel.join("|"):"";
+const d=await tmdb("/discover/"+state.type,{
+sort_by:"popularity.desc",
+include_adult:"true",
+watch_region:REGION,
+with_watch_providers:prov,
+with_watch_monetization_types:"flatrate|rent|buy"
+});
+let items=(d.results||[]).slice(0,80);
+items=filterAND(items,ids);
+items=score(items,state.weights);
+el("resultsBox").innerHTML="";
+if(!items.length){
+el("resultsBox").innerHTML="Nessun risultato. Cambia slider o piattaforme.";
+return;
+}
+items.slice(0,5).forEach(m=>{renderResult(el("resultsBox"),m,state.type,true);addToList(LS.last,m,state.type);});
+}catch(e){
+el("resultsBox").innerHTML=escapeHtml(e.message||"Errore");
+}
+}
+
+async function loadTrending(){
+el("trendBox").innerHTML="Carico...";
+try{
+const d=await tmdb("/trending/"+state.trendType+"/week",{});
+const list=(d.results||[]).slice(0,5);
+el("trendBox").innerHTML="";
+if(!list.length){el("trendBox").innerHTML="Nessun dato";return;}
+list.forEach(m=>renderResult(el("trendBox"),m,state.trendType,true));
+}catch(e){
+el("trendBox").innerHTML=escapeHtml(e.message||"Errore");
+}
+}
+
+function openList(key,title){
+el("listTitle").textContent=title;
+el("listBox").innerHTML="";
+const list=loadJSON(key,[]);
+if(!list.length){el("listBox").innerHTML="Vuoto.";return;}
+list.forEach(x=>{
+const fake={
+id:x.id,
+title:x.type==="movie"?x.title:undefined,
+name:x.type==="tv"?x.title:undefined,
+poster_path:x.poster_path,
+overview:""
+};
+renderResult(el("listBox"),fake,x.type,true);
+});
+el("clearList").onclick=()=>{localStorage.removeItem(key);openList(key,title);};
+}
+
+function wire(){
+el("basicBtn").addEventListener("click",()=>show("planInfo"));
+el("premiumBtn").addEventListener("click",()=>show("planInfo"));
+
+el("goBasicFromInfo").addEventListener("click",()=>show("basic"));
+el("goPremiumFromInfo").addEventListener("click",()=>show("login"));
+el("backHome1").addEventListener("click",()=>show("home"));
+
+el("backHome2").addEventListener("click",()=>show("home"));
+el("backHome3").addEventListener("click",()=>show("home"));
+el("backHome4").addEventListener("click",()=>show("home"));
+
+el("basicSearch").addEventListener("click",basicSearch);
+
+el("loginBtn").addEventListener("click",async()=>{
+const email=(el("email").value||"").trim().toLowerCase();
+const pass=(el("pass").value||"").trim();
+if(email===DEMO_EMAIL && pass===DEMO_PASS){
+state.premium=true;
+localStorage.setItem(LS.premium,"1");
+el("loginMsg").textContent="Premium attivo.";
+await ensureProviders();
+show("premiumMenu");
+}else{
+el("loginMsg").textContent="Credenziali non valide.";
+}
+});
+
+el("pickMovie").addEventListener("click",async()=>{
+state.type="movie";
+localStorage.setItem(LS.type,"movie");
+await loadSliderGenres();
+show("sliders");
+});
+el("pickTv").addEventListener("click",async()=>{
+state.type="tv";
+localStorage.setItem(LS.type,"tv");
+await loadSliderGenres();
+show("sliders");
+});
+
+el("backToMenu").addEventListener("click",()=>show("premiumMenu"));
+el("goProviders").addEventListener("click",async()=>{
+if(!state.premium){show("login");return;}
+await ensureProviders();
+renderProviderChips();
+show("providers");
+});
+el("backToSliders").addEventListener("click",()=>show("sliders"));
+el("premiumSearch").addEventListener("click",premiumSearch);
+
+el("backFromResults").addEventListener("click",()=>{
+if(state.premium) show("premiumMenu");
+else show("basic");
+});
+el("homeFromResults").addEventListener("click",()=>show("home"));
+
+el("openTrending").addEventListener("click",()=>show("trending"));
+el("openSocial").addEventListener("click",()=>show("social"));
+el("openLast").addEventListener("click",()=>{show("lists");openList(LS.last,"Ultimi visti");});
+el("openWatch").addEventListener("click",()=>{show("lists");openList(LS.watch,"Watchlist");});
+
+el("backFromList").addEventListener("click",()=>show("premiumMenu"));
+
+el("toggleTrending").addEventListener("click",()=>{
+state.trendType=state.trendType==="movie"?"tv":"movie";
+el("toggleTrending").textContent=state.trendType==="movie"?"Mostra: Film":"Mostra: Serie TV";
+});
+el("loadTrending").addEventListener("click",loadTrending);
+el("backFromTrending").addEventListener("click",()=>show("premiumMenu"));
+
+el("shareLast").addEventListener("click",()=>{
+const list=loadJSON(LS.last,[]);
+if(!list.length){el("shareMsg").textContent="Nessun ultimo visto.";return;}
+const msg=(el("socialText").value||"").trim();
+const base="Sto usando Movie Finder. Sto guardando: "+list[0].title+".";
+shareAny(msg?msg+"\n"+base:base);
+});
+el("shareApp").addEventListener("click",()=>{
+const msg=(el("socialText").value||"").trim();
+const base="Movie Finder. Scegli i generi e trova cosa guardare oggi.";
+shareAny(msg?msg+"\n"+base:base);
+});
+el("backFromSocial").addEventListener("click",()=>show("premiumMenu"));
+
+el("exitBtn").addEventListener("click",()=>{try{window.close()}catch(e){}});
+}
+
+wire();
+show("home");
 </script>
 
 </body>
 </html>
+```0
