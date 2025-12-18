@@ -1,210 +1,196 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Movie Finder</title>
-<meta name="theme-color" content="#0B0F1A">
 
 <style>
-:root{
---bg:#0B0F1A;
---text:#F8FAFC;
---muted:#9CA3AF;
---acidY:#EFFF00;
---acidG:#7CFF00;
---blue:#0047FF;
---card:rgba(255,255,255,.06);
---border:rgba(255,255,255,.12);
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #ffffff;
 }
 
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Roboto;
-background:var(--bg);
-color:var(--text);
+.container {
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 20px;
 }
 
-.app{
-max-width:900px;
-margin:auto;
-padding:16px;
+.card {
+  background: #0b1220;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
 }
 
-h1{
-margin:0;
-font-size:20px;
+h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
 }
 
-button{
-border:none;
-border-radius:18px;
-padding:14px;
-font-weight:800;
-cursor:pointer;
+label {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 16px;
 }
 
-.cta{
-background:linear-gradient(135deg,var(--acidY),var(--acidG));
-color:var(--blue);
-width:100%;
-margin-top:14px;
+input[type="checkbox"] {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
 }
 
-.ghost{
-background:transparent;
-border:1px solid var(--border);
-color:var(--text);
+button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(90deg, #eaff00, #7CFF00);
+  color: #0033cc;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.card{
-background:var(--card);
-border:1px solid var(--border);
-border-radius:22px;
-padding:16px;
-margin-top:16px;
+button:active {
+  transform: scale(0.98);
 }
 
-.toggle{
-display:flex;
-align-items:center;
-gap:10px;
-margin-top:10px;
+.result {
+  margin-top: 30px;
+  background: #0b1220;
+  border-radius: 18px;
+  padding: 20px;
+  display: none;
 }
 
-input[type=checkbox]{
-accent-color:var(--acidG);
-transform:scale(1.2);
+.result h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-.result{
-margin-top:16px;
+.result p {
+  font-size: 14px;
+  opacity: 0.8;
 }
 
-.overlay{
-position:fixed;
-inset:0;
-background:black;
-color:white;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:99;
+.close-btn {
+  margin-top: 20px;
+  background: transparent;
+  border: 1px solid #444;
+  color: #ffffff;
+  padding: 12px;
+  border-radius: 20px;
+  cursor: pointer;
 }
 
-.overlay.show{display:flex}
+/* Overlay finale */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.8s ease;
+  z-index: 999;
+}
 
-.small{font-size:13px;color:var(--muted)}
+.overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlay h2 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.overlay button {
+  width: auto;
+  padding: 14px 30px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
-<div id="welcome" class="card">
-<h1>Movie Finder</h1>
-<p class="small">Tu scegli il mood. Al film pensiamo noi.</p>
+  <div class="card">
+    <h1>Cosa guardi oggi?</h1>
 
-<button class="cta" onclick="goBasic()">Continua gratis</button>
-<button class="ghost" onclick="goPremium()">Passa a Premium</button>
+    <label>
+      <input type="checkbox" value="35"> Comico
+    </label>
 
-<p class="small">Gratis: solo film, 1 ricerca al giorno</p>
-</div>
+    <label>
+      <input type="checkbox" value="28"> Azione
+    </label>
 
-<div id="app" style="display:none">
+    <label>
+      <input type="checkbox" value="10749"> Romantico
+    </label>
 
-<div class="card">
-<h1>Cosa guardi oggi?</h1>
+    <button onclick="cercaFilm()">Cosa guardi oggi?</button>
+  </div>
 
-<div class="toggle">
-<input id="comedy" type="checkbox"> Comico
-</div>
-<div class="toggle">
-<input id="action" type="checkbox"> Azione
-</div>
-<div class="toggle">
-<input id="romance" type="checkbox"> Romantico
-</div>
-
-<button class="cta" onclick="search()">Cosa guardi oggi?</button>
-<p id="limit" class="small"></p>
-</div>
-
-<div id="result" class="card result"></div>
+  <div class="result" id="result">
+    <h2 id="movieTitle"></h2>
+    <p id="movieOverview"></p>
+    <button class="close-btn" onclick="chiudiRisultato()">Chiudi</button>
+  </div>
 
 </div>
-</div>
 
-<div id="exit" class="overlay">
-<h2>Sta per iniziare il film</h2>
-<p id="exitTitle"></p>
-<button class="cta" onclick="closeApp()">Esci dall’app</button>
+<div class="overlay" id="overlay">
+  <h2>Sta per iniziare il film</h2>
+  <button onclick="chiudiApp()">Esci dall'app</button>
 </div>
 
 <script>
-const API="f8ecb75282e8dcea2d4845598cc7d030";
-const BASE="https://api.themoviedb.org/3";
-let searched=false;
-let lastTitle="";
+const API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
 
-function goBasic(){
-localStorage.setItem("mode","basic");
-document.getElementById("welcome").style.display="none";
-document.getElementById("app").style.display="block";
+function cercaFilm() {
+  const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+  if (checked.length === 0) return;
+
+  const genres = Array.from(checked).map(cb => cb.value).join(",");
+
+  const url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genres}&language=it-IT&page=1`;
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.results || data.results.length === 0) return;
+
+      const film = data.results[Math.floor(Math.random() * data.results.length)];
+
+      document.getElementById("movieTitle").innerText = film.title;
+      document.getElementById("movieOverview").innerText = film.overview || "Trama non disponibile";
+
+      document.getElementById("result").style.display = "block";
+    });
 }
 
-function goPremium(){
-localStorage.setItem("mode","premium");
-goBasic();
+function chiudiRisultato() {
+  document.getElementById("result").style.display = "none";
+  document.getElementById("overlay").classList.add("active");
 }
 
-async function search(){
-if(localStorage.getItem("mode")==="basic" && searched){
-document.getElementById("limit").innerText="Hai già cercato oggi";
-return;
-}
-
-let genres=[];
-if(comedy.checked) genres.push(35);
-if(action.checked) genres.push(28);
-if(romance.checked) genres.push(10749);
-
-if(genres.length===0){
-alert("Seleziona almeno un genere");
-return;
-}
-
-let url=`${BASE}/discover/movie?api_key=${API}&with_genres=${genres.join(",")}&watch_region=IT&with_watch_monetization_types=flatrate|rent|buy`;
-
-let r=await fetch(url);
-let j=await r.json();
-let m=j.results[0];
-
-if(!m){
-result.innerHTML="<p class='small'>Nessun risultato</p>";
-return;
-}
-
-lastTitle=m.title;
-searched=true;
-result.innerHTML=`
-<h3>${m.title}</h3>
-<p class="small">${m.overview?.slice(0,150) || ""}</p>
-<button class="ghost" onclick="showExit()">Chiudi</button>
-`;
-}
-
-function showExit(){
-exitTitle.innerText=lastTitle;
-document.getElementById("exit").classList.add("show");
-}
-
-function closeApp(){
-window.close();
+function chiudiApp() {
+  document.getElementById("overlay").classList.remove("active");
 }
 </script>
 
