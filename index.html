@@ -92,7 +92,7 @@ input[type="checkbox"]{
   accent-color:var(--acidG);
 }
 
-input[type="password"]{
+input[type="email"], input[type="password"]{
   width:100%;
   box-sizing:border-box;
   margin-top:12px;
@@ -160,10 +160,34 @@ input[type="password"]{
   width:auto;
 }
 
-.overlay{
+.badge{
+  display:inline-block;
+  margin-top:10px;
+  padding:8px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  color:var(--muted);
+  font-size:13px;
+}
+
+.fade{
   position:fixed;
   inset:0;
   background:black;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 600ms ease;
+  z-index:998;
+}
+
+.fade.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
   display:none;
   align-items:center;
   justify-content:center;
@@ -188,16 +212,6 @@ input[type="password"]{
   font-weight:bold;
   margin-bottom:20px;
 }
-
-.badge{
-  display:inline-block;
-  margin-top:10px;
-  padding:8px 10px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.08);
-  color:var(--muted);
-  font-size:13px;
-}
 </style>
 </head>
 
@@ -211,189 +225,281 @@ input[type="password"]{
 
     <button onclick="startBasic()">Continua senza account</button>
 
-    <button class="secondary" onclick="openPremium()">Accedi Premium</button>
+    <button class="secondary" onclick="openPremiumGate()">Area Premium</button>
 
     <span class="badge" id="modeBadge">Modalità: non selezionata</span>
   </div>
 
-  <div class="card hidden" id="screenPremium">
-    <h1>Accesso Premium</h1>
-    <p>Inserisci il codice Premium.</p>
+  <div class="card hidden" id="screenPremiumGate">
+    <h1>Area Premium</h1>
+    <p>Se non hai Premium, fai l’acquisto su Google Play. Se hai già Premium, entra con le credenziali.</p>
 
-    <input type="password" id="premiumCode" placeholder="Codice Premium">
+    <button onclick="goToPlayBilling()">Passa a Premium</button>
+
+    <button class="secondary" onclick="openPremiumLogin()">Ho già pagato, accedi</button>
+
+    <button class="secondary small" onclick="backToStart()">Indietro</button>
+  </div>
+
+  <div class="card hidden" id="screenPremiumLogin">
+    <h1>Accesso Premium</h1>
+    <p>Accedi con le credenziali.</p>
+
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
 
     <button onclick="loginPremium()">Entra</button>
-    <button class="secondary small" onclick="backToStart()">Indietro</button>
-
-    <p id="loginMsg"></p>
+    <button class="secondary small" onclick="backToPremiumGate()">Indietro</button>
   </div>
 
-  <div class="card hidden" id="screenQuestion">
-    <h1>Cosa guardi oggi?</h1>
+  <div class="card hidden" id="screenChooser">
+    <h1 id="chooserTitle">Cosa guardi oggi?</h1>
 
-    <div id="toggleMedia" class="hidden">
-      <div class="row">
-        <button class="secondary small" onclick="setMedia('movie')">Film</button>
-        <button class="secondary small" onclick="setMedia('tv')">Serie TV</button>
+    <div id="premiumTabs" class="row hidden">
+      <button class="secondary small" onclick="setType('movie')" id="tabMovie">Film</button>
+      <button class="secondary small" onclick="setType('tv')" id="tabTv">Serie TV</button>
+    </div>
+
+    <label><input type="checkbox" value="35" class="genre">Comico</label>
+    <label><input type="checkbox" value="28" class="genre">Azione</label>
+    <label><input type="checkbox" value="10749" class="genre">Romantico</label>
+
+    <button onclick="findSomething()">Cosa guardi oggi?</button>
+
+    <div class="result" id="resultBox">
+      <div class="posterBox" id="posterBox">
+        <div class="posterFallback" id="posterFallback">Locandina non disponibile</div>
       </div>
-      <span class="badge" id="mediaBadge">Contenuto: Film</span>
+      <h2 id="title"></h2>
+      <p id="overview"></p>
+
+      <button class="close-btn" onclick="closeAfterResult()">Chiudi</button>
     </div>
 
-    <label><input type="checkbox" value="35">Comico</label>
-    <label><input type="checkbox" value="28">Azione</label>
-    <label><input type="checkbox" value="10749">Romantico</label>
-
-    <button onclick="cercaTitolo()">Cosa guardi oggi?</button>
-    <button class="secondary small" onclick="resetApp()">Cambia modalità</button>
-  </div>
-
-  <div class="result" id="result">
-    <div class="posterBox" id="posterBox">
-      <div class="posterFallback">Locandina non disponibile</div>
-    </div>
-    <h2 id="movieTitle"></h2>
-    <p id="movieOverview"></p>
-    <button class="close-btn" onclick="chiudiRisultato()">Chiudi</button>
+    <button class="secondary small" onclick="resetAll()">Torna all’inizio</button>
   </div>
 
 </div>
 
+<div class="fade" id="fade"></div>
+
 <div class="overlay" id="overlay">
-  <h2>Sta per iniziare</h2>
-  <p id="overlayTitle"></p>
-  <button onclick="chiudiOverlay()">Ok</button>
+  <h2>Sta per iniziare il film</h2>
+  <p>Buona visione</p>
+  <button onclick="exitApp()">Esci dalla app</button>
+  <button class="secondary small" onclick="cancelExit()">Annulla</button>
 </div>
 
 <script>
-const API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
-const IMG = "https://image.tmdb.org/t/p/w500";
+const TMDB_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
 
-const PREMIUM_CODE = "1234";
-
-let mode = "none";
-let media = "movie";
-let lastTitle = "";
+let isPremium = false;
+let contentType = "movie";
+let lastResultShown = false;
 
 function show(id){
   document.getElementById("screenStart").classList.add("hidden");
-  document.getElementById("screenPremium").classList.add("hidden");
-  document.getElementById("screenQuestion").classList.add("hidden");
+  document.getElementById("screenPremiumGate").classList.add("hidden");
+  document.getElementById("screenPremiumLogin").classList.add("hidden");
+  document.getElementById("screenChooser").classList.add("hidden");
   document.getElementById(id).classList.remove("hidden");
 }
 
-function setBadge(){
-  const b = document.getElementById("modeBadge");
-  if(mode==="basic") b.innerText = "Modalità: BASIC";
-  else if(mode==="premium") b.innerText = "Modalità: PREMIUM";
-  else b.innerText = "Modalità: non selezionata";
-}
-
-function setMediaBadge(){
-  const m = document.getElementById("mediaBadge");
-  m.innerText = "Contenuto: " + (media==="movie" ? "Film" : "Serie TV");
-}
-
 function startBasic(){
-  mode = "basic";
-  media = "movie";
-  setBadge();
-  document.getElementById("toggleMedia").classList.add("hidden");
-  show("screenQuestion");
+  isPremium = false;
+  document.getElementById("modeBadge").textContent = "Modalità: BASIC";
+  document.getElementById("premiumTabs").classList.add("hidden");
+  contentType = "movie";
+  lastResultShown = false;
+  show("screenChooser");
+  updateTabsUI();
 }
 
-function openPremium(){
-  document.getElementById("premiumCode").value = "";
-  document.getElementById("loginMsg").innerText = "";
-  show("screenPremium");
+function openPremiumGate(){
+  show("screenPremiumGate");
+}
+
+function goToPlayBilling(){
+  alert("Qui devi collegare Google Play Billing nella versione app. Per ora è un placeholder.");
+}
+
+function openPremiumLogin(){
+  show("screenPremiumLogin");
 }
 
 function loginPremium(){
-  const code = document.getElementById("premiumCode").value.trim();
-  if(code !== PREMIUM_CODE){
-    document.getElementById("loginMsg").innerText = "Codice errato.";
+  const email = (document.getElementById("email").value || "").trim();
+  const password = (document.getElementById("password").value || "").trim();
+
+  if(!email || !password){
+    alert("Inserisci email e password.");
     return;
   }
-  mode = "premium";
-  media = "movie";
-  setBadge();
-  document.getElementById("toggleMedia").classList.remove("hidden");
-  setMediaBadge();
-  show("screenQuestion");
+
+  isPremium = true;
+  document.getElementById("modeBadge").textContent = "Modalità: PREMIUM";
+  document.getElementById("premiumTabs").classList.remove("hidden");
+  contentType = "movie";
+  lastResultShown = false;
+  show("screenChooser");
+  updateTabsUI();
 }
 
 function backToStart(){
   show("screenStart");
 }
 
-function setMedia(val){
-  media = val;
-  setMediaBadge();
+function backToPremiumGate(){
+  show("screenPremiumGate");
 }
 
-function resetApp(){
-  mode = "none";
-  media = "movie";
-  setBadge();
-  document.getElementById("result").style.display = "none";
-  show("screenStart");
+function setType(type){
+  if(!isPremium) return;
+  contentType = type;
+  updateTabsUI();
+}
+
+function updateTabsUI(){
+  if(!isPremium) return;
+  const tabMovie = document.getElementById("tabMovie");
+  const tabTv = document.getElementById("tabTv");
+  tabMovie.style.borderColor = (contentType==="movie") ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)";
+  tabTv.style.borderColor = (contentType==="tv") ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.25)";
+}
+
+function getSelectedGenres(){
+  return Array.from(document.querySelectorAll(".genre:checked")).map(x => x.value);
+}
+
+async function findSomething(){
+  const genres = getSelectedGenres();
+  if(genres.length === 0){
+    alert("Seleziona almeno un genere.");
+    return;
+  }
+
+  const resultBox = document.getElementById("resultBox");
+  resultBox.style.display = "none";
+
+  const url = buildDiscoverUrl(genres);
+
+  try{
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if(!data || !data.results || data.results.length === 0){
+      alert("Nessun risultato con questi generi. Prova a cambiare selezione.");
+      return;
+    }
+
+    const pick = data.results[Math.floor(Math.random() * data.results.length)];
+
+    renderResult(pick);
+    lastResultShown = true;
+  }catch(e){
+    alert("Errore di rete. Riprova.");
+  }
 }
 
 function buildDiscoverUrl(genres){
-  if(media==="movie"){
-    return `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_genres=${genres}&language=it-IT&include_adult=false`;
+  const base = (contentType === "tv")
+    ? "https://api.themoviedb.org/3/discover/tv"
+    : "https://api.themoviedb.org/3/discover/movie";
+
+  const params = new URLSearchParams();
+  params.set("api_key", TMDB_KEY);
+  params.set("language", "it-IT");
+  params.set("sort_by", "popularity.desc");
+  params.set("include_adult", "false");
+  params.set("with_genres", genres.join(","));
+  params.set("with_genres_operator", "AND");
+
+  return base + "?" + params.toString();
+}
+
+function renderResult(item){
+  const title = document.getElementById("title");
+  const overview = document.getElementById("overview");
+  const resultBox = document.getElementById("resultBox");
+
+  const name = item.title || item.name || "Titolo non disponibile";
+  const desc = item.overview || "Descrizione non disponibile";
+
+  title.textContent = name;
+  overview.textContent = desc;
+
+  renderPoster(item.poster_path);
+
+  resultBox.style.display = "block";
+}
+
+function renderPoster(posterPath){
+  const box = document.getElementById("posterBox");
+  const fallback = document.getElementById("posterFallback");
+
+  box.innerHTML = "";
+  if(!posterPath){
+    fallback.style.display = "block";
+    box.appendChild(fallback);
+    return;
   }
-  return `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_genres=${genres}&language=it-IT&include_adult=false`;
+
+  const img = document.createElement("img");
+  img.src = "https://image.tmdb.org/t/p/w500" + posterPath;
+  img.alt = "Locandina";
+  img.onload = () => {};
+  img.onerror = () => {
+    box.innerHTML = "";
+    fallback.style.display = "block";
+    box.appendChild(fallback);
+  };
+
+  fallback.style.display = "none";
+  box.appendChild(img);
 }
 
-function getTitle(item){
-  return media==="movie" ? item.title : item.name;
+function closeAfterResult(){
+  if(!lastResultShown){
+    alert("Prima trova un risultato.");
+    return;
+  }
+  startExitEffect();
 }
 
-function getOverview(item){
-  return item.overview;
+function startExitEffect(){
+  const fade = document.getElementById("fade");
+  const overlay = document.getElementById("overlay");
+
+  fade.classList.add("active");
+  setTimeout(() => {
+    overlay.classList.add("active");
+  }, 500);
 }
 
-function cercaTitolo(){
-  const checked = document.querySelectorAll('#screenQuestion input[type="checkbox"]:checked');
-  if(checked.length===0) return;
-
-  const genres = [...checked].map(c=>c.value).join(",");
-
-  fetch(buildDiscoverUrl(genres))
-    .then(r=>r.json())
-    .then(d=>{
-      if(!d.results || d.results.length===0) return;
-
-      const item = d.results.find(f=>f.poster_path) || d.results[0];
-      lastTitle = getTitle(item);
-
-      document.getElementById("movieTitle").innerText = lastTitle;
-      document.getElementById("movieOverview").innerText = getOverview(item) || "Descrizione non disponibile";
-
-      const posterBox = document.getElementById("posterBox");
-      posterBox.innerHTML = "";
-
-      if(item.poster_path){
-        const img = document.createElement("img");
-        img.src = IMG + item.poster_path;
-        posterBox.appendChild(img);
-      }else{
-        posterBox.innerHTML = "<div class='posterFallback'>Locandina non disponibile</div>";
-      }
-
-      document.getElementById("result").style.display = "block";
-      document.getElementById("result").scrollIntoView({behavior:"smooth", block:"start"});
-    });
+function cancelExit(){
+  const fade = document.getElementById("fade");
+  const overlay = document.getElementById("overlay");
+  overlay.classList.remove("active");
+  fade.classList.remove("active");
 }
 
-function chiudiRisultato(){
-  document.getElementById("result").style.display = "none";
-  document.getElementById("overlayTitle").innerText = lastTitle;
-  document.getElementById("overlay").classList.add("active");
+function exitApp(){
+  cancelExit();
+
+  try{
+    window.close();
+  }catch(e){}
+
+  setTimeout(() => {
+    alert("Se il browser non chiude la scheda, chiudila tu. Nell’app Android questo comando può chiudere l’app.");
+  }, 150);
 }
 
-function chiudiOverlay(){
-  document.getElementById("overlay").classList.remove("active");
+function resetAll(){
+  document.querySelectorAll(".genre").forEach(x => x.checked = false);
+  document.getElementById("resultBox").style.display = "none";
+  lastResultShown = false;
+  show("screenStart");
 }
 </script>
 
