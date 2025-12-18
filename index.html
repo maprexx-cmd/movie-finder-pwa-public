@@ -2,26 +2,40 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
 <title>Movie Finder</title>
 
 <style>
+:root{
+--bg0:#050813;
+--bg1:#0b1020;
+--card:#111827;
+--line:#1f2937;
+--text:#e5e7eb;
+--muted:#9ca3af;
+--y:#d9ff2f;
+--g:#39ff6b;
+--blue:#1e40af;
+--r:20px;
+}
+*{box-sizing:border-box}
 body{
 margin:0;
 font-family:system-ui,Arial;
-background:#0b1020;
-color:#e5e7eb;
+background:linear-gradient(180deg,var(--bg0),var(--bg1));
+color:var(--text);
 padding:16px;
 }
 .card{
-background:#111827;
-border-radius:20px;
+background:var(--card);
+border-radius:var(--r);
 padding:18px;
 margin-bottom:16px;
-border:1px solid #1f2937;
+border:1px solid var(--line);
 }
 h1,h2{margin:0 0 10px}
-.small{color:#9ca3af;font-size:13px}
+.small{color:var(--muted);font-size:13px;line-height:1.35}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
 padding:14px 20px;
@@ -31,8 +45,8 @@ font-weight:900;
 cursor:pointer;
 }
 .primary{
-background:linear-gradient(90deg,#d9ff2f,#39ff6b);
-color:#1e40af;
+background:linear-gradient(90deg,var(--y),var(--g));
+color:var(--blue);
 }
 .secondary{
 background:transparent;
@@ -41,7 +55,7 @@ color:#fff;
 }
 .hidden{display:none}
 .genre{margin:10px 0}
-input[type=checkbox]{width:20px;height:20px}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--g)}
 input[type=range]{width:100%}
 .results{margin-top:10px}
 .result{
@@ -60,21 +74,68 @@ border-radius:12px;
 overflow:hidden;
 }
 .poster img{width:100%;height:100%;object-fit:cover}
-.fade{
-position:fixed;
-inset:0;
-background:#000;
-display:none;
+
+/* SPLASH 2 SECONDI */
+.splash{
+position:fixed;inset:0;
+display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-z-index:99;
+z-index:200;
+background:radial-gradient(900px 600px at 30% 20%, rgba(217,255,47,.14), transparent 55%),
+radial-gradient(900px 600px at 80% 30%, rgba(57,255,107,.12), transparent 55%),
+linear-gradient(180deg,var(--bg0),var(--bg1));
+transition:opacity .5s ease;
+opacity:1;
 }
-.fade.show{display:flex}
+.splash.hide{opacity:0;pointer-events:none}
+.splashLogo{
+width:84px;height:84px;border-radius:26px;
+background:linear-gradient(135deg, rgba(217,255,47,.95), rgba(57,255,107,.85));
+display:grid;place-items:center;
+color:#0b1020;font-weight:1000;font-size:26px;
+box-shadow:0 18px 55px rgba(217,255,47,.16);
+margin-bottom:12px;
+}
+.splashTitle{font-weight:1000;font-size:22px;margin-bottom:6px}
+.splashSub{color:var(--muted);font-size:13px}
+
+/* USCITA SFUMATA */
+.fadeOut{
+position:fixed;inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:250;
+background:#000;
+opacity:0;
+pointer-events:none;
+transition:opacity .7s ease;
+padding:20px;
+text-align:center;
+}
+.fadeOut.show{opacity:1;pointer-events:auto}
+.fadeText{font-size:22px;font-weight:1000;margin-bottom:14px}
 </style>
 </head>
 
 <body>
+
+<!-- SPLASH -->
+<div class="splash" id="splash">
+  <div class="splashLogo">MF</div>
+  <div class="splashTitle">Movie Finder</div>
+  <div class="splashSub">COSA VUOI GUARDARE OGGI?</div>
+</div>
+
+<!-- FADE OUT USCITA -->
+<div class="fadeOut" id="fadeOut">
+  <div class="fadeText">Sta iniziando il film...</div>
+  <button class="btn primary" id="exitBtn">Esci dalla app</button>
+  <div class="small" style="margin-top:10px">Se non si chiude da solo, chiudi tu la scheda.</div>
+</div>
 
 <div class="card" id="home">
 <h1>Movie Finder</h1>
@@ -94,7 +155,12 @@ z-index:99;
 <div class="genre"><label><input type="checkbox" value="10749"> Romantico</label></div>
 <div class="genre"><label><input type="checkbox" value="16"> Cartoni animati</label></div>
 
+<div class="row">
 <button class="btn primary" onclick="searchBasic()">Trova film</button>
+<button class="btn secondary" onclick="goHome()">Home</button>
+</div>
+
+<div class="small" id="basicMsg" style="margin-top:10px"></div>
 </div>
 
 <div class="card hidden" id="premium">
@@ -108,14 +174,15 @@ z-index:99;
 
 <h3>Preferenze</h3>
 
-<div class="genre">Comico <input type="range" min="0" max="5" data-g="35"></div>
-<div class="genre">Azione <input type="range" min="0" max="5" data-g="28"></div>
-<div class="genre">Romantico <input type="range" min="0" max="5" data-g="10749"></div>
-<div class="genre">Animazione <input type="range" min="0" max="5" data-g="16"></div>
+<div class="genre">Comico <input type="range" min="0" max="5" value="0" data-g="35"></div>
+<div class="genre">Azione <input type="range" min="0" max="5" value="0" data-g="28"></div>
+<div class="genre">Romantico <input type="range" min="0" max="5" value="0" data-g="10749"></div>
+<div class="genre">Animazione <input type="range" min="0" max="5" value="0" data-g="16"></div>
 
 <div class="row">
 <button class="btn primary" onclick="searchPremium()">Cerca</button>
 <button class="btn secondary" onclick="openTrending()">Trending</button>
+<button class="btn secondary" onclick="goHome()">Home</button>
 </div>
 </div>
 
@@ -132,18 +199,42 @@ z-index:99;
 <div class="card hidden" id="results">
 <h2>Risultati</h2>
 <div class="results" id="resultsBox"></div>
+<div class="row">
 <button class="btn secondary" onclick="goHome()">Home</button>
 </div>
-
-<div class="fade" id="fade">
-<h2>Sta iniziando il film...</h2>
-<button class="btn primary" onclick="window.close()">Esci</button>
 </div>
 
 <script>
 const API_KEY="f8ecb75282e8dcea2d4845598cc7d030";
 const IMG="https://image.tmdb.org/t/p/w500";
 let currentType="movie";
+
+const LS_DATE="mf_basic_date";
+const LS_COUNT="mf_basic_count";
+
+function todayKey(){
+const d=new Date();
+return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function getBasicCount(){
+const t=todayKey();
+const dt=localStorage.getItem(LS_DATE);
+if(dt!==t){
+localStorage.setItem(LS_DATE,t);
+localStorage.setItem(LS_COUNT,"0");
+return 0;
+}
+return parseInt(localStorage.getItem(LS_COUNT)||"0",10);
+}
+function setBasicCount(n){
+localStorage.setItem(LS_DATE,todayKey());
+localStorage.setItem(LS_COUNT,String(n));
+}
+
+/* SPLASH 2 SECONDI */
+window.addEventListener("load",()=>{
+setTimeout(()=>{document.getElementById("splash").classList.add("hide");},2000);
+});
 
 function hideAll(){
 ["home","basic","premium","results","trending"].forEach(id=>{
@@ -155,10 +246,38 @@ function goHome(){hideAll();document.getElementById("home").classList.remove("hi
 function showBasic(){hideAll();document.getElementById("basic").classList.remove("hidden")}
 function showPremium(){hideAll();document.getElementById("premium").classList.remove("hidden")}
 function openTrending(){hideAll();document.getElementById("trending").classList.remove("hidden")}
-
 function setType(t){currentType=t}
 
+function render(container,m,brief){
+const div=document.createElement("div");
+div.className="result";
+div.innerHTML=`
+<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}</div>
+<div>
+<h3>${m.title||m.name||"Titolo"}</h3>
+<p class="small">${m.overview?(brief?m.overview.substring(0,140)+"...":m.overview):""}</p>
+<button class="btn secondary">Guarda</button>
+</div>`;
+div.querySelector("button").addEventListener("click",()=>startExitFade());
+container.appendChild(div);
+}
+
+function startExitFade(){
+document.getElementById("fadeOut").classList.add("show");
+}
+
+document.getElementById("exitBtn").addEventListener("click",()=>{
+try{window.close();}catch(e){}
+});
+
 async function searchBasic(){
+const msg=document.getElementById("basicMsg");
+msg.textContent="";
+if(getBasicCount()>=1){
+msg.textContent="Hai già fatto la ricerca di oggi.";
+return;
+}
+
 hideAll();
 document.getElementById("results").classList.remove("hidden");
 const box=document.getElementById("resultsBox");
@@ -167,11 +286,17 @@ box.innerHTML="Carico...";
 const genres=[...document.querySelectorAll('#basic input:checked')].map(x=>x.value).join(",");
 if(!genres){box.innerHTML="Seleziona un genere";return;}
 
-const r=await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=it-IT&with_genres=${genres}&include_adult=false`);
+try{
+const r=await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=it-IT&with_genres=${genres}&include_adult=false&sort_by=popularity.desc`);
 const d=await r.json();
-
 box.innerHTML="";
-(d.results||[]).slice(0,3).forEach(m=>render(m));
+const list=(d.results||[]);
+if(!list.length){box.innerHTML="Nessun risultato";return;}
+list.slice(0,3).forEach(m=>render(box,m,true));
+setBasicCount(1);
+}catch(e){
+box.innerHTML="Errore caricamento";
+}
 }
 
 async function searchPremium(){
@@ -181,40 +306,39 @@ const box=document.getElementById("resultsBox");
 box.innerHTML="Carico...";
 
 const sliders=[...document.querySelectorAll('#premium input[type=range]')]
-.filter(r=>r.value>0).map(r=>r.dataset.g).join(",");
+.filter(r=>parseInt(r.value,10)>0).map(r=>r.dataset.g).join(",");
 
 if(!sliders){box.innerHTML="Alza almeno uno slider";return;}
 
-const r=await fetch(`https://api.themoviedb.org/3/discover/${currentType}?api_key=${API_KEY}&language=it-IT&with_genres=${sliders}&include_adult=true`);
+try{
+const r=await fetch(`https://api.themoviedb.org/3/discover/${currentType}?api_key=${API_KEY}&language=it-IT&with_genres=${sliders}&include_adult=true&sort_by=popularity.desc`);
 const d=await r.json();
-
 box.innerHTML="";
-(d.results||[]).slice(0,5).forEach(m=>render(m));
+const list=(d.results||[]);
+if(!list.length){box.innerHTML="Nessun risultato";return;}
+list.slice(0,5).forEach(m=>render(box,m,false));
+}catch(e){
+box.innerHTML="Errore caricamento";
+}
 }
 
 async function loadTrending(type){
 const box=document.getElementById("trendBox");
 box.innerHTML="Carico...";
+
+try{
 const r=await fetch(`https://api.themoviedb.org/3/trending/${type}/week?api_key=${API_KEY}`);
 const d=await r.json();
 box.innerHTML="";
-(d.results||[]).slice(0,5).forEach(m=>render(m));
+const list=(d.results||[]);
+if(!list.length){box.innerHTML="Nessun dato";return;}
+list.slice(0,5).forEach(m=>render(box,m,false));
+}catch(e){
+box.innerHTML="Errore trending";
 }
-
-function render(m){
-const box=document.getElementById("resultsBox")||document.getElementById("trendBox");
-const div=document.createElement("div");
-div.className="result";
-div.innerHTML=`
-<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}</div>
-<div>
-<h3>${m.title||m.name}</h3>
-<p class="small">${m.overview?m.overview.substring(0,140)+"...":""}</p>
-<button class="btn secondary" onclick="document.getElementById('fade').classList.add('show')">Guarda</button>
-</div>`;
-box.appendChild(div);
 }
 </script>
 
 </body>
 </html>
+```0
