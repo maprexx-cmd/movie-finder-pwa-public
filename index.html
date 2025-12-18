@@ -34,7 +34,7 @@ padding:18px;
 margin-bottom:16px;
 border:1px solid var(--line);
 }
-h1,h2{margin:0 0 10px}
+h1,h2,h3{margin:0 0 10px}
 .small{color:var(--muted);font-size:13px;line-height:1.35}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .btn{
@@ -82,19 +82,20 @@ display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-z-index:200;
-background:radial-gradient(900px 600px at 30% 20%, rgba(217,255,47,.14), transparent 55%),
+z-index:300;
+background:
+radial-gradient(900px 600px at 30% 20%, rgba(217,255,47,.14), transparent 55%),
 radial-gradient(900px 600px at 80% 30%, rgba(57,255,107,.12), transparent 55%),
 linear-gradient(180deg,var(--bg0),var(--bg1));
-transition:opacity .5s ease;
+transition:opacity .45s ease;
 opacity:1;
 }
 .splash.hide{opacity:0;pointer-events:none}
 .splashLogo{
-width:84px;height:84px;border-radius:26px;
+width:92px;height:92px;border-radius:28px;
 background:linear-gradient(135deg, rgba(217,255,47,.95), rgba(57,255,107,.85));
 display:grid;place-items:center;
-color:#0b1020;font-weight:1000;font-size:26px;
+color:#0b1020;font-weight:1000;font-size:28px;
 box-shadow:0 18px 55px rgba(217,255,47,.16);
 margin-bottom:12px;
 }
@@ -108,11 +109,11 @@ display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-z-index:250;
+z-index:350;
 background:#000;
 opacity:0;
 pointer-events:none;
-transition:opacity .7s ease;
+transition:opacity .75s ease;
 padding:20px;
 text-align:center;
 }
@@ -123,85 +124,82 @@ text-align:center;
 
 <body>
 
-<!-- SPLASH -->
 <div class="splash" id="splash">
   <div class="splashLogo">MF</div>
   <div class="splashTitle">Movie Finder</div>
   <div class="splashSub">COSA VUOI GUARDARE OGGI?</div>
 </div>
 
-<!-- FADE OUT USCITA -->
 <div class="fadeOut" id="fadeOut">
   <div class="fadeText">Sta iniziando il film...</div>
   <button class="btn primary" id="exitBtn">Esci dalla app</button>
   <div class="small" style="margin-top:10px">Se non si chiude da solo, chiudi tu la scheda.</div>
 </div>
 
-<div class="card" id="home">
-<h1>Movie Finder</h1>
-<p class="small">COSA VUOI GUARDARE OGGI?</p>
-<div class="row">
-<button class="btn primary" onclick="showBasic()">BASIC</button>
-<button class="btn secondary" onclick="showPremium()">PREMIUM</button>
-</div>
+<div class="card hidden" id="home">
+  <h1>Movie Finder</h1>
+  <p class="small">COSA VUOI GUARDARE OGGI?</p>
+  <div class="row">
+    <button class="btn primary" id="basicGo">BASIC</button>
+    <button class="btn secondary" id="premiumGo">PREMIUM</button>
+  </div>
 </div>
 
 <div class="card hidden" id="basic">
-<h2>BASIC</h2>
-<p class="small">1 ricerca al giorno, 3 film</p>
+  <h2>BASIC</h2>
+  <p class="small">1 ricerca al giorno, 3 film</p>
 
-<div class="genre"><label><input type="checkbox" value="35"> Comico</label></div>
-<div class="genre"><label><input type="checkbox" value="28"> Azione</label></div>
-<div class="genre"><label><input type="checkbox" value="10749"> Romantico</label></div>
-<div class="genre"><label><input type="checkbox" value="16"> Cartoni animati</label></div>
+  <div class="genre"><label><input type="checkbox" value="35"> Comico</label></div>
+  <div class="genre"><label><input type="checkbox" value="28"> Azione</label></div>
+  <div class="genre"><label><input type="checkbox" value="10749"> Romantico</label></div>
+  <div class="genre"><label><input type="checkbox" value="16"> Cartoni animati</label></div>
 
-<div class="row">
-<button class="btn primary" onclick="searchBasic()">Trova film</button>
-<button class="btn secondary" onclick="goHome()">Home</button>
-</div>
+  <div class="row">
+    <button class="btn primary" id="basicSearch">Trova film</button>
+    <button class="btn secondary" id="homeFromBasic">Home</button>
+  </div>
 
-<div class="small" id="basicMsg" style="margin-top:10px"></div>
+  <div class="small" id="basicMsg" style="margin-top:10px"></div>
 </div>
 
 <div class="card hidden" id="premium">
-<h2>PREMIUM</h2>
-<p class="small">Accesso completo</p>
+  <h2>PREMIUM</h2>
+  <p class="small">Demo Premium attiva. Trending separato. Slider base.</p>
 
-<div class="row">
-<button class="btn primary" onclick="setType('movie')">Film</button>
-<button class="btn primary" onclick="setType('tv')">Serie TV</button>
-</div>
+  <div class="row">
+    <button class="btn primary" id="typeMovie">Film</button>
+    <button class="btn primary" id="typeTv">Serie TV</button>
+  </div>
 
-<h3>Preferenze</h3>
+  <h3 style="margin-top:12px">Preferenze</h3>
+  <div class="genre">Comico <input type="range" min="0" max="5" value="0" data-g="35"></div>
+  <div class="genre">Azione <input type="range" min="0" max="5" value="0" data-g="28"></div>
+  <div class="genre">Romantico <input type="range" min="0" max="5" value="0" data-g="10749"></div>
+  <div class="genre">Animazione <input type="range" min="0" max="5" value="0" data-g="16"></div>
 
-<div class="genre">Comico <input type="range" min="0" max="5" value="0" data-g="35"></div>
-<div class="genre">Azione <input type="range" min="0" max="5" value="0" data-g="28"></div>
-<div class="genre">Romantico <input type="range" min="0" max="5" value="0" data-g="10749"></div>
-<div class="genre">Animazione <input type="range" min="0" max="5" value="0" data-g="16"></div>
-
-<div class="row">
-<button class="btn primary" onclick="searchPremium()">Cerca</button>
-<button class="btn secondary" onclick="openTrending()">Trending</button>
-<button class="btn secondary" onclick="goHome()">Home</button>
-</div>
+  <div class="row">
+    <button class="btn primary" id="premiumSearch">Cerca</button>
+    <button class="btn secondary" id="openTrending">Trending</button>
+    <button class="btn secondary" id="homeFromPremium">Home</button>
+  </div>
 </div>
 
 <div class="card hidden" id="trending">
-<h2>Trending settimanale</h2>
-<div class="row">
-<button class="btn primary" onclick="loadTrending('movie')">Trending Film</button>
-<button class="btn primary" onclick="loadTrending('tv')">Trending Serie TV</button>
-<button class="btn secondary" onclick="goHome()">Home</button>
-</div>
-<div class="results" id="trendBox"></div>
+  <h2>Trending settimanale</h2>
+  <div class="row">
+    <button class="btn primary" id="trendMovieBtn">Trending Film</button>
+    <button class="btn primary" id="trendTvBtn">Trending Serie TV</button>
+    <button class="btn secondary" id="homeFromTrending">Home</button>
+  </div>
+  <div class="results" id="trendBox"></div>
 </div>
 
 <div class="card hidden" id="results">
-<h2>Risultati</h2>
-<div class="results" id="resultsBox"></div>
-<div class="row">
-<button class="btn secondary" onclick="goHome()">Home</button>
-</div>
+  <h2>Risultati</h2>
+  <div class="results" id="resultsBox"></div>
+  <div class="row">
+    <button class="btn secondary" id="homeFromResults">Home</button>
+  </div>
 </div>
 
 <script>
@@ -211,6 +209,8 @@ let currentType="movie";
 
 const LS_DATE="mf_basic_date";
 const LS_COUNT="mf_basic_count";
+
+const el=(id)=>document.getElementById(id);
 
 function todayKey(){
 const d=new Date();
@@ -231,59 +231,86 @@ localStorage.setItem(LS_DATE,todayKey());
 localStorage.setItem(LS_COUNT,String(n));
 }
 
-/* SPLASH 2 SECONDI */
-window.addEventListener("load",()=>{
-setTimeout(()=>{document.getElementById("splash").classList.add("hide");},2000);
-});
-
 function hideAll(){
-["home","basic","premium","results","trending"].forEach(id=>{
-document.getElementById(id).classList.add("hidden");
+["home","basic","premium","trending","results"].forEach(id=>el(id).classList.add("hidden"));
+}
+function show(id){
+hideAll();
+el(id).classList.remove("hidden");
+window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function startExitFade(){
+const f=el("fadeOut");
+f.classList.remove("show");
+requestAnimationFrame(()=>{
+requestAnimationFrame(()=>{
+f.classList.add("show");
+setTimeout(()=>{ try{ window.close(); }catch(e){} }, 900);
+});
 });
 }
 
-function goHome(){hideAll();document.getElementById("home").classList.remove("hidden")}
-function showBasic(){hideAll();document.getElementById("basic").classList.remove("hidden")}
-function showPremium(){hideAll();document.getElementById("premium").classList.remove("hidden")}
-function openTrending(){hideAll();document.getElementById("trending").classList.remove("hidden")}
-function setType(t){currentType=t}
+el("exitBtn").addEventListener("click", ()=>{ try{ window.close(); }catch(e){} });
 
 function render(container,m,brief){
 const div=document.createElement("div");
 div.className="result";
 div.innerHTML=`
-<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}">`:""}</div>
+<div class="poster">${m.poster_path?`<img src="${IMG+m.poster_path}" alt="">`:""}</div>
 <div>
-<h3>${m.title||m.name||"Titolo"}</h3>
-<p class="small">${m.overview?(brief?m.overview.substring(0,140)+"...":m.overview):""}</p>
-<button class="btn secondary">Guarda</button>
+<h3>${escapeHtml(m.title||m.name||"Titolo")}</h3>
+<p class="small">${escapeHtml(m.overview?(brief?m.overview.substring(0,140)+"...":m.overview):"")}</p>
+<button class="btn secondary" data-a="watch">Guarda</button>
 </div>`;
-div.querySelector("button").addEventListener("click",()=>startExitFade());
+div.querySelector('[data-a="watch"]').addEventListener("click", startExitFade);
 container.appendChild(div);
 }
 
-function startExitFade(){
-document.getElementById("fadeOut").classList.add("show");
+function escapeHtml(s){
+return (s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
-document.getElementById("exitBtn").addEventListener("click",()=>{
-try{window.close();}catch(e){}
+/* SPLASH: 2 secondi poi mostra HOME */
+window.addEventListener("load", ()=>{
+hideAll();
+el("home").classList.add("hidden");
+setTimeout(()=>{
+el("splash").classList.add("hide");
+show("home");
+}, 2000);
 });
 
+el("basicGo").addEventListener("click", ()=>show("basic"));
+el("premiumGo").addEventListener("click", ()=>show("premium"));
+
+el("homeFromBasic").addEventListener("click", ()=>show("home"));
+el("homeFromPremium").addEventListener("click", ()=>show("home"));
+el("homeFromTrending").addEventListener("click", ()=>show("home"));
+el("homeFromResults").addEventListener("click", ()=>show("home"));
+
+el("typeMovie").addEventListener("click", ()=>{ currentType="movie"; });
+el("typeTv").addEventListener("click", ()=>{ currentType="tv"; });
+
+el("openTrending").addEventListener("click", ()=>show("trending"));
+el("trendMovieBtn").addEventListener("click", ()=>loadTrending("movie"));
+el("trendTvBtn").addEventListener("click", ()=>loadTrending("tv"));
+
+el("basicSearch").addEventListener("click", searchBasic);
+el("premiumSearch").addEventListener("click", searchPremium);
+
 async function searchBasic(){
-const msg=document.getElementById("basicMsg");
+const msg=el("basicMsg");
 msg.textContent="";
 if(getBasicCount()>=1){
 msg.textContent="Hai già fatto la ricerca di oggi.";
 return;
 }
-
-hideAll();
-document.getElementById("results").classList.remove("hidden");
-const box=document.getElementById("resultsBox");
+show("results");
+const box=el("resultsBox");
 box.innerHTML="Carico...";
 
-const genres=[...document.querySelectorAll('#basic input:checked')].map(x=>x.value).join(",");
+const genres=[...document.querySelectorAll('#basic input[type="checkbox"]:checked')].map(x=>x.value).join(",");
 if(!genres){box.innerHTML="Seleziona un genere";return;}
 
 try{
@@ -300,12 +327,11 @@ box.innerHTML="Errore caricamento";
 }
 
 async function searchPremium(){
-hideAll();
-document.getElementById("results").classList.remove("hidden");
-const box=document.getElementById("resultsBox");
+show("results");
+const box=el("resultsBox");
 box.innerHTML="Carico...";
 
-const sliders=[...document.querySelectorAll('#premium input[type=range]')]
+const sliders=[...document.querySelectorAll('#premium input[type="range"]')]
 .filter(r=>parseInt(r.value,10)>0).map(r=>r.dataset.g).join(",");
 
 if(!sliders){box.innerHTML="Alza almeno uno slider";return;}
@@ -323,9 +349,8 @@ box.innerHTML="Errore caricamento";
 }
 
 async function loadTrending(type){
-const box=document.getElementById("trendBox");
+const box=el("trendBox");
 box.innerHTML="Carico...";
-
 try{
 const r=await fetch(`https://api.themoviedb.org/3/trending/${type}/week?api_key=${API_KEY}`);
 const d=await r.json();
@@ -341,4 +366,3 @@ box.innerHTML="Errore trending";
 
 </body>
 </html>
-```0
