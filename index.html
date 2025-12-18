@@ -275,11 +275,10 @@
       <div class="logo">MF</div>
       <div>
         <h1>Movie Finder</h1>
-        <div class="sub">Premium a pagine. Tipo, slider, piattaforme.</div>
+        <div class="sub">Basic o Premium, risultati con locandine e piattaforme.</div>
       </div>
     </div>
 
-    <!-- HOME -->
     <div class="page show" id="pageHome">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -303,10 +302,13 @@
           <span>Mostra solo disponibili online</span>
           <input type="checkbox" id="onlyOnlineToggle" checked>
         </div>
+
+        <div class="small" style="margin-top:10px">
+          Se non trovi nulla con “solo disponibili online”, disattivalo e riprova.
+        </div>
       </div>
     </div>
 
-    <!-- PIANO -->
     <div class="page" id="pagePlan">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -343,7 +345,6 @@
       </div>
     </div>
 
-    <!-- CHIAVE API -->
     <div class="page" id="pageKey">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -361,7 +362,6 @@
       </div>
     </div>
 
-    <!-- BASIC GENRES -->
     <div class="page" id="pageBasic">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -379,7 +379,6 @@
       </div>
     </div>
 
-    <!-- PREMIUM: TIPO -->
     <div class="page" id="pagePremType">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -403,7 +402,6 @@
       </div>
     </div>
 
-    <!-- PREMIUM: SLIDER -->
     <div class="page" id="pagePremSliders">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -422,7 +420,6 @@
       </div>
     </div>
 
-    <!-- PREMIUM: PROVIDERS -->
     <div class="page" id="pageProviders">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -452,18 +449,17 @@
       </div>
     </div>
 
-    <!-- RISULTATI -->
     <div class="page" id="pageResults">
       <div class="card">
         <div class="row" style="justify-content:space-between">
           <h2>Risultati</h2>
           <button class="btn btnGhost btnSmall" id="backFromResultsBtn">Indietro</button>
         </div>
+        <div class="small" id="resultsHint" style="margin-top:6px"></div>
         <div class="results" id="resultsBox"></div>
       </div>
     </div>
 
-    <!-- TRENDING -->
     <div class="page" id="pageTrending">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -484,7 +480,6 @@
       </div>
     </div>
 
-    <!-- SOCIAL -->
     <div class="page" id="pageSocial">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -502,7 +497,6 @@
       </div>
     </div>
 
-    <!-- LISTE -->
     <div class="page" id="pageLists">
       <div class="card">
         <div class="row" style="justify-content:space-between">
@@ -611,10 +605,9 @@
     }
     return parseInt(localStorage.getItem(LS.basicCount) || "0", 10);
   }
-  function incBasicCount(){
-    const c=getBasicCount()+1;
-    localStorage.setItem(LS.basicCount, String(c));
-    return c;
+  function setBasicCount(n){
+    localStorage.setItem(LS.basicDate, todayKey());
+    localStorage.setItem(LS.basicCount, String(n));
   }
 
   async function tmdb(path, params){
@@ -832,6 +825,10 @@
     return card;
   }
 
+  function countVisibleCards(container){
+    return Array.from(container.querySelectorAll(".resultCard")).filter(c => c.style.display !== "none").length;
+  }
+
   function applyOnlyOnlineFilter(container){
     if(!container) return;
     const cards = Array.from(container.querySelectorAll(".resultCard"));
@@ -939,6 +936,8 @@
 
   async function basicSearch(){
     const out = el("resultsBox");
+    const hint = el("resultsHint");
+    hint.textContent = "";
     out.innerHTML = `<div class="small">Carico...</div>`;
 
     const count = getBasicCount();
@@ -958,26 +957,23 @@
 
     if(!selected.length){
       alert("Seleziona almeno un genere.");
+      out.innerHTML = "";
       return;
     }
-
-    incBasicCount();
 
     try{
       const data = await tmdb("/discover/movie", {
         include_adult:"false",
         sort_by:"popularity.desc",
         page:1,
-        with_genres:selected.join(","),
-        watch_region:REGION,
-        with_watch_monetization_types:"flatrate|rent|buy"
+        with_genres:selected.join(",")
       });
 
       const list = (data.results || []).slice(0, 12);
       out.innerHTML = "";
 
       if(!list.length){
-        out.innerHTML = `<div class="small">Nessun risultato.</div>`;
+        out.innerHTML = `<div class="small">Nessun risultato. Prova un altro genere.</div>`;
         showPage("pageResults");
         return;
       }
@@ -990,32 +986,22 @@
 
       setTimeout(()=>{
         applyOnlyOnlineFilter(out);
+
+        const visible = countVisibleCards(out);
+        if(state.onlyOnline && visible === 0){
+          hint.textContent = "Con “solo disponibili online” non trovo niente. Disattivalo e riprova.";
+          Array.from(out.querySelectorAll(".resultCard")).forEach(c=> c.style.display="");
+        }
+
         limitVisible(out, 3);
-      }, 1100);
+
+        setBasicCount(1);
+      }, 1400);
 
     }catch(e){
       out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
       showPage("pageResults");
     }
-  }
-
-  function buildSliderRow(container, g, value){
-    const row = document.createElement("div");
-    row.className="genreRow";
-    row.innerHTML = `
-      <div class="genreName">
-        <div>${safeText(g.name)}</div>
-        <div class="badge" id="${container.id}_b_${g.id}">${value}</div>
-      </div>
-      <div><input type="range" min="0" max="5" value="${value}" step="1" id="${container.id}_r_${g.id}"></div>
-    `;
-    container.appendChild(row);
-    const r = row.querySelector("#"+container.id+"_r_"+g.id);
-    const b = row.querySelector("#"+container.id+"_b_"+g.id);
-    r.addEventListener("input", ()=>{
-      b.textContent = r.value;
-      persistCurrentWeights();
-    });
   }
 
   function getSliderSelections(container){
@@ -1116,6 +1102,25 @@
     el("provMsg").textContent = sel.length ? ("Selezionate: "+sel.length) : "Nessuna selezione. Uso tutte.";
   }
 
+  function buildSliderRow(container, g, value){
+    const row = document.createElement("div");
+    row.className="genreRow";
+    row.innerHTML = `
+      <div class="genreName">
+        <div>${safeText(g.name)}</div>
+        <div class="badge" id="${container.id}_b_${g.id}">${value}</div>
+      </div>
+      <div><input type="range" min="0" max="5" value="${value}" step="1" id="${container.id}_r_${g.id}"></div>
+    `;
+    container.appendChild(row);
+    const r = row.querySelector("#"+container.id+"_r_"+g.id);
+    const b = row.querySelector("#"+container.id+"_b_"+g.id);
+    r.addEventListener("input", ()=>{
+      b.textContent = r.value;
+      persistCurrentWeights();
+    });
+  }
+
   async function loadSliderGenres(){
     const box = el("premSlidersBox");
     box.innerHTML = `<div class="small">Carico...</div>`;
@@ -1123,7 +1128,6 @@
     const data = await tmdb(`/genre/${state.premType}/list`, {});
     const all = (data.genres || []).slice().sort((a,b)=>a.name.localeCompare(b.name));
 
-    // Prendo 10 generi “utili” prima, poi completo se mancano
     const preferredNames = [
       "Azione","Commedia","Romance","Romantico","Animazione","Dramma","Thriller","Horror",
       "Fantascienza","Avventura","Mistero","Crime","Famiglia","Fantasy"
@@ -1158,6 +1162,8 @@
 
   async function premiumSearch(){
     const out = el("resultsBox");
+    const hint = el("resultsHint");
+    hint.textContent = "";
     out.innerHTML = `<div class="small">Carico...</div>`;
 
     try{
@@ -1203,8 +1209,15 @@
 
       setTimeout(()=>{
         applyOnlyOnlineFilter(out);
+
+        const visible = countVisibleCards(out);
+        if(state.onlyOnline && visible === 0){
+          hint.textContent = "Con “solo disponibili online” non trovo niente. Disattivalo e riprova.";
+          Array.from(out.querySelectorAll(".resultCard")).forEach(c=> c.style.display="");
+        }
+
         limitVisible(out, 5);
-      }, 1200);
+      }, 1400);
 
     }catch(e){
       out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
@@ -1232,7 +1245,7 @@
       setTimeout(()=>{
         applyOnlyOnlineFilter(out);
         limitVisible(out, 5);
-      }, 1200);
+      }, 1400);
 
     }catch(e){
       out.innerHTML = `<div class="small">${safeText(e.message || "Errore")}</div>`;
@@ -1430,4 +1443,3 @@
 </script>
 </body>
 </html>
-```0
