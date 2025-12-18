@@ -32,15 +32,10 @@ body{
   padding:18px;
 }
 
-a{
-  color:var(--acidY);
-  text-decoration:none;
-}
-
 .topLink{
   font-size:12px;
   color:var(--muted2);
-  margin:0 0 10px 0;
+  margin-bottom:10px;
   text-align:center;
 }
 
@@ -49,31 +44,11 @@ a{
   border-radius:18px;
   padding:18px;
   box-shadow:0 0 40px rgba(0,0,0,0.6);
-  border:1px solid rgba(255,255,255,0.06);
 }
 
-h1{
-  font-size:22px;
-  margin:0 0 10px 0;
-}
-
-h2{
-  font-size:18px;
-  margin:0 0 8px 0;
-}
-
-p{
-  margin:8px 0 0 0;
-  color:var(--muted);
-  line-height:1.35;
-}
-
-.small{
-  font-size:12px;
-  color:var(--muted2);
-  margin-top:10px;
-  line-height:1.35;
-}
+h1{font-size:22px;margin:0 0 10px}
+h2{font-size:18px;margin:0 0 8px}
+p{margin:6px 0;color:var(--muted);line-height:1.35}
 
 .hr{
   height:1px;
@@ -94,15 +69,10 @@ button{
   cursor:pointer;
 }
 
-button:active{
-  transform:scale(0.985);
-}
-
 .secondary{
   background:transparent;
   border:1px solid var(--border);
   color:#fff;
-  font-weight:700;
 }
 
 .badge{
@@ -115,9 +85,7 @@ button:active{
   font-size:12px;
 }
 
-.hidden{
-  display:none;
-}
+.hidden{display:none}
 
 label{
   display:flex;
@@ -139,20 +107,18 @@ input[type="checkbox"]{
   border-radius:18px;
   padding:18px;
   display:none;
-  border:1px solid rgba(255,255,255,0.06);
 }
 
 .posterBox{
   width:100%;
   height:260px;
   border-radius:14px;
-  margin-bottom:12px;
+  margin-bottom:10px;
   background:#111827;
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  border:1px solid rgba(255,255,255,0.10);
 }
 
 .posterBox img{
@@ -161,25 +127,15 @@ input[type="checkbox"]{
   object-fit:cover;
 }
 
-.posterFallback{
-  font-size:13px;
-  color:var(--muted);
-  padding:14px;
-  text-align:center;
-}
-
 .closeRow{
   display:flex;
   gap:10px;
-  margin-top:14px;
 }
 
 .closeRow button{
   width:50%;
-  margin-top:0;
   padding:12px;
   border-radius:18px;
-  font-size:14px;
 }
 
 .fade{
@@ -194,7 +150,6 @@ input[type="checkbox"]{
 
 .fade.active{
   opacity:1;
-  pointer-events:auto;
 }
 
 .overlay{
@@ -206,47 +161,10 @@ input[type="checkbox"]{
   flex-direction:column;
   text-align:center;
   z-index:999;
-  padding:22px;
 }
 
 .overlay.active{
   display:flex;
-}
-
-.overlay h2{
-  font-size:22px;
-  margin:0 0 10px 0;
-}
-
-.overlay .filmTitle{
-  font-size:18px;
-  margin:0 0 16px 0;
-  color:var(--acidY);
-  font-weight:900;
-}
-
-.overlay .hint{
-  font-size:12px;
-  color:rgba(255,255,255,0.70);
-  margin:0 0 14px 0;
-  max-width:360px;
-  line-height:1.35;
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:16px;
-  transform:translateX(-50%);
-  background:rgba(0,0,0,0.72);
-  color:#fff;
-  border:1px solid rgba(255,255,255,0.14);
-  padding:10px 12px;
-  border-radius:999px;
-  font-size:12px;
-  display:none;
-  z-index:1000;
-  max-width:92vw;
 }
 </style>
 </head>
@@ -255,69 +173,41 @@ input[type="checkbox"]{
 
 <div class="container">
 
-  <p class="topLink">
-    App: <a href="https://maprexx-cmd.github.io/movie-finder-pwa-public/" target="_blank" rel="noopener">https://maprexx-cmd.github.io/movie-finder-pwa-public/</a>
-  </p>
+  <div class="topLink">
+    https://maprexx-cmd.github.io/movie-finder-pwa-public/
+  </div>
 
-  <div class="card" id="screenStart">
+  <div class="card" id="start">
     <h1>Movie Finder</h1>
-    <p>Scegli la versione.</p>
-
-    <div class="hr"></div>
 
     <h2>BASIC</h2>
-    <p>Film. 1 ricerca al giorno. Trama breve. Generi essenziali.</p>
-    <button onclick="startBasic()">Continua BASIC</button>
+    <p>Film soltanto. 3 suggerimenti al giorno. Trama breve.</p>
+    <p>Nessuna registrazione.</p>
+    <button onclick="startBasic()">Usa BASIC</button>
 
     <div class="hr"></div>
 
     <h2>PREMIUM</h2>
-    <p>Film e Serie TV. Risultati multipli. Trama completa. Watchlist.</p>
-    <button class="secondary" onclick="goPremiumInfo()">Passa a PREMIUM</button>
+    <p>Film e Serie TV. Risultati illimitati.</p>
+    <p>Trama completa e funzioni avanzate.</p>
+    <button class="secondary" onclick="startPremium()">Scopri PREMIUM</button>
 
     <span class="badge" id="modeBadge">Modalità: non selezionata</span>
   </div>
 
-  <div class="card hidden" id="screenPremiumInfo">
-    <h1>Premium</h1>
-    <p>Il pagamento avviene su Google Play nell’app pubblicata sul Play Store.</p>
-    <p>Questa versione web non può gestire il pagamento diretto.</p>
-    <div class="hr"></div>
-    <button onclick="simulatePremium()">Ho già Premium, continua</button>
-    <button class="secondary small" onclick="backToStart()">Indietro</button>
-    <p class="small">Nota: qui simuliamo Premium. Nell’app Android useremo Google Play Billing per verificare l’acquisto.</p>
-  </div>
-
-  <div class="card hidden" id="screenChooser">
+  <div class="card hidden" id="chooser">
     <h1>Cosa guardi oggi?</h1>
 
-    <span class="badge" id="contentBadge">Contenuto: Film</span>
+    <label><input type="checkbox" value="35">Comico</label>
+    <label><input type="checkbox" value="28">Azione</label>
+    <label><input type="checkbox" value="10749">Romantico</label>
+    <label><input type="checkbox" value="16">Cartoni animati</label>
 
-    <div class="hr"></div>
+    <button onclick="findMovies()">Cosa guardi oggi?</button>
 
-    <label><input type="checkbox" value="35" class="genre" id="gComedy">Comico</label>
-    <label><input type="checkbox" value="28" class="genre" id="gAction">Azione</label>
-    <label><input type="checkbox" value="10749" class="genre" id="gRomance">Romantico</label>
-    <label><input type="checkbox" value="16" class="genre" id="gAnimation">Cartoni animati</label>
+    <div id="results"></div>
 
-    <button onclick="findSomething()">Cosa guardi oggi?</button>
-
-    <div class="small" id="limitNote"></div>
-
-    <div class="result" id="resultBox">
-      <div class="posterBox" id="posterBox">
-        <div class="posterFallback" id="posterFallback">Locandina non disponibile</div>
-      </div>
-      <h2 id="title"></h2>
-      <p id="overview"></p>
-
-      <div class="closeRow">
-        <button class="secondary" onclick="hideResult()">Indietro</button>
-        <button onclick="closeAfterResult()">Chiudi</button>
-      </div>
-    </div>
-
-    <button class="secondary small" onclick="resetAll()">Torna all’inizio</button>
+    <button class="secondary" onclick="resetApp()">Torna all’inizio</button>
   </div>
 
 </div>
@@ -326,264 +216,84 @@ input[type="checkbox"]{
 
 <div class="overlay" id="overlay">
   <h2>Sta iniziando il film...</h2>
-  <div class="filmTitle" id="overlayFilmTitle"></div>
-  <p class="hint">Ora chiudi la schermata e avvia la visione dalla tua piattaforma.</p>
-  <button onclick="exitApp()">Ok, esci</button>
+  <button onclick="closeOverlay()">Ok</button>
 </div>
 
-<div id="toast" class="toast"></div>
-
 <script>
-const TMDB_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
-const IMG_BASE = "https://image.tmdb.org/t/p/w500";
-
-const LS_MODE = "mf_mode";
-const LS_LAST = "mf_lastSearchDate";
-
-let mode = "none";
-let contentType = "movie";
-let lastTitle = "";
-let lastResultShown = false;
-
-function todayISO(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-
-function toast(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg;
-  t.style.display="block";
-  clearTimeout(toast._t);
-  toast._t=setTimeout(()=>{t.style.display="none";},2200);
-}
-
-function showOnly(id){
-  ["screenStart","screenPremiumInfo","screenChooser"].forEach(x=>{
-    document.getElementById(x).classList.add("hidden");
-  });
-  document.getElementById(id).classList.remove("hidden");
-}
-
-function setBadge(){
-  const b = document.getElementById("modeBadge");
-  if(mode==="basic") b.textContent="Modalità: BASIC";
-  else if(mode==="premium") b.textContent="Modalità: PREMIUM";
-  else b.textContent="Modalità: non selezionata";
-}
-
-function updateLimitNote(){
-  const el = document.getElementById("limitNote");
-  if(mode==="basic"){
-    const last = localStorage.getItem(LS_LAST) || "";
-    if(last === todayISO()){
-      el.textContent = "Hai già fatto la ricerca di oggi. Riprova domani.";
-    }else{
-      el.textContent = "Versione BASIC. Una ricerca al giorno. Trama breve.";
-    }
-  }else{
-    el.textContent = "Versione PREMIUM. Nessun limite. Trama completa.";
-  }
-}
+const API="f8ecb75282e8dcea2d4845598cc7d030";
+const IMG="https://image.tmdb.org/t/p/w500";
+let mode="none";
+let dailyCount=0;
+let today=new Date().toDateString();
 
 function startBasic(){
   mode="basic";
-  contentType="movie";
-  lastResultShown=false;
-  localStorage.setItem(LS_MODE, "basic");
-  setBadge();
-  document.getElementById("contentBadge").textContent = "Contenuto: Film";
-  showOnly("screenChooser");
-  updateLimitNote();
+  dailyCount=0;
+  localStorage.setItem("day",today);
+  showChooser();
 }
 
-function goPremiumInfo(){
-  showOnly("screenPremiumInfo");
-}
-
-function simulatePremium(){
+function startPremium(){
   mode="premium";
-  contentType="movie";
-  lastResultShown=false;
-  localStorage.setItem(LS_MODE, "premium");
-  document.getElementById("contentBadge").textContent = "Contenuto: Film";
-  setBadge();
-  showOnly("screenChooser");
-  updateLimitNote();
-  toast("Premium simulato. In Play Store useremo il pagamento reale.");
+  showChooser();
 }
 
-function backToStart(){
-  showOnly("screenStart");
+function showChooser(){
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("chooser").classList.remove("hidden");
+  document.getElementById("modeBadge").innerText="Modalità: "+mode.toUpperCase();
 }
 
-function getSelectedGenres(){
-  return Array.from(document.querySelectorAll(".genre:checked")).map(x => x.value);
-}
-
-function canSearchToday(){
-  if(mode!=="basic") return true;
-  const last = localStorage.getItem(LS_LAST) || "";
-  return last !== todayISO();
-}
-
-function markSearchedToday(){
-  if(mode!=="basic") return;
-  localStorage.setItem(LS_LAST, todayISO());
-}
-
-function buildDiscoverUrl(genres){
-  const base = "https://api.themoviedb.org/3/discover/movie";
-  const params = new URLSearchParams();
-  params.set("api_key", TMDB_KEY);
-  params.set("language", "it-IT");
-  params.set("sort_by", "popularity.desc");
-  params.set("include_adult", "false");
-  params.set("with_genres", genres.join(","));
-  return base + "?" + params.toString();
-}
-
-function pickWithPoster(results){
-  if(!Array.isArray(results) || results.length===0) return null;
-  const withPoster = results.filter(x => x && x.poster_path);
-  const pool = withPoster.length ? withPoster : results;
-  return pool[Math.floor(Math.random()*pool.length)];
-}
-
-function shortOverview(text){
-  if(!text) return "Trama non disponibile";
-  const t = text.trim();
-  if(mode!=="basic") return t;
-  if(t.length <= 160) return t;
-  return t.slice(0,160).trim() + "...";
-}
-
-function renderPoster(posterPath){
-  const box = document.getElementById("posterBox");
-  const fallback = document.getElementById("posterFallback");
-
-  box.innerHTML = "";
-  if(!posterPath){
-    fallback.style.display = "block";
-    box.appendChild(fallback);
-    return;
-  }
-
-  const img = document.createElement("img");
-  img.alt = "Locandina";
-  img.onload = () => {};
-  img.onerror = () => {
-    box.innerHTML = "";
-    fallback.style.display = "block";
-    box.appendChild(fallback);
-  };
-  img.src = IMG_BASE + posterPath;
-
-  fallback.style.display = "none";
-  box.appendChild(img);
-}
-
-async function findSomething(){
-  const genres = getSelectedGenres();
-  if(genres.length === 0){
-    toast("Seleziona almeno un genere");
-    return;
-  }
-
-  if(!canSearchToday()){
-    toast("Hai già cercato oggi. Riprova domani.");
-    updateLimitNote();
-    return;
-  }
-
-  document.getElementById("resultBox").style.display = "none";
-
-  try{
-    const res = await fetch(buildDiscoverUrl(genres));
-    const data = await res.json();
-
-    if(!data || !data.results || data.results.length === 0){
-      toast("Nessun risultato. Cambia selezione.");
+function findMovies(){
+  if(mode==="basic"){
+    if(localStorage.getItem("day")!==today){
+      localStorage.setItem("day",today);
+      dailyCount=0;
+    }
+    if(dailyCount>=3){
+      alert("Hai già visto i 3 film di oggi.");
       return;
     }
-
-    const item = pickWithPoster(data.results);
-    if(!item){
-      toast("Nessun risultato. Cambia selezione.");
-      return;
-    }
-
-    lastTitle = item.title || "Titolo";
-    lastResultShown = true;
-
-    document.getElementById("title").textContent = lastTitle;
-    document.getElementById("overview").textContent = shortOverview(item.overview);
-
-    renderPoster(item.poster_path);
-
-    document.getElementById("resultBox").style.display = "block";
-    document.getElementById("resultBox").scrollIntoView({behavior:"smooth", block:"start"});
-
-    markSearchedToday();
-    updateLimitNote();
-  }catch(e){
-    toast("Errore di rete. Riprova.");
   }
+
+  const genres=[...document.querySelectorAll("input:checked")].map(x=>x.value).join(",");
+  if(!genres){alert("Seleziona almeno un genere");return;}
+
+  fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API}&with_genres=${genres}&language=it-IT`)
+  .then(r=>r.json())
+  .then(d=>{
+    document.getElementById("results").innerHTML="";
+    d.results.slice(0,3).forEach(f=>{
+      const div=document.createElement("div");
+      div.className="result";
+      div.style.display="block";
+      div.innerHTML=`
+        <div class="posterBox">${f.poster_path?`<img src="${IMG+f.poster_path}">`:""}</div>
+        <h2>${f.title}</h2>
+        <p>${mode==="basic"?f.overview.slice(0,140)+"...":f.overview}</p>
+        <div class="closeRow">
+          <button onclick="exit()">Chiudi</button>
+        </div>
+      `;
+      document.getElementById("results").appendChild(div);
+    });
+    dailyCount++;
+  });
 }
 
-function hideResult(){
-  document.getElementById("resultBox").style.display = "none";
+function exit(){
+  document.getElementById("fade").classList.add("active");
+  setTimeout(()=>document.getElementById("overlay").classList.add("active"),650);
 }
 
-function closeAfterResult(){
-  if(!lastResultShown){
-    toast("Prima trova un risultato");
-    return;
-  }
-  startExitEffect();
+function closeOverlay(){
+  document.getElementById("overlay").classList.remove("active");
+  document.getElementById("fade").classList.remove("active");
 }
 
-function startExitEffect(){
-  const fade = document.getElementById("fade");
-  const overlay = document.getElementById("overlay");
-
-  document.getElementById("overlayFilmTitle").textContent = lastTitle || "Il tuo film";
-
-  fade.classList.add("active");
-  setTimeout(() => {
-    overlay.classList.add("active");
-  }, 650);
+function resetApp(){
+  location.reload();
 }
-
-function exitApp(){
-  const overlay = document.getElementById("overlay");
-  overlay.classList.remove("active");
-
-  setTimeout(() => {
-    try{ window.close(); }catch(e){}
-    toast("Se non si chiude, chiudi tu la schermata.");
-  }, 150);
-}
-
-function resetAll(){
-  document.querySelectorAll(".genre").forEach(x => x.checked = false);
-  document.getElementById("resultBox").style.display = "none";
-  lastResultShown = false;
-  showOnly("screenStart");
-}
-
-(function boot(){
-  const saved = localStorage.getItem(LS_MODE);
-  if(saved === "basic" || saved === "premium"){
-    mode = saved;
-    setBadge();
-  }else{
-    setBadge();
-  }
-})();
 </script>
 
 </body>
