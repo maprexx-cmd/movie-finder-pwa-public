@@ -8,78 +8,133 @@
 <style>
 :root{
   --bg:#0f0f0f;
-  --card:#1c1c1c;
+  --panel:#171717;
+  --card:#1f1f1f;
+  --border:#2b2b2b;
+  --text:#ffffff;
   --muted:#cfcfcf;
   --muted2:#9a9a9a;
   --btn:#5b2cff;
   --btn2:#2a2a2a;
   --danger:#ff3b30;
   --ok:#34c759;
-  --border:#2b2b2b;
 }
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
   margin:0;
   font-family: Arial, sans-serif;
   background:var(--bg);
-  color:#fff;
+  color:var(--text);
 }
-.container{padding:16px; max-width:980px; margin:0 auto}
-h1{margin:6px 0 14px 0; text-align:center; font-size:22px}
-.row{display:flex; gap:10px; flex-wrap:wrap}
-.col{flex:1; min-width:240px}
+.container{
+  max-width:980px;
+  margin:0 auto;
+  padding:16px;
+}
+h1{
+  margin:8px 0 14px 0;
+  text-align:center;
+  font-size:22px;
+}
 .section{
   margin-top:14px;
   padding:12px;
-  background:var(--card);
+  background:var(--panel);
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:12px;
 }
-label{display:block; margin-top:10px; font-size:14px; color:var(--muted)}
-select, input[type="text"], input[type="range"]{
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.col{
+  flex:1;
+  min-width:240px;
+}
+label{
+  display:block;
+  margin-top:10px;
+  font-size:14px;
+  color:var(--muted);
+}
+input[type="text"], select{
   width:100%;
   margin-top:8px;
   padding:12px;
-  border-radius:8px;
+  border-radius:10px;
   border:1px solid var(--border);
-  background:#141414;
-  color:#fff;
+  background:#111111;
+  color:var(--text);
 }
-input[type="range"]{padding:0; height:36px; background:transparent; border:none}
+input[type="range"]{
+  width:100%;
+  margin-top:10px;
+}
 button{
   width:100%;
   padding:14px;
   margin-top:10px;
   font-size:16px;
   background:var(--btn);
-  color:#fff;
+  color:var(--text);
   border:none;
-  border-radius:8px;
+  border-radius:10px;
 }
 button.secondary{background:var(--btn2)}
 button.danger{background:var(--danger)}
-.small{font-size:13px; color:var(--muted2); line-height:1.35}
+.inline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.inline button{width:auto; flex:1; min-width:160px}
 .notice{
   margin-top:10px;
   padding:10px;
-  border-radius:8px;
-  background:#141414;
+  border-radius:10px;
   border:1px solid var(--border);
+  background:#111111;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.35;
 }
 .badge{
   display:inline-block;
   padding:6px 10px;
   border-radius:999px;
   border:1px solid var(--border);
-  background:#141414;
+  background:#111111;
   color:var(--muted);
   font-size:12px;
-  margin-right:6px;
-  margin-top:6px;
 }
 .badge.ok{border-color:rgba(52,199,89,.35); color:#c8f7d8}
 .badge.warn{border-color:rgba(255,59,48,.35); color:#ffd2cf}
-hr{border:none; border-top:1px solid var(--border); margin:12px 0}
+.hidden{display:none !important}
+
+.grid2{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+}
+@media(max-width:520px){
+  .grid2{grid-template-columns:1fr}
+}
+
+.chk{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#111111;
+  margin-top:10px;
+}
+.chk input{width:18px; height:18px; margin:0}
+
 .results{
   display:grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -89,13 +144,13 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:12px;
   overflow:hidden;
 }
 .poster{
   width:100%;
   aspect-ratio: 2 / 3;
-  background:#121212;
+  background:#111111;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -107,22 +162,34 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
 .title{margin:0; font-size:16px}
 .meta{margin:6px 0 0 0; font-size:13px; color:var(--muted)}
 .overview{margin:8px 0 0 0; font-size:13px; color:#e8e8e8; line-height:1.35}
-.providers{margin-top:8px}
-.providers .p-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+
+.packs{margin-top:10px}
+.pack-label{font-size:12px; color:var(--muted2); margin-top:8px}
+.p-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
 .pill{
   display:flex;
   align-items:center;
   gap:6px;
   border:1px solid var(--border);
-  background:#141414;
+  background:#111111;
   border-radius:999px;
   padding:6px 10px;
   font-size:12px;
   color:var(--muted);
 }
 .pill img{width:18px; height:18px; border-radius:4px}
-.actions{display:flex; gap:8px; margin-top:10px}
-.actions button{margin-top:0; padding:10px; font-size:14px}
+
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+.actions button{
+  margin-top:0;
+  padding:10px;
+  font-size:14px;
+}
+
 .kpi{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -130,30 +197,13 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
   margin-top:10px;
 }
 .kpi .box{
-  background:#141414;
+  background:#111111;
   border:1px solid var(--border);
-  border-radius:10px;
+  border-radius:12px;
   padding:10px;
 }
 .kpi .num{font-size:20px; margin:0}
 .kpi .lbl{margin:6px 0 0 0; color:var(--muted2); font-size:12px}
-.hidden{display:none !important}
-.inline{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
-.chk{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-top:10px;
-  padding:10px;
-  border:1px solid var(--border);
-  background:#141414;
-  border-radius:10px;
-}
-.chk input{width:18px; height:18px; margin:0}
-.grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-@media(max-width:520px){
-  .grid2{grid-template-columns:1fr}
-}
 </style>
 </head>
 
@@ -166,10 +216,11 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
       <div class="col">
         <label>TMDB API Key</label>
         <input id="apiKey" type="text" placeholder="Incolla qui la tua API key" />
-        <div class="small" style="margin-top:8px">
-          L’app usa TMDB. Tu inserisci la tua API key. L’app la salva in locale.
+        <div class="notice">
+          Tu inserisci la tua API key. L’app la salva in locale sul telefono.
         </div>
       </div>
+
       <div class="col">
         <label>Tipo utente</label>
         <select id="userType">
@@ -186,19 +237,24 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
       </div>
     </div>
 
-    <div class="row" style="margin-top:10px">
-      <div class="col">
-        <div class="inline">
-          <button id="btnSearch" onclick="runSearch()">Cerca</button>
-          <button class="secondary" onclick="showWatchlist()">Watchlist</button>
-          <button class="secondary" onclick="clearResults()">Pulisci risultati</button>
-        </div>
-      </div>
+    <div class="inline" style="margin-top:10px">
+      <button id="btnSearch" onclick="runSearch()">Cerca</button>
+      <button class="secondary" onclick="showWatchlist()">Watchlist</button>
+      <button class="secondary" onclick="clearResults()">Pulisci</button>
     </div>
+
+    <div class="inline" style="margin-top:10px">
+      <span class="badge" id="statusBadge">Pronto</span>
+      <span class="badge" id="modeBadge">Base</span>
+    </div>
+
+    <div id="msg" class="notice">Inserisci la tua API key, scegli i generi, poi premi Cerca.</div>
   </div>
 
   <div class="section" id="baseSection">
-    <div class="small">Utente base. Tu fai una ricerca al giorno. Tu ottieni 3 risultati. Tu vedi locandina e trama breve.</div>
+    <div class="notice">
+      Utente base. Tu fai 1 ricerca al giorno. Tu ottieni 3 risultati. Tu vedi locandina e trama breve.
+    </div>
 
     <div class="grid2">
       <div>
@@ -221,7 +277,9 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
   </div>
 
   <div class="section hidden" id="premiumSection">
-    <div class="small">Utente premium. Tu scegli fino a 10 generi. Tu regoli i generi con slider. Tu cerchi film e serie TV. Tu vedi trama estesa, locandina, statistiche.</div>
+    <div class="notice">
+      Utente premium. Tu scegli fino a 10 generi con slider. Tu cerchi film e serie TV. Tu vedi trama estesa, locandina, statistiche.
+    </div>
 
     <label>Contenuti</label>
     <select id="contentType">
@@ -231,13 +289,13 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
     </select>
 
     <div class="section" style="margin-top:12px">
-      <div class="small">Generi e intensità. Se imposti 0, l’app ignora il genere.</div>
+      <div class="notice">Se imposti 0, l’app ignora il genere.</div>
       <div id="premiumGenres"></div>
     </div>
 
     <div class="section" style="margin-top:12px">
-      <div class="small">Piattaforme. Tu scegli cosa vedere. L’app filtra i risultati in base alle piattaforme presenti in Italia.</div>
-      <div id="platformsBox" class="inline"></div>
+      <div class="notice">Piattaforme. Tu puoi filtrare sui servizi che usi.</div>
+      <div id="platformsBox" class="row"></div>
       <div class="inline" style="margin-top:10px">
         <button class="secondary" onclick="savePlatforms()">Salva piattaforme</button>
         <button class="secondary" onclick="resetPlatforms()">Reset piattaforme</button>
@@ -245,18 +303,13 @@ hr{border:none; border-top:1px solid var(--border); margin:12px 0}
     </div>
 
     <div class="section" style="margin-top:12px">
-      <div class="small">Statistiche personali. L’app le salva in locale.</div>
+      <div class="notice">Statistiche personali. L’app le salva in locale.</div>
       <div class="kpi" id="statsKpi"></div>
       <button class="danger" onclick="resetStats()">Reset statistiche</button>
     </div>
   </div>
 
   <div class="section">
-    <div class="inline">
-      <span class="badge" id="statusBadge">Pronto</span>
-      <span class="badge" id="modeBadge">Base</span>
-    </div>
-    <div id="msg" class="notice small" style="margin-top:10px">Inserisci la tua API key. Seleziona i generi. Premi Cerca.</div>
     <div id="results" class="results"></div>
   </div>
 </div>
@@ -266,47 +319,26 @@ const TMDB_BASE = "https://api.themoviedb.org/3";
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 const LOGO_BASE = "https://image.tmdb.org/t/p/w92";
 
-const GENRES = {
-  movie: [
-    {id:28, name:"Azione"},
-    {id:12, name:"Avventura"},
-    {id:16, name:"Animazione"},
-    {id:35, name:"Commedia"},
-    {id:80, name:"Crime"},
-    {id:99, name:"Documentario"},
-    {id:18, name:"Drammatico"},
-    {id:10751, name:"Famiglia"},
-    {id:14, name:"Fantasy"},
-    {id:36, name:"Storia"},
-    {id:27, name:"Horror"},
-    {id:10402, name:"Musica"},
-    {id:9648, name:"Mistero"},
-    {id:10749, name:"Romantico"},
-    {id:878, name:"Fantascienza"},
-    {id:10770, name:"Film TV"},
-    {id:53, name:"Thriller"},
-    {id:10752, name:"Guerra"},
-    {id:37, name:"Western"}
-  ],
-  tv: [
-    {id:10759, name:"Azione e avventura"},
-    {id:16, name:"Animazione"},
-    {id:35, name:"Commedia"},
-    {id:80, name:"Crime"},
-    {id:99, name:"Documentario"},
-    {id:18, name:"Drammatico"},
-    {id:10751, name:"Famiglia"},
-    {id:10762, name:"Kids"},
-    {id:9648, name:"Mistero"},
-    {id:10763, name:"News"},
-    {id:10764, name:"Reality"},
-    {id:10765, name:"Sci-Fi e fantasy"},
-    {id:10766, name:"Soap"},
-    {id:10767, name:"Talk"},
-    {id:10768, name:"Guerra e politica"},
-    {id:37, name:"Western"}
-  ]
-};
+const GENRES_MOVIE = [
+  {id:28, name:"Azione"},
+  {id:12, name:"Avventura"},
+  {id:16, name:"Animazione"},
+  {id:35, name:"Commedia"},
+  {id:80, name:"Crime"},
+  {id:99, name:"Documentario"},
+  {id:18, name:"Drammatico"},
+  {id:10751, name:"Famiglia"},
+  {id:14, name:"Fantasy"},
+  {id:36, name:"Storia"},
+  {id:27, name:"Horror"},
+  {id:10402, name:"Musica"},
+  {id:9648, name:"Mistero"},
+  {id:10749, name:"Romantico"},
+  {id:878, name:"Fantascienza"},
+  {id:53, name:"Thriller"},
+  {id:10752, name:"Guerra"},
+  {id:37, name:"Western"}
+];
 
 const PREMIUM_GENRE_SET = [
   {key:"action", name:"Azione", movieId:28, tvId:10759},
@@ -333,10 +365,22 @@ const LS = {
   watchlist:"mf_watchlist",
   stats:"mf_stats",
   platforms:"mf_platforms",
-  premiumSliders:"mf_sliders"
+  sliders:"mf_sliders",
+  onlyOnline:"mf_onlyOnline"
 };
 
 function $(id){return document.getElementById(id)}
+
+function safeJson(s, fallback){
+  try{ return s ? JSON.parse(s) : fallback; }catch(e){ return fallback; }
+}
+
+function escapeHtml(s){
+  return String(s || "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
 function setStatus(txt, kind){
   const b = $("statusBadge");
   b.textContent = txt;
@@ -344,44 +388,17 @@ function setStatus(txt, kind){
   if(kind==="ok") b.classList.add("ok");
   if(kind==="warn") b.classList.add("warn");
 }
-function setMsg(txt){$("msg").textContent = txt}
+
+function setMsg(txt){
+  $("msg").textContent = txt;
+}
+
 function todayKey(){
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth()+1).padStart(2,"0");
   const da = String(d.getDate()).padStart(2,"0");
   return y + "-" + m + "-" + da;
-}
-
-function loadState(){
-  const api = localStorage.getItem(LS.apiKey) || "";
-  $("apiKey").value = api;
-
-  const ut = localStorage.getItem(LS.userType) || "base";
-  $("userType").value = ut;
-
-  const onlyOnline = localStorage.getItem("mf_onlyOnline") === "1";
-  $("onlyOnline").checked = onlyOnline;
-
-  initBaseGenres();
-  initPremiumGenres();
-  initPlatformsBox();
-  refreshUI();
-  refreshDailyNotice();
-  renderStats();
-}
-
-function saveApiKey(){
-  const k = $("apiKey").value.trim();
-  localStorage.setItem(LS.apiKey, k);
-}
-
-function refreshUI(){
-  const ut = $("userType").value;
-  $("modeBadge").textContent = ut === "premium" ? "Premium" : "Base";
-  $("baseSection").classList.toggle("hidden", ut === "premium");
-  $("premiumSection").classList.toggle("hidden", ut !== "premium");
-  refreshDailyNotice();
 }
 
 function refreshDailyNotice(){
@@ -392,21 +409,24 @@ function refreshDailyNotice(){
     return;
   }
   const daily = safeJson(localStorage.getItem(LS.daily), {});
-  const t = todayKey();
-  if(daily && daily.date === t){
-    box.textContent = "Oggi hai già fatto la ricerca base. Torna domani per un’altra ricerca.";
+  if(daily && daily.date === todayKey()){
+    box.textContent = "Oggi hai già fatto la ricerca base. Torna domani.";
   }else{
     box.textContent = "Tu puoi fare 1 ricerca al giorno. Oggi non hai ancora cercato.";
   }
 }
 
-function safeJson(s, fallback){
-  try{ return s ? JSON.parse(s) : fallback; }catch(e){ return fallback; }
+function refreshUI(){
+  const ut = $("userType").value;
+  $("modeBadge").textContent = ut === "premium" ? "Premium" : "Base";
+  $("baseSection").classList.toggle("hidden", ut === "premium");
+  $("premiumSection").classList.toggle("hidden", ut !== "premium");
+  refreshDailyNotice();
 }
 
 function initBaseGenres(){
   const selects = document.querySelectorAll(".baseGenre");
-  const opts = GENRES.movie.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const opts = GENRES_MOVIE.slice().sort((a,b)=>a.name.localeCompare(b.name));
   selects.forEach(sel=>{
     sel.innerHTML = "";
     const none = document.createElement("option");
@@ -425,8 +445,7 @@ function initBaseGenres(){
 function initPremiumGenres(){
   const host = $("premiumGenres");
   host.innerHTML = "";
-
-  const saved = safeJson(localStorage.getItem(LS.premiumSliders), {});
+  const saved = safeJson(localStorage.getItem(LS.sliders), {});
   PREMIUM_GENRE_SET.forEach(g=>{
     const wrap = document.createElement("div");
     wrap.className = "chk";
@@ -436,33 +455,34 @@ function initPremiumGenres(){
     const top = document.createElement("div");
     top.className = "inline";
     top.style.justifyContent = "space-between";
+    top.style.width = "100%";
 
-    const label = document.createElement("div");
-    label.textContent = g.name;
-    label.style.color = "#fff";
-    label.style.fontSize = "14px";
+    const l = document.createElement("div");
+    l.textContent = g.name;
+    l.style.fontSize = "14px";
+    l.style.color = "#fff";
 
-    const val = document.createElement("div");
-    val.id = "val_" + g.key;
-    val.className = "small";
-    val.textContent = "0";
-
-    top.appendChild(label);
-    top.appendChild(val);
+    const v = document.createElement("div");
+    v.id = "val_" + g.key;
+    v.style.fontSize = "13px";
+    v.style.color = "var(--muted)";
 
     const r = document.createElement("input");
     r.type = "range";
     r.min = "0";
     r.max = "10";
     r.step = "1";
+    r.id = "r_" + g.key;
     r.value = String(saved[g.key] ?? 0);
-    val.textContent = r.value;
+    v.textContent = r.value;
 
     r.addEventListener("input", ()=>{
-      val.textContent = r.value;
+      v.textContent = r.value;
       savePremiumSliders();
     });
 
+    top.appendChild(l);
+    top.appendChild(v);
     wrap.appendChild(top);
     wrap.appendChild(r);
     host.appendChild(wrap);
@@ -470,19 +490,16 @@ function initPremiumGenres(){
 }
 
 function savePremiumSliders(){
-  const data = {};
+  const out = {};
   PREMIUM_GENRE_SET.forEach(g=>{
-    const el = document.querySelector(`#premiumGenres input[type="range"]#r_${g.key}`);
+    const r = document.getElementById("r_" + g.key);
+    out[g.key] = Number(r ? r.value : 0);
   });
-  const ranges = Array.from(document.querySelectorAll("#premiumGenres input[type='range']"));
-  ranges.forEach((r,i)=>{
-    data[PREMIUM_GENRE_SET[i].key] = Number(r.value);
-  });
-  localStorage.setItem(LS.premiumSliders, JSON.stringify(data));
+  localStorage.setItem(LS.sliders, JSON.stringify(out));
 }
 
 function getPremiumSliders(){
-  const data = safeJson(localStorage.getItem(LS.premiumSliders), {});
+  const data = safeJson(localStorage.getItem(LS.sliders), {});
   const out = {};
   PREMIUM_GENRE_SET.forEach(g=>{
     out[g.key] = Number(data[g.key] ?? 0);
@@ -493,14 +510,13 @@ function getPremiumSliders(){
 function initPlatformsBox(){
   const box = $("platformsBox");
   box.innerHTML = "";
-
   const saved = safeJson(localStorage.getItem(LS.platforms), {});
   KNOWN_PLATFORMS_IT.forEach(name=>{
     const d = document.createElement("div");
     d.className = "chk";
-    d.style.marginTop = "0";
-    d.style.padding = "10px";
+    d.style.flex = "1";
     d.style.minWidth = "190px";
+    d.style.marginTop = "0";
 
     const c = document.createElement("input");
     c.type = "checkbox";
@@ -537,8 +553,7 @@ function resetPlatforms(){
 
 function getSelectedPlatforms(){
   const saved = safeJson(localStorage.getItem(LS.platforms), {});
-  const selected = Object.keys(saved).filter(k=>saved[k]);
-  return selected;
+  return Object.keys(saved).filter(k=>saved[k]);
 }
 
 function canSearchBaseToday(){
@@ -564,24 +579,35 @@ function normalize(n, min, max){
 
 async function tmdbFetch(path, params){
   const apiKey = $("apiKey").value.trim();
-  if(!apiKey){
-    throw new Error("Manca la API key.");
-  }
+  if(!apiKey) throw new Error("Manca la API key.");
   const url = new URL(TMDB_BASE + path);
   url.searchParams.set("api_key", apiKey);
   url.searchParams.set("language", "it-IT");
   if(params){
     Object.keys(params).forEach(k=>{
-      if(params[k] !== undefined && params[k] !== null && params[k] !== ""){
-        url.searchParams.set(k, String(params[k]));
+      const v = params[k];
+      if(v !== undefined && v !== null && v !== ""){
+        url.searchParams.set(k, String(v));
       }
     });
   }
   const res = await fetch(url.toString());
-  if(!res.ok){
-    throw new Error("Errore TMDB: " + res.status);
-  }
+  if(!res.ok) throw new Error("Errore TMDB: " + res.status);
   return await res.json();
+}
+
+async function discover(kind, genreIds, page){
+  const withGenres = genreIds && genreIds.length ? genreIds.join(",") : "";
+  const params = {
+    include_adult: "false",
+    sort_by: "popularity.desc",
+    watch_region: "IT",
+    with_watch_monetization_types: "flatrate|rent|buy",
+    page: page || 1
+  };
+  if(withGenres) params.with_genres = withGenres;
+  const path = kind === "tv" ? "/discover/tv" : "/discover/movie";
+  return await tmdbFetch(path, params);
 }
 
 async function getProviders(kind, id){
@@ -592,22 +618,22 @@ async function getProviders(kind, id){
 
     const packs = [];
     const pushPack = (label, arr)=>{
-      if(!Array.isArray(arr)) return;
-      const unique = [];
+      if(!Array.isArray(arr) || !arr.length) return;
       const seen = new Set();
+      const items = [];
       arr.forEach(p=>{
-        if(p && p.provider_name && !seen.has(p.provider_name)){
-          seen.add(p.provider_name);
-          unique.push({
-            name: p.provider_name,
-            logo: p.logo_path ? (LOGO_BASE + p.logo_path) : null
-          });
-        }
+        if(!p || !p.provider_name) return;
+        if(seen.has(p.provider_name)) return;
+        seen.add(p.provider_name);
+        items.push({
+          name: p.provider_name,
+          logo: p.logo_path ? (LOGO_BASE + p.logo_path) : null
+        });
       });
-      if(unique.length) packs.push({label, items: unique});
+      if(items.length) packs.push({label, items});
     };
 
-    pushPack("Abbonamento", it.flarate);
+    pushPack("Abbonamento", it.flatrate);
     pushPack("Noleggio", it.rent);
     pushPack("Acquisto", it.buy);
 
@@ -628,203 +654,6 @@ function providersMatchSelected(packs, selectedPlatforms){
     }
   }
   return false;
-}
-
-function flattenProviders(packs){
-  if(!packs) return [];
-  const all = [];
-  packs.forEach(p=>p.items.forEach(i=>all.push(i.name)));
-  return all;
-}
-
-function updateStatsOnSearch(payload){
-  const st = safeJson(localStorage.getItem(LS.stats), {
-    searches:0,
-    searchesBase:0,
-    searchesPremium:0,
-    movieSearches:0,
-    tvSearches:0,
-    genreCounts:{},
-    clicks:0,
-    watchAdds:0
-  });
-
-  st.searches += 1;
-  if(payload.userType === "base") st.searchesBase += 1;
-  if(payload.userType === "premium") st.searchesPremium += 1;
-
-  if(payload.contentType === "movie") st.movieSearches += 1;
-  if(payload.contentType === "tv") st.tvSearches += 1;
-  if(payload.contentType === "both"){
-    st.movieSearches += 1;
-    st.tvSearches += 1;
-  }
-
-  (payload.genres || []).forEach(g=>{
-    const k = String(g);
-    st.genreCounts[k] = (st.genreCounts[k] || 0) + 1;
-  });
-
-  localStorage.setItem(LS.stats, JSON.stringify(st));
-  renderStats();
-}
-
-function updateStatsOnClick(){
-  const st = safeJson(localStorage.getItem(LS.stats), {});
-  st.clicks = Number(st.clicks || 0) + 1;
-  localStorage.setItem(LS.stats, JSON.stringify(st));
-  renderStats();
-}
-
-function updateStatsOnWatchAdd(){
-  const st = safeJson(localStorage.getItem(LS.stats), {});
-  st.watchAdds = Number(st.watchAdds || 0) + 1;
-  localStorage.setItem(LS.stats, JSON.stringify(st));
-  renderStats();
-}
-
-function renderStats(){
-  const ut = $("userType").value;
-  const box = $("statsKpi");
-  if(!box) return;
-  const st = safeJson(localStorage.getItem(LS.stats), {
-    searches:0, searchesBase:0, searchesPremium:0, movieSearches:0, tvSearches:0, clicks:0, watchAdds:0
-  });
-
-  box.innerHTML = "";
-  const items = [
-    {num: st.searches || 0, lbl: "Ricerche totali"},
-    {num: st.searchesPremium || 0, lbl: "Ricerche premium"},
-    {num: st.searchesBase || 0, lbl: "Ricerche base"},
-    {num: st.movieSearches || 0, lbl: "Ricerche film"},
-    {num: st.tvSearches || 0, lbl: "Ricerche serie TV"},
-    {num: st.clicks || 0, lbl: "Click su risultati"},
-    {num: st.watchAdds || 0, lbl: "Aggiunte in watchlist"}
-  ];
-  items.forEach(it=>{
-    const d = document.createElement("div");
-    d.className = "box";
-    d.innerHTML = `<p class="num">${it.num}</p><p class="lbl">${it.lbl}</p>`;
-    box.appendChild(d);
-  });
-}
-
-function resetStats(){
-  localStorage.removeItem(LS.stats);
-  renderStats();
-  setMsg("Statistiche resettate.");
-}
-
-function getWatchlist(){
-  return safeJson(localStorage.getItem(LS.watchlist), []);
-}
-
-function saveWatchlist(list){
-  localStorage.setItem(LS.watchlist, JSON.stringify(list));
-}
-
-function addToWatchlist(item){
-  const list = getWatchlist();
-  const key = item.kind + ":" + item.id;
-  if(list.some(x => (x.kind + ":" + x.id) === key)){
-    setMsg("È già in watchlist.");
-    return;
-  }
-  list.unshift({
-    kind:item.kind,
-    id:item.id,
-    title:item.title,
-    poster:item.poster || null,
-    year:item.year || "",
-    addedAt: Date.now()
-  });
-  saveWatchlist(list);
-  updateStatsOnWatchAdd();
-  setMsg("Aggiunto in watchlist.");
-}
-
-function removeFromWatchlist(kind, id){
-  const list = getWatchlist();
-  const key = kind + ":" + id;
-  const out = list.filter(x => (x.kind + ":" + x.id) !== key);
-  saveWatchlist(out);
-  showWatchlist();
-}
-
-function showWatchlist(){
-  const list = getWatchlist();
-  clearResults();
-  if(!list.length){
-    setMsg("Watchlist vuota.");
-    return;
-  }
-  setMsg("Watchlist. Tocca Rimuovi per cancellare un elemento.");
-  const host = $("results");
-  list.forEach(w=>{
-    const card = document.createElement("div");
-    card.className = "card";
-    const poster = w.poster ? `<img src="${w.poster}" alt="Locandina">` : "";
-    card.innerHTML = `
-      <div class="poster">${poster || "Locandina"}</div>
-      <div class="card-body">
-        <h3 class="title">${escapeHtml(w.title)}</h3>
-        <div class="meta">${escapeHtml(w.year || "")}</div>
-        <div class="actions">
-          <button class="danger" onclick="removeFromWatchlist('${w.kind}', ${w.id})">Rimuovi</button>
-        </div>
-      </div>
-    `;
-    host.appendChild(card);
-  });
-}
-
-function clearResults(){
-  $("results").innerHTML = "";
-  setStatus("Pronto");
-}
-
-function escapeHtml(s){
-  return String(s || "").replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[m]));
-}
-
-function getBaseSelectedGenres(){
-  const ids = Array.from(document.querySelectorAll(".baseGenre"))
-    .map(s=>Number(s.value || 0))
-    .filter(n=>n > 0);
-  const uniq = Array.from(new Set(ids));
-  return uniq.slice(0, 4);
-}
-
-function getPremiumGenreIdsFor(kind){
-  const sliders = getPremiumSliders();
-  const active = PREMIUM_GENRE_SET
-    .map(g=>{
-      const w = Number(sliders[g.key] || 0);
-      const id = kind === "movie" ? g.movieId : g.tvId;
-      return {id, w};
-    })
-    .filter(x => x.id && x.w > 0);
-
-  active.sort((a,b)=>b.w - a.w);
-  return active;
-}
-
-async function discover(kind, genreIds, page){
-  const withGenres = genreIds && genreIds.length ? genreIds.join(",") : "";
-  const params = {
-    include_adult: "false",
-    include_video: "false",
-    sort_by: "popularity.desc",
-    "watch_region":"IT",
-    "with_watch_monetization_types":"flatrate|rent|buy",
-    page: page || 1
-  };
-  if(withGenres) params.with_genres = withGenres;
-
-  const path = kind === "tv" ? "/discover/tv" : "/discover/movie";
-  return await tmdbFetch(path, params);
 }
 
 function baseReRank(items, genreIds){
@@ -871,8 +700,8 @@ function premiumReRank(items, weightedGenreIds){
       if(g.includes(it.id)) wmatch += it.w;
     });
     const wm = wsum ? (wmatch / wsum) : 0;
-
     const topBoost = weightedGenreIds.length ? (weightedGenreIds[0].w / maxW) : 0;
+
     x._score = (v * 0.50) + (p * 0.25) + (wm * 0.25) + (topBoost * 0.03);
   });
 
@@ -887,7 +716,6 @@ async function buildItems(kind, raw){
     const date = kind === "tv" ? (r.first_air_date || "") : (r.release_date || "");
     const year = date ? String(date).slice(0,4) : "";
     const poster = r.poster_path ? (IMG_BASE + r.poster_path) : null;
-
     out.push({
       kind,
       id: r.id,
@@ -923,6 +751,22 @@ async function attachProviders(items){
   return final;
 }
 
+function buildProvidersHtml(packs){
+  if(!packs) return '<div class="notice">Disponibilità streaming IT non trovata.</div>';
+  let html = '<div class="packs">';
+  packs.forEach(p=>{
+    html += '<div class="pack-label">' + escapeHtml(p.label) + '</div>';
+    html += '<div class="p-row">';
+    p.items.forEach(i=>{
+      const logo = i.logo ? '<img src="' + i.logo + '" alt="">' : "";
+      html += '<div class="pill">' + logo + escapeHtml(i.name) + '</div>';
+    });
+    html += '</div>';
+  });
+  html += "</div>";
+  return html;
+}
+
 function renderItems(items, userType){
   const host = $("results");
   host.innerHTML = "";
@@ -937,44 +781,28 @@ function renderItems(items, userType){
     const card = document.createElement("div");
     card.className = "card";
 
-    const posterHtml = it.poster ? `<img src="${it.poster}" alt="Locandina">` : "";
+    const posterHtml = it.poster ? '<img src="' + it.poster + '" alt="Locandina">' : "";
     const overviewText = userType === "premium" ? (it.overview || "Trama non disponibile.") : shortOverview(it.overview);
     const kindLabel = it.kind === "tv" ? "Serie TV" : "Film";
 
-    const providersHtml = buildProvidersHtml(it.providers);
-    const onlineBadge = it.providers ? `<span class="badge ok">Online IT</span>` : `<span class="badge warn">Non trovato online</span>`;
+    const onlineBadge = it.providers ? '<span class="badge ok">Online IT</span>' : '<span class="badge warn">Non trovato online</span>';
 
-    card.innerHTML = `
-      <div class="poster">${posterHtml || "Locandina"}</div>
-      <div class="card-body">
-        <h3 class="title">${escapeHtml(it.title)}</h3>
-        <div class="meta">${escapeHtml(kindLabel)} ${it.year ? " , " + escapeHtml(it.year) : ""} , Voto ${escapeHtml(it.rating)}</div>
-        <div style="margin-top:8px">${onlineBadge}</div>
-        <p class="overview">${escapeHtml(overviewText)}</p>
-        <div class="providers">${providersHtml}</div>
-        <div class="actions">
-          <button class="secondary" onclick="openTmdb('${it.kind}', ${it.id})">Apri su TMDB</button>
-          <button onclick='addToWatchlist(${JSON.stringify(it).replace(/</g,"\\u003c")})'>Watchlist</button>
-        </div>
-      </div>
-    `;
+    card.innerHTML =
+      '<div class="poster">' + (posterHtml || "Locandina") + '</div>' +
+      '<div class="card-body">' +
+        '<h3 class="title">' + escapeHtml(it.title) + '</h3>' +
+        '<div class="meta">' + escapeHtml(kindLabel) + (it.year ? " , " + escapeHtml(it.year) : "") + " , Voto " + escapeHtml(it.rating) + '</div>' +
+        '<div style="margin-top:8px">' + onlineBadge + '</div>' +
+        '<p class="overview">' + escapeHtml(overviewText) + '</p>' +
+        buildProvidersHtml(it.providers) +
+        '<div class="actions">' +
+          '<button class="secondary" onclick="openTmdb(\'' + it.kind + '\',' + it.id + ')">Apri su TMDB</button>' +
+          '<button onclick="addToWatchlist(\'' + it.kind + '\',' + it.id + ',\'' + escapeHtml(it.title).replace(/'/g,"&#039;") + '\',\'' + (it.poster ? it.poster : "") + '\',\'' + (it.year ? it.year : "") + '\')">Watchlist</button>' +
+        '</div>' +
+      '</div>';
+
     host.appendChild(card);
   });
-}
-
-function buildProvidersHtml(packs){
-  if(!packs) return `<div class="small">Disponibilità streaming IT non trovata.</div>`;
-  let html = "";
-  packs.forEach(p=>{
-    html += `<div class="small" style="margin-top:8px">${escapeHtml(p.label)}</div>`;
-    html += `<div class="p-row">`;
-    p.items.forEach(i=>{
-      const logo = i.logo ? `<img src="${i.logo}" alt="">` : "";
-      html += `<div class="pill">${logo}${escapeHtml(i.name)}</div>`;
-    });
-    html += `</div>`;
-  });
-  return html;
 }
 
 function openTmdb(kind, id){
@@ -983,12 +811,162 @@ function openTmdb(kind, id){
   window.open(url, "_blank");
 }
 
+function getBaseSelectedGenres(){
+  const ids = Array.from(document.querySelectorAll(".baseGenre"))
+    .map(s=>Number(s.value || 0))
+    .filter(n=>n > 0);
+  return Array.from(new Set(ids)).slice(0, 4);
+}
+
+function getPremiumGenreIdsFor(kind){
+  const sliders = getPremiumSliders();
+  const active = PREMIUM_GENRE_SET.map(g=>{
+    const w = Number(sliders[g.key] || 0);
+    const id = kind === "movie" ? g.movieId : g.tvId;
+    return {id, w};
+  }).filter(x=>x.id && x.w > 0);
+
+  active.sort((a,b)=>b.w - a.w);
+  return active;
+}
+
+function updateStatsOnSearch(payload){
+  const st = safeJson(localStorage.getItem(LS.stats), {
+    searches:0,
+    searchesBase:0,
+    searchesPremium:0,
+    movieSearches:0,
+    tvSearches:0,
+    clicks:0,
+    watchAdds:0
+  });
+
+  st.searches += 1;
+  if(payload.userType === "base") st.searchesBase += 1;
+  if(payload.userType === "premium") st.searchesPremium += 1;
+
+  if(payload.contentType === "movie") st.movieSearches += 1;
+  if(payload.contentType === "tv") st.tvSearches += 1;
+  if(payload.contentType === "both"){ st.movieSearches += 1; st.tvSearches += 1; }
+
+  localStorage.setItem(LS.stats, JSON.stringify(st));
+  renderStats();
+}
+
+function updateStatsOnClick(){
+  const st = safeJson(localStorage.getItem(LS.stats), {});
+  st.clicks = Number(st.clicks || 0) + 1;
+  localStorage.setItem(LS.stats, JSON.stringify(st));
+  renderStats();
+}
+
+function updateStatsOnWatchAdd(){
+  const st = safeJson(localStorage.getItem(LS.stats), {});
+  st.watchAdds = Number(st.watchAdds || 0) + 1;
+  localStorage.setItem(LS.stats, JSON.stringify(st));
+  renderStats();
+}
+
+function renderStats(){
+  const box = $("statsKpi");
+  if(!box) return;
+  const st = safeJson(localStorage.getItem(LS.stats), {
+    searches:0, searchesBase:0, searchesPremium:0, movieSearches:0, tvSearches:0, clicks:0, watchAdds:0
+  });
+
+  box.innerHTML = "";
+  const items = [
+    {num: st.searches || 0, lbl: "Ricerche totali"},
+    {num: st.searchesPremium || 0, lbl: "Ricerche premium"},
+    {num: st.searchesBase || 0, lbl: "Ricerche base"},
+    {num: st.movieSearches || 0, lbl: "Ricerche film"},
+    {num: st.tvSearches || 0, lbl: "Ricerche serie TV"},
+    {num: st.clicks || 0, lbl: "Click su risultati"},
+    {num: st.watchAdds || 0, lbl: "Aggiunte in watchlist"}
+  ];
+  items.forEach(it=>{
+    const d = document.createElement("div");
+    d.className = "box";
+    d.innerHTML = '<p class="num">' + it.num + '</p><p class="lbl">' + it.lbl + '</p>';
+    box.appendChild(d);
+  });
+}
+
+function resetStats(){
+  localStorage.removeItem(LS.stats);
+  renderStats();
+  setMsg("Statistiche resettate.");
+}
+
+function getWatchlist(){
+  return safeJson(localStorage.getItem(LS.watchlist), []);
+}
+
+function saveWatchlist(list){
+  localStorage.setItem(LS.watchlist, JSON.stringify(list));
+}
+
+function addToWatchlist(kind, id, title, poster, year){
+  const list = getWatchlist();
+  const key = kind + ":" + id;
+  if(list.some(x => (x.kind + ":" + x.id) === key)){
+    setMsg("È già in watchlist.");
+    return;
+  }
+  list.unshift({kind, id, title, poster: poster || null, year: year || "", addedAt: Date.now()});
+  saveWatchlist(list);
+  updateStatsOnWatchAdd();
+  setMsg("Aggiunto in watchlist.");
+}
+
+function removeFromWatchlist(kind, id){
+  const list = getWatchlist();
+  const key = kind + ":" + id;
+  saveWatchlist(list.filter(x => (x.kind + ":" + x.id) !== key));
+  showWatchlist();
+}
+
+function showWatchlist(){
+  clearResults();
+  const list = getWatchlist();
+  if(!list.length){
+    setMsg("Watchlist vuota.");
+    return;
+  }
+  setMsg("Watchlist. Tocca Rimuovi per cancellare.");
+  const host = $("results");
+
+  list.forEach(w=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    const posterHtml = w.poster ? '<img src="' + w.poster + '" alt="Locandina">' : "";
+    card.innerHTML =
+      '<div class="poster">' + (posterHtml || "Locandina") + '</div>' +
+      '<div class="card-body">' +
+        '<h3 class="title">' + escapeHtml(w.title) + '</h3>' +
+        '<div class="meta">' + escapeHtml(w.year || "") + '</div>' +
+        '<div class="actions">' +
+          '<button class="danger" onclick="removeFromWatchlist(\'' + w.kind + '\',' + w.id + ')">Rimuovi</button>' +
+        '</div>' +
+      '</div>';
+    host.appendChild(card);
+  });
+}
+
+function clearResults(){
+  $("results").innerHTML = "";
+  setStatus("Pronto");
+}
+
+function persistTopSettings(){
+  localStorage.setItem(LS.apiKey, $("apiKey").value.trim());
+  localStorage.setItem(LS.userType, $("userType").value);
+  localStorage.setItem(LS.onlyOnline, $("onlyOnline").checked ? "1" : "0");
+}
+
 async function runSearch(){
   try{
-    saveApiKey();
-    localStorage.setItem(LS.userType, $("userType").value);
-    localStorage.setItem("mf_onlyOnline", $("onlyOnline").checked ? "1" : "0");
-
+    persistTopSettings();
     refreshUI();
     clearResults();
     setStatus("Cerco...");
@@ -1014,95 +992,69 @@ async function runSearch(){
       const d2 = await discover("movie", genres, 2);
 
       const raw = (d1.results || []).concat(d2.results || []);
-      const ranked = baseReRank(raw, genres).slice(0, 12);
-      let items = await buildItems("movie", ranked);
+      const ranked = baseReRank(raw, genres).slice(0, 14);
 
+      let items = await buildItems("movie", ranked);
       items = await attachProviders(items);
       items = items.slice(0, 3);
 
       renderItems(items, "base");
       markBaseSearchedToday();
       refreshDailyNotice();
-      updateStatsOnSearch({userType:"base", contentType:"movie", genres});
+      updateStatsOnSearch({userType:"base", contentType:"movie"});
       setStatus("Fatto", "ok");
       return;
     }
 
     if(userType === "premium"){
       const contentType = $("contentType").value;
-      const selectedPlatforms = getSelectedPlatforms();
-      const sliders = getPremiumSliders();
 
       const activeMovie = getPremiumGenreIdsFor("movie");
       const activeTv = getPremiumGenreIdsFor("tv");
 
-      const usedGenres = [];
-      Object.keys(sliders).forEach(k=>{
-        if(Number(sliders[k]||0) > 0) usedGenres.push(k);
-      });
-
-      if(!usedGenres.length){
+      const anyActive = Object.values(getPremiumSliders()).some(v=>Number(v)>0);
+      if(!anyActive){
         setMsg("Imposta almeno 1 slider sopra 0.");
         setStatus("Attenzione", "warn");
         return;
       }
 
-      if(contentType === "movie" && !activeMovie.length){
-        setMsg("I generi scelti non hanno corrispondenze film. Alza altri slider.");
-        setStatus("Attenzione", "warn");
-        return;
-      }
-      if(contentType === "tv" && !activeTv.length){
-        setMsg("I generi scelti non hanno corrispondenze serie TV. Alza altri slider.");
-        setStatus("Attenzione", "warn");
-        return;
-      }
-
-      if(selectedPlatforms.length){
-        setMsg("Sto cercando risultati pertinenti, filtrati sulle tue piattaforme.");
-      }else{
-        setMsg("Sto cercando risultati pertinenti. Tu non hai impostato piattaforme.");
-      }
-
       let pool = [];
 
       if(contentType === "movie" || contentType === "both"){
+        if(!activeMovie.length){
+          setMsg("I generi scelti non hanno corrispondenze film. Alza altri slider.");
+          setStatus("Attenzione", "warn");
+          return;
+        }
         const gids = activeMovie.map(x=>x.id);
         const d1 = await discover("movie", gids, 1);
         const d2 = await discover("movie", gids, 2);
         const raw = (d1.results || []).concat(d2.results || []);
-        const ranked = premiumReRank(raw, activeMovie).slice(0, 14);
-        const items = await buildItems("movie", ranked);
-        pool = pool.concat(items);
+        const ranked = premiumReRank(raw, activeMovie).slice(0, 18);
+        pool = pool.concat(await buildItems("movie", ranked));
       }
 
       if(contentType === "tv" || contentType === "both"){
+        if(!activeTv.length){
+          setMsg("I generi scelti non hanno corrispondenze serie TV. Alza altri slider.");
+          setStatus("Attenzione", "warn");
+          return;
+        }
         const gids = activeTv.map(x=>x.id);
         const d1 = await discover("tv", gids, 1);
         const d2 = await discover("tv", gids, 2);
         const raw = (d1.results || []).concat(d2.results || []);
-        const ranked = premiumReRank(raw, activeTv).slice(0, 14);
-        const items = await buildItems("tv", ranked);
-        pool = pool.concat(items);
+        const ranked = premiumReRank(raw, activeTv).slice(0, 18);
+        pool = pool.concat(await buildItems("tv", ranked));
       }
 
-      const popMin = Math.min(...pool.map(x=>x.popularity), 0);
-      const popMax = Math.max(...pool.map(x=>x.popularity), 1);
-      const voteMin = Math.min(...pool.map(x=>Number(x.rating)), 0);
-      const voteMax = Math.max(...pool.map(x=>Number(x.rating)), 10);
-
-      pool.forEach(x=>{
-        const p = normalize(x.popularity, popMin, popMax);
-        const v = normalize(Number(x.rating), voteMin, voteMax);
-        x._score = (v * 0.55) + (p * 0.45);
-      });
-      pool.sort((a,b)=>(b._score||0)-(a._score||0));
-
       pool = await attachProviders(pool);
-      const top = pool.slice(0, 8);
+      pool = pool.slice(0, 8);
 
-      renderItems(top, "premium");
-      updateStatsOnSearch({userType:"premium", contentType, genres: usedGenres});
+      setMsg("Risultati premium con trama estesa e locandina.");
+      renderItems(pool, "premium");
+      updateStatsOnSearch({userType:"premium", contentType});
       setStatus("Fatto", "ok");
       return;
     }
@@ -1113,33 +1065,22 @@ async function runSearch(){
   }
 }
 
-$("userType").addEventListener("change", ()=>{
-  localStorage.setItem(LS.userType, $("userType").value);
+function loadState(){
+  $("apiKey").value = localStorage.getItem(LS.apiKey) || "";
+  $("userType").value = localStorage.getItem(LS.userType) || "base";
+  $("onlyOnline").checked = (localStorage.getItem(LS.onlyOnline) === "1");
+
+  initBaseGenres();
+  initPremiumGenres();
+  initPlatformsBox();
   refreshUI();
-});
-
-$("apiKey").addEventListener("input", ()=>{
-  localStorage.setItem(LS.apiKey, $("apiKey").value.trim());
-});
-
-$("onlyOnline").addEventListener("change", ()=>{
-  localStorage.setItem("mf_onlyOnline", $("onlyOnline").checked ? "1" : "0");
-});
-
-function clearResults(){
-  $("results").innerHTML = "";
+  renderStats();
   setStatus("Pronto");
 }
 
-(function fixPremiumSlidersIds(){
-  const host = $("premiumGenres");
-  if(!host) return;
-  const rows = Array.from(host.querySelectorAll(".chk"));
-  rows.forEach((row, idx)=>{
-    const r = row.querySelector("input[type='range']");
-    if(r) r.id = "r_" + PREMIUM_GENRE_SET[idx].key;
-  });
-})();
+$("apiKey").addEventListener("input", ()=>localStorage.setItem(LS.apiKey, $("apiKey").value.trim()));
+$("userType").addEventListener("change", ()=>{ localStorage.setItem(LS.userType, $("userType").value); refreshUI(); });
+$("onlyOnline").addEventListener("change", ()=>localStorage.setItem(LS.onlyOnline, $("onlyOnline").checked ? "1" : "0"));
 
 loadState();
 </script>
