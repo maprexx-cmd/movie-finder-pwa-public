@@ -7,7 +7,6 @@
   <style>
     :root{
       --bg:#0b0720;
-      --card:#151033;
       --text:#f3f1ff;
       --muted:#b9b2e6;
       --violet:#7c3aed;
@@ -16,7 +15,12 @@
       --border: rgba(255,255,255,.10);
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --radius:18px;
+
+      --devBlue:#4aa3ff;
+      --devBlueBg: rgba(74,163,255,.10);
+      --devBlueBorder: rgba(74,163,255,.22);
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -27,6 +31,7 @@
       color:var(--text);
       min-height:100vh;
     }
+
     .wrap{max-width:1040px;margin:0 auto;padding:18px 14px 80px}
     .topbar{
       position:sticky;top:0;z-index:5;
@@ -68,6 +73,7 @@
 
     .grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
     @media(min-width:860px){ .grid2{grid-template-columns:1fr 1fr} }
+
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
       border:1px solid var(--border);
@@ -214,6 +220,7 @@
       backdrop-filter: blur(10px);
     }
     .toast.show{display:block;animation:fade .25s ease forwards}
+
     a.link{color:var(--yellow);text-decoration:none}
 
     .actionRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -283,6 +290,22 @@
       75%{transform:translate(1px,1px)}
       100%{transform:translate(-1px,-1px)}
     }
+
+    /* DEV NOTES */
+    .devNote{
+      display:none;
+      margin-top:10px;
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid var(--devBlueBorder);
+      background: var(--devBlueBg);
+      color: var(--devBlue);
+      font-size:12px;
+      line-height:1.35;
+      white-space:pre-wrap;
+    }
+    body.dev .devNote{display:block}
+    body.dev .devInline{color:var(--devBlue)}
   </style>
 </head>
 
@@ -309,6 +332,8 @@
           <div class="pill">Trama breve in Basic</div>
           <div class="pill">Trama più lunga in Premium</div>
         </div>
+
+        <div class="devNote" id="devStartNote"></div>
       </div>
 
       <div class="grid2">
@@ -319,6 +344,7 @@
             <button id="btnGoBasic">Entra in Basic</button>
             <button class="secondary" id="btnInfoBasic">Dettagli</button>
           </div>
+          <div class="devNote" id="devBasicHomeNote"></div>
         </div>
 
         <div class="card">
@@ -329,6 +355,7 @@
             <button class="secondary" id="btnBuyPremium">Sblocca Premium</button>
           </div>
           <div class="note" id="premiumStatus"></div>
+          <div class="devNote" id="devPremiumHomeNote"></div>
         </div>
       </div>
 
@@ -340,6 +367,7 @@
         <div class="btnRow">
           <button class="danger" id="btnExitFromStart">Esci</button>
         </div>
+        <div class="devNote" id="devExitNote"></div>
       </div>
     </div>
 
@@ -364,6 +392,8 @@
         <button class="danger" id="btnExitFromBasic">Esci</button>
       </div>
 
+      <div class="devNote" id="devBasicScreenNote"></div>
+
       <div class="sectionTitle">
         <h2>Seleziona generi</h2>
         <div class="small">Scegli 1 o più</div>
@@ -384,6 +414,7 @@
       <div class="card">
         <div class="chips" id="basicProvidersPick"></div>
         <p class="note">Se non selezioni piattaforme, la app cerca comunque solo titoli disponibili in Italia.</p>
+        <div class="devNote" id="devProvidersNote"></div>
       </div>
 
       <div class="btnRow" style="margin-top:12px">
@@ -392,6 +423,7 @@
       </div>
 
       <div class="note" id="basicLimitInfo"></div>
+      <div class="devNote" id="devBasicSearchNote"></div>
 
       <div id="basicResults" class="results"></div>
     </div>
@@ -425,6 +457,8 @@
         <button class="danger" id="btnExitFromPremium">Esci</button>
       </div>
 
+      <div class="devNote" id="devPremiumScreenNote"></div>
+
       <div class="sectionTitle">
         <h2>Intensità generi</h2>
         <div class="small">0, 5</div>
@@ -449,6 +483,7 @@
       </div>
 
       <div class="note" id="premiumGateInfo"></div>
+      <div class="devNote" id="devPremiumSearchNote"></div>
 
       <div id="premiumResults" class="results"></div>
     </div>
@@ -463,10 +498,21 @@
         <button class="danger" id="btnForceExit" type="button">Esci</button>
         <button class="secondary" id="btnCancelExit" type="button">Annulla</button>
       </div>
+      <div class="devNote" id="devExitOverlayNote"></div>
     </div>
   </div>
 
 <script>
+/* =======================
+   DEV CONTROL
+   Metti DEV_NOTES_ENABLED = false per l'app ufficiale.
+   Le note blu spariscono automaticamente.
+======================= */
+const DEV_NOTES_ENABLED = true;
+
+/* =======================
+   TMDB
+======================= */
 const TMDB_API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
 const TMDB_LANG = "it-IT";
 const TMDB_REGION = "IT";
@@ -474,8 +520,25 @@ const TMDB_REGION = "IT";
 const POSTER_W342 = "https://image.tmdb.org/t/p/w342";
 const LOGO_W45 = "https://image.tmdb.org/t/p/w45";
 
+/* =======================
+   BASIC TEST MODE
+   true = nessun limite giornaliero per test
+   false = 1 ricerca al giorno
+======================= */
 const BASIC_TEST_MODE_UNLIMITED = true;
 
+/* =======================
+   BASIC VM18 BLOCK (best effort)
+   In discover/movie usiamo certification.lte per l'Italia.
+   Se TMDB non ha la certificazione per un titolo, il filtro può non essere perfetto.
+======================= */
+const BASIC_BLOCK_VM18 = true;
+const BASIC_CERT_COUNTRY = "IT";
+const BASIC_CERT_LTE = "14";
+
+/* =======================
+   LOCAL STORAGE KEYS
+======================= */
 const LS = {
   premium: "mf_premium_purchased",
   lastBasicSearchDate: "mf_basic_last_search_date",
@@ -484,6 +547,9 @@ const LS = {
   picked: "mf_picked_to_watch"
 };
 
+/* =======================
+   GENRES
+======================= */
 const GENRE_MAP_MOVIE = {
   azione: 28,
   comico: 35,
@@ -509,6 +575,10 @@ const GENRE_MAP_TV = {
   crime: 80
 };
 
+/* =======================
+   PROVIDERS LIST
+   Sono solo un elenco per filtrare. La disponibilità reale la leggiamo sempre via watch/providers in IT.
+======================= */
 const PROVIDERS = [
   { id: 8,   name: "Netflix" },
   { id: 119, name: "Prime Video" },
@@ -525,6 +595,29 @@ const PLOT_MAX_PREMIUM = 650;
 
 const el = (id) => document.getElementById(id);
 
+/* =======================
+   DEV NOTES RENDER
+======================= */
+function setDevMode(){
+  if(DEV_NOTES_ENABLED){
+    document.body.classList.add("dev");
+  }else{
+    document.body.classList.remove("dev");
+  }
+}
+function devSet(id, text){
+  const n = el(id);
+  if(!n) return;
+  if(!DEV_NOTES_ENABLED){
+    n.textContent = "";
+    return;
+  }
+  n.textContent = text;
+}
+
+/* =======================
+   UI HELPERS
+======================= */
 function toast(msg){
   const t = el("toast");
   t.textContent = msg;
@@ -573,57 +666,64 @@ async function tmdbFetch(url){
   return res.json();
 }
 
+function escapeHtml(s){
+  return String(s || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* =======================
+   PREMIUM GATE
+======================= */
 function isPremiumPurchased(){
   return localStorage.getItem(LS.premium) === "1";
 }
-
 function setPremiumPurchased(v){
   localStorage.setItem(LS.premium, v ? "1" : "0");
   refreshPremiumStatus();
 }
-
 function refreshPremiumStatus(){
   const st = el("premiumStatus");
-  if(isPremiumPurchased()){
-    st.textContent = "Premium attivo su questo dispositivo.";
-  }else{
-    st.textContent = "Premium non attivo. Premi Sblocca Premium per simulare l'acquisto.";
-  }
+  st.textContent = isPremiumPurchased()
+    ? "Premium attivo su questo dispositivo."
+    : "Premium non attivo. Premi Sblocca Premium per simulare l'acquisto.";
 }
-
 function refreshPremiumGateInfo(){
   const info = el("premiumGateInfo");
-  if(isPremiumPurchased()){
-    info.textContent = "Ok. Premi Cerca per ottenere 5 risultati coerenti con gli slider.";
-  }else{
-    info.textContent = "Premium bloccato. Premi Sblocca Premium nella home, oppure usa Basic.";
-  }
+  info.textContent = isPremiumPurchased()
+    ? "Ok. Premi Cerca per ottenere 5 risultati coerenti con gli slider."
+    : "Premium bloccato. Premi Sblocca Premium nella home, oppure usa Basic.";
 }
 
+/* =======================
+   BASIC LIMIT
+======================= */
 function canBasicSearch(){
   if(BASIC_TEST_MODE_UNLIMITED) return true;
   const last = localStorage.getItem(LS.lastBasicSearchDate) || "";
   return last !== todayISO();
 }
-
 function markBasicSearched(){
   if(BASIC_TEST_MODE_UNLIMITED) return;
   localStorage.setItem(LS.lastBasicSearchDate, todayISO());
 }
-
 function refreshBasicLimitInfo(){
   const info = el("basicLimitInfo");
   if(BASIC_TEST_MODE_UNLIMITED){
     info.textContent = "Test attivo. Ricerche Basic senza limiti.";
     return;
   }
-  if(canBasicSearch()){
-    info.textContent = "Puoi fare 1 ricerca oggi.";
-  }else{
-    info.textContent = "Hai già fatto la ricerca oggi. Riprova domani.";
-  }
+  info.textContent = canBasicSearch()
+    ? "Puoi fare 1 ricerca oggi."
+    : "Hai già fatto la ricerca oggi. Riprova domani.";
 }
 
+/* =======================
+   SHOWN SETS
+======================= */
 function loadShownSet(kind){
   const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
   try{
@@ -636,18 +736,19 @@ function loadShownSet(kind){
     return new Set();
   }
 }
-
 function saveShownSet(kind, set){
   const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
   const arr = Array.from(set).slice(0, 1500);
   localStorage.setItem(key, JSON.stringify(arr));
 }
-
 function resetShown(kind){
   const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
   localStorage.removeItem(key);
 }
 
+/* =======================
+   PROVIDER PICK UI
+======================= */
 function buildProviderPick(containerId){
   const box = el(containerId);
   box.innerHTML = "";
@@ -658,7 +759,6 @@ function buildProviderPick(containerId){
     box.appendChild(lab);
   });
 }
-
 function readPickedProviders(containerId){
   const box = el(containerId);
   const ids = [];
@@ -668,6 +768,9 @@ function readPickedProviders(containerId){
   return ids.join("|");
 }
 
+/* =======================
+   PREMIUM SLIDERS
+======================= */
 const PREMIUM_GENRES = [
   { key:"azione", label:"Azione" },
   { key:"comico", label:"Comico" },
@@ -720,6 +823,12 @@ function pickTopGenres(weights, maxCount){
   return arr.slice(0, maxCount).map(x => x.k);
 }
 
+/* =======================
+   DISCOVER PARAMS
+   Nota importante:
+   with_watch_providers filtra su watch_region=IT.
+   Poi verifichiamo comunque ogni titolo con watch/providers IT.
+======================= */
 function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
   const params = new URLSearchParams();
   params.set("api_key", TMDB_API_KEY);
@@ -745,9 +854,9 @@ function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
     params.set("with_watch_providers", providerCsv);
   }
 
-  if(isBasicMovie){
-    params.set("certification_country", "IT");
-    params.set("certification.lte", "14");
+  if(isBasicMovie && BASIC_BLOCK_VM18){
+    params.set("certification_country", BASIC_CERT_COUNTRY);
+    params.set("certification.lte", BASIC_CERT_LTE);
   }
 
   const sortPool = ["popularity.desc","vote_average.desc","revenue.desc"];
@@ -887,6 +996,9 @@ async function getRandomItems({
   return collected;
 }
 
+/* =======================
+   RENDER
+======================= */
 function formatYear(kind, item){
   const d = kind === "movie" ? item.release_date : item.first_air_date;
   if(!d) return "";
@@ -904,15 +1016,6 @@ function clipText(text, maxLen){
   const t = String(text).trim();
   if(t.length <= maxLen) return t;
   return t.slice(0, maxLen) + "...";
-}
-
-function escapeHtml(s){
-  return String(s || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
 }
 
 function renderProvidersBlock(p){
@@ -979,6 +1082,17 @@ function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
       ? `<button class="openBtn" id="${openId}" type="button">Apri piattaforme</button>`
       : "";
 
+    const devBlock = DEV_NOTES_ENABLED ? `
+      <div class="devNote">
+DEV INFO
+kind: ${kind}
+tmdb_id: ${escapeHtml(String(item.id))}
+sort: random page
+providers_it: ${mergeProviders(providers).length}
+note: in app ufficiale queste note spariscono
+      </div>
+    ` : "";
+
     return `
       <div class="resultCard">
         <div class="poster"><img src="${posterUrl}" alt=""></div>
@@ -996,6 +1110,7 @@ function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
             <button class="watchBtn" id="${btnId}" type="button">Guarda</button>
             ${openBtn}
           </div>
+          ${devBlock}
         </div>
       </div>
     `;
@@ -1026,6 +1141,9 @@ function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
   });
 }
 
+/* =======================
+   BASIC
+======================= */
 function readBasicSelectedGenres(){
   const ids = [];
   document.querySelectorAll("#basicGenres input[type='checkbox']").forEach(cb => {
@@ -1076,6 +1194,9 @@ async function runBasic(){
   }
 }
 
+/* =======================
+   PREMIUM
+======================= */
 function getPremiumKind(){
   const v = document.querySelector('input[name="premiumType"]:checked');
   return v ? v.value : "movie";
@@ -1084,7 +1205,6 @@ function getPremiumKind(){
 function buildGenreCsvForPremium(kind, weights){
   const top = pickTopGenres(weights, 3);
   if(top.length === 0) return "";
-
   const map = kind === "movie" ? GENRE_MAP_MOVIE : GENRE_MAP_TV;
   const ids = top.map(k => map[k]).filter(Boolean);
   return ids.join(",");
@@ -1129,6 +1249,9 @@ async function runPremium(){
   }
 }
 
+/* =======================
+   EXIT EFFECT
+======================= */
 function exitApp(){
   if(document.body.classList.contains("closing")) return;
   document.body.classList.add("closing");
@@ -1171,14 +1294,78 @@ function forceExit(){
   exitApp();
 }
 
+/* =======================
+   INIT
+======================= */
 function init(){
+  setDevMode();
+
   refreshPremiumStatus();
   refreshBasicLimitInfo();
+  refreshPremiumGateInfo();
 
   buildProviderPick("basicProvidersPick");
   buildProviderPick("premiumProvidersPick");
   buildPremiumSliders();
-  refreshPremiumGateInfo();
+
+  devSet("devStartNote",
+`DEV INFO
+DEV_NOTES_ENABLED: ${DEV_NOTES_ENABLED}
+Per nascondere tutto il blu: metti DEV_NOTES_ENABLED = false
+La disponibilità Italia usa: watch/providers con regione ${TMDB_REGION}`);
+
+  devSet("devBasicHomeNote",
+`DEV INFO BASIC
+Basic è solo film.
+Esclusione VM18: certification_country=${BASIC_CERT_COUNTRY}, certification.lte=${BASIC_CERT_LTE}
+Limite giornaliero: ${BASIC_TEST_MODE_UNLIMITED ? "disattivo per test" : "attivo 1 al giorno"}`);
+
+  devSet("devPremiumHomeNote",
+`DEV INFO PREMIUM
+Premium usa film o serie.
+Filtro piattaforme: with_watch_providers se selezionate.
+Conferma Italia: controllo watch/providers IT su ogni titolo.`);
+
+  devSet("devExitNote",
+`DEV INFO USCITA
+Su Guarda o Esci:
+1 overlay nero
+2 vibrazione se supportata
+3 tremolio 1 secondo
+4 prova history.back e window.close
+5 se non chiude, hai i pulsanti nell'overlay`);
+
+  devSet("devBasicScreenNote",
+`DEV INFO SCHERMATA BASIC
+Ricerca: discover/movie con generi selezionati.
+Poi scarta titoli senza provider IT.`);
+
+  devSet("devProvidersNote",
+`DEV INFO PIATTAFORME
+Selezione piattaforme è facoltativa.
+Se scegli 1 o più, la ricerca filtra già i risultati.
+In ogni caso mostriamo la lista unificata di provider IT, senza distinguere noleggio o abbonamento.`);
+
+  devSet("devBasicSearchNote",
+`DEV INFO OUTPUT BASIC
+Trama breve: max ${PLOT_MAX_BASIC} caratteri.
+Risultati: 3.`);
+
+  devSet("devPremiumScreenNote",
+`DEV INFO SCHERMATA PREMIUM
+Ricerca: discover/${isPremiumPurchased() ? "movie o tv" : "bloccato"}.
+Generi: prende i 3 slider più alti.`);
+
+  devSet("devPremiumSearchNote",
+`DEV INFO OUTPUT PREMIUM
+Trama lunga: max ${PLOT_MAX_PREMIUM} caratteri.
+Risultati: 5.`);
+
+  devSet("devExitOverlayNote",
+`DEV INFO OVERLAY
+Se la app non si chiude, usa:
+Esci = chiusura forzata
+Annulla = torna alla app`);
 
   el("btnGoBasic").addEventListener("click", () => {
     showScreen("screenBasic");
@@ -1244,4 +1431,4 @@ function init(){
 init();
 </script>
 </body>
-</html>
+</html> 
