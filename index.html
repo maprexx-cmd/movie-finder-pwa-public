@@ -8,7 +8,6 @@
     :root{
       --bg:#050607;
       --panel:#0c0f10;
-      --panel2:#0a0c0d;
       --text:#e9eef2;
       --muted:#9aa6b2;
       --line:#1d2427;
@@ -17,10 +16,8 @@
       --acidG:#00ff7a;
 
       --danger:#ff3b30;
-      --ok:#00ff7a;
 
       --r:18px;
-      --pad:14px;
       --shadow: 0 10px 30px rgba(0,0,0,.45);
     }
 
@@ -32,7 +29,6 @@
       color:var(--text);
     }
 
-    a{color:inherit}
     .wrap{max-width:980px;margin:0 auto;padding:18px}
     .topbar{
       display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -66,17 +62,11 @@
       border-color: rgba(0,255,122,.35);
       background: linear-gradient(180deg, rgba(0,255,122,.18) 0%, rgba(0,255,122,.06) 100%);
     }
-    .btn.danger{
-      border-color: rgba(255,59,48,.35);
-      background: linear-gradient(180deg, rgba(255,59,48,.18) 0%, rgba(255,59,48,.06) 100%);
-    }
     .btn.ghost{
       box-shadow:none;background:transparent;border-color: var(--line);
     }
     .btn.small{padding:8px 10px;border-radius:12px;font-size:12px}
-    .btn:disabled{
-      opacity:.45;cursor:not-allowed;box-shadow:none;
-    }
+    .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 
     .grid{
       display:grid;
@@ -110,9 +100,7 @@
       border-color: rgba(0,255,122,.35);
       box-shadow: 0 0 0 4px rgba(0,255,122,.08);
     }
-    .pill .dot{
-      width:9px;height:9px;border-radius:99px;background:#3a464d;
-    }
+    .pill .dot{width:9px;height:9px;border-radius:99px;background:#3a464d}
     .pill.on .dot{background: var(--acidG)}
     .pill.yellow.on{
       border-color: rgba(230,255,0,.35);
@@ -233,24 +221,19 @@
       100%{opacity:1;transform: translateX(0)}
     }
 
-    .hint{
-      font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px;
-    }
-
-    .copyHint{
-      display:none;
-      margin-left:10px;color:var(--muted);font-size:12px;
-    }
+    .hint{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}
+    .copyHint{display:none;margin-left:10px;color:var(--muted);font-size:12px}
     .copyHint.on{display:inline}
   </style>
 </head>
+
 <body>
   <div class="topbar">
     <div class="brand">
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1>Movie Finder</h1>
-        <small>TMDB, consigli rapidi e piattaforme in IT</small>
+        <small>TMDB, poster, trama, piattaforme in IT</small>
       </div>
     </div>
 
@@ -270,11 +253,7 @@
           <div class="bigLogo" aria-hidden="true"></div>
           <h2>Movie Finder</h2>
           <p>Trova cosa guardare in pochi tocchi. Poster, trama, statistiche, piattaforme.</p>
-          <div class="sep"></div>
-          <div class="row" style="justify-content:center">
-            <button class="btn primary" id="btnGoProfiles">Inizia</button>
-          </div>
-          <div class="hint">Suggerimento. In Basic hai una sola scelta al giorno. In Premium hai ricerche illimitate, slider e Serie TV.</div>
+          <div class="hint">Mettiti comodo. Tra poco scegli Basic o Premium.</div>
         </div>
       </div>
     </section>
@@ -297,9 +276,10 @@
             </div>
             <div class="sep"></div>
             <div class="muted" style="font-size:13px;line-height:1.4">
-              Solo film. Serie TV non selezionabile.<br/>
-              Una ricerca al giorno. 3 risultati.<br/>
-              Generi: Azione, Comico, Thriller, Animazione.
+              Menu con Film e Serie TV, ma Serie TV bloccate.<br/>
+              Una sola ricerca al giorno. 3 risultati.<br/>
+              Generi: Azione, Comico, Thriller, Animazione.<br/>
+              Poster, trama breve, statistiche base, piattaforme.
             </div>
           </div>
 
@@ -315,38 +295,33 @@
             </div>
             <div class="sep"></div>
             <div class="muted" style="font-size:13px;line-height:1.4">
-              Film e Serie TV sbloccate.<br/>
+              Sblocca Film e Serie TV.<br/>
               Ricerche illimitate. 5 risultati.<br/>
               Slider intensità 0 a 5 per i generi.<br/>
-              Piattaforme complete: gratis, noleggio, acquisto.
+              Poster, trama estesa, statistiche complete.<br/>
+              Piattaforme complete: gratis, noleggio, acquisto.<br/>
+              Social, ultimi visti, top 5 settimana.
             </div>
           </div>
 
           <div class="sep"></div>
           <div class="muted" style="font-size:12px;line-height:1.35">
-            Nota tecnica. Questo index.html è una demo web. Il pagamento Play Store va integrato nell’app Android con Google Play Billing. Qui lo simulo con un tasto.
+            Nota tecnica. Questa è una demo web. In app Android userai Google Play Billing per il pagamento.
           </div>
         </div>
 
         <div class="card">
-          <h2>Impostazioni TMDB</h2>
-          <p class="muted">Inserisci la tua API key TMDB e la regione.</p>
-          <div class="sep"></div>
-
+          <h2>Controlli rapidi</h2>
           <div class="row">
-            <span class="badge">watch_region: IT</span>
-            <span class="badge">providers: TMDB watch/providers</span>
-            <span class="badge">monetization: flatrate, rent, buy</span>
+            <span class="badge">Regione: IT</span>
+            <span class="badge">TMDB watch/providers</span>
+            <span class="badge">flatrate, rent, buy</span>
           </div>
-
           <div class="sep"></div>
-
           <div class="muted" style="font-size:13px;line-height:1.4">
-            1) Trova la riga: const TMDB_API_KEY = "INSERISCI_LA_TUA_KEY"<br/>
-            2) Incolla la key.<br/>
-            3) Salva e ripubblica.
+            In Basic: una ricerca al giorno.<br/>
+            In Premium: illimitato, slider, Serie TV, social.
           </div>
-
           <div class="sep"></div>
           <button class="btn ghost" id="btnResetLocal">Reset demo</button>
         </div>
@@ -404,7 +379,7 @@
 
           <div class="sep"></div>
           <div class="muted" style="font-size:12px;line-height:1.35">
-            Ordine suggerito: 1 più disponibile gratis, 2 miglior voto, 3 scelta alternativa.
+            Ordine suggerito: 1 più disponibile, 2 miglior voto, 3 scelta alternativa.
           </div>
         </div>
       </div>
@@ -443,53 +418,37 @@
             <div class="sliderRow">
               <div>
                 <div style="font-weight:650">Azione</div>
-                <div class="muted" style="font-size:12px">Più ritmo, più adrenalina</div>
+                <div class="muted" style="font-size:12px">Ritmo, adrenalina</div>
               </div>
-              <div class="row" style="justify-content:flex-end">
-                <span class="badge" id="valAction">3</span>
-              </div>
-              <div style="grid-column:1 / -1">
-                <input type="range" min="0" max="5" value="3" id="slAction" />
-              </div>
+              <div class="row" style="justify-content:flex-end"><span class="badge" id="valAction">3</span></div>
+              <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="3" id="slAction" /></div>
             </div>
 
             <div class="sliderRow">
               <div>
                 <div style="font-weight:650">Comico</div>
-                <div class="muted" style="font-size:12px">Leggero, divertente</div>
+                <div class="muted" style="font-size:12px">Leggero</div>
               </div>
-              <div class="row" style="justify-content:flex-end">
-                <span class="badge" id="valComedy">2</span>
-              </div>
-              <div style="grid-column:1 / -1">
-                <input type="range" min="0" max="5" value="2" id="slComedy" />
-              </div>
+              <div class="row" style="justify-content:flex-end"><span class="badge" id="valComedy">2</span></div>
+              <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="2" id="slComedy" /></div>
             </div>
 
             <div class="sliderRow">
               <div>
                 <div style="font-weight:650">Thriller</div>
-                <div class="muted" style="font-size:12px">Tensione, mistero</div>
+                <div class="muted" style="font-size:12px">Tensione</div>
               </div>
-              <div class="row" style="justify-content:flex-end">
-                <span class="badge" id="valThriller">3</span>
-              </div>
-              <div style="grid-column:1 / -1">
-                <input type="range" min="0" max="5" value="3" id="slThriller" />
-              </div>
+              <div class="row" style="justify-content:flex-end"><span class="badge" id="valThriller">3</span></div>
+              <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="3" id="slThriller" /></div>
             </div>
 
             <div class="sliderRow">
               <div>
                 <div style="font-weight:650">Romantico</div>
-                <div class="muted" style="font-size:12px">Relazioni, emozioni</div>
+                <div class="muted" style="font-size:12px">Emozioni</div>
               </div>
-              <div class="row" style="justify-content:flex-end">
-                <span class="badge" id="valRomance">1</span>
-              </div>
-              <div style="grid-column:1 / -1">
-                <input type="range" min="0" max="5" value="1" id="slRomance" />
-              </div>
+              <div class="row" style="justify-content:flex-end"><span class="badge" id="valRomance">1</span></div>
+              <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="1" id="slRomance" /></div>
             </div>
 
             <div class="sliderRow">
@@ -497,12 +456,8 @@
                 <div style="font-weight:650">Dramma</div>
                 <div class="muted" style="font-size:12px">Storie intense</div>
               </div>
-              <div class="row" style="justify-content:flex-end">
-                <span class="badge" id="valDrama">2</span>
-              </div>
-              <div style="grid-column:1 / -1">
-                <input type="range" min="0" max="5" value="2" id="slDrama" />
-              </div>
+              <div class="row" style="justify-content:flex-end"><span class="badge" id="valDrama">2</span></div>
+              <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="2" id="slDrama" /></div>
             </div>
 
             <div class="sep"></div>
@@ -529,9 +484,8 @@
             </div>
 
             <div class="sep"></div>
-
             <div class="muted" style="font-size:12px;line-height:1.35">
-              Nota. In produzione userai un deep link. Qui metto un link demo.
+              In produzione userai un deep link reale verso lo store.
             </div>
           </div>
 
@@ -561,7 +515,7 @@
 
           <div class="sep"></div>
           <div class="muted" style="font-size:12px;line-height:1.35">
-            Piattaforme. Mostro gratis, noleggio, acquisto, con logo e nome.
+            Piattaforme complete con logo. Gratis, noleggio, acquisto.
           </div>
         </div>
       </div>
@@ -594,7 +548,6 @@
         <button class="btn primary" id="btnPayNow">Paga con Play Store</button>
         <button class="btn ghost" id="btnPayLater">Non ora</button>
       </div>
-      <div class="hint">Dopo il pagamento sblocco Film e Serie TV, slider, ricerche illimitate, social, top settimana.</div>
     </div>
   </div>
 
@@ -622,14 +575,13 @@
     /* ===========================
        CONFIG TMDB
        =========================== */
-    const TMDB_API_KEY = "INSERISCI_LA_TUA_KEY";
+    const TMDB_API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
     const TMDB_BASE = "https://api.themoviedb.org/3";
     const IMG = "https://image.tmdb.org/t/p/w342";
     const LOGO = "https://image.tmdb.org/t/p/w45";
     const REGION = "IT";
-    const APP_DEEPLINK = "https://example.com/movie-finder"; // qui metterai lo store link
+    const APP_DEEPLINK = "https://example.com/movie-finder";
 
-    /* Generi TMDB */
     const G = {
       action: 28,
       comedy: 35,
@@ -639,15 +591,10 @@
       drama: 18
     };
 
-    /* ===========================
-       STATE E STORAGE
-       =========================== */
     const S = {
       profile: localStorage.getItem("mf_profile") || "none",
       premium: localStorage.getItem("mf_premium") === "true",
-      basicLastDate: localStorage.getItem("mf_basic_last_date") || "",
-      premTab: "film",
-      premType: "movie" // "movie" o "tv"
+      premType: "movie"
     };
 
     function todayKey(){
@@ -669,9 +616,8 @@
       updatePremiumStatus();
     }
 
-    /* ===========================
-       ROUTER UI
-       =========================== */
+    function byId(id){ return document.getElementById(id); }
+
     const secSplash = byId("secSplash");
     const secProfiles = byId("secProfiles");
     const secBasic = byId("secBasic");
@@ -682,19 +628,6 @@
       [secSplash, secProfiles, secBasic, secPremium, secFinal].forEach(x => x.classList.remove("on"));
       byId(sectionId).classList.add("on");
       window.scrollTo({top:0, behavior:"instant"});
-    }
-
-    byId("btnHome").addEventListener("click", () => {
-      show("secProfiles");
-    });
-
-    byId("btnGoProfiles").addEventListener("click", () => {
-      fadeToProfiles();
-    });
-
-    function fadeToProfiles(){
-      show("secSplash");
-      setTimeout(() => show("secProfiles"), 420);
     }
 
     /* ===========================
@@ -708,19 +641,17 @@
         hint.classList.add("on");
         setTimeout(() => hint.classList.remove("on"), 1200);
       }catch(e){
-        alert("Copia non riuscita. Copia questo file dal repository o dal messaggio in chat.");
+        alert("Copia non riuscita. Prova da Chrome oppure copia dal repository.");
       }
     });
 
-    /* ===========================
-       RESET DEMO
-       =========================== */
+    byId("btnHome").addEventListener("click", () => show("secProfiles"));
+
     byId("btnResetLocal").addEventListener("click", () => {
       localStorage.removeItem("mf_profile");
       localStorage.removeItem("mf_premium");
       localStorage.removeItem("mf_basic_last_date");
       localStorage.removeItem("mf_history");
-      localStorage.removeItem("mf_last_shared");
       location.reload();
     });
 
@@ -751,23 +682,21 @@
     const payModal = byId("payModal");
     byId("btnPayClose").addEventListener("click", closePayModal);
     byId("btnPayLater").addEventListener("click", closePayModal);
-
     byId("btnPayNow").addEventListener("click", () => {
       setPremium(true);
       closePayModal();
       show("secPremium");
       loadPremiumPanels();
     });
-
     function openPayModal(){ payModal.classList.add("on"); }
     function closePayModal(){ payModal.classList.remove("on"); }
-
     function updatePremiumStatus(){
       byId("premiumStatus").textContent = S.premium ? "Premium attivo" : "Non attivo";
     }
+    updatePremiumStatus();
 
     /* ===========================
-       BASIC: SELEZIONE GENERI
+       BASIC: GENERI E LIMITE
        =========================== */
     const basicGenresBox = byId("basicGenres");
     let basicSelected = new Set([G.action]);
@@ -791,21 +720,15 @@
       byId("basicHint").textContent = "Seleziona almeno un genere.";
     });
 
-    /* Limitazione 1 volta al giorno */
     function basicCanSearch(){
       return (localStorage.getItem("mf_basic_last_date") || "") !== todayKey();
     }
 
     function refreshBasicLimitUI(){
       const badge = byId("basicLimitBadge");
-      if(basicCanSearch()){
-        badge.textContent = "Ricerca disponibile oggi";
-      }else{
-        badge.textContent = "Già usata oggi";
-      }
+      badge.textContent = basicCanSearch() ? "Ricerca disponibile oggi" : "Già usata oggi";
     }
 
-    /* MODAL LIMIT */
     const limitModal = byId("limitModal");
     byId("btnLimitClose").addEventListener("click", () => limitModal.classList.remove("on"));
     byId("btnComeBack").addEventListener("click", () => limitModal.classList.remove("on"));
@@ -822,14 +745,8 @@
         limitModal.classList.add("on");
         return;
       }
-
       if(basicSelected.size === 0){
         byId("basicHint").textContent = "Seleziona almeno un genere.";
-        return;
-      }
-
-      if(!hasApiKey()){
-        byId("basicHint").textContent = "Inserisci la tua TMDB API key nel codice. Cerca TMDB_API_KEY.";
         return;
       }
 
@@ -856,17 +773,14 @@
         localStorage.setItem("mf_basic_last_date", todayKey());
         refreshBasicLimitUI();
         byId("basicHint").textContent = "Fatto. 3 scelte per oggi.";
-
       }catch(e){
-        byId("basicHint").textContent = "Errore. Controlla API key e rete.";
+        byId("basicHint").textContent = "Errore di rete o TMDB.";
       }
     });
 
     /* ===========================
        PREMIUM: TAB E SLIDER
        =========================== */
-    updatePremiumStatus();
-
     const premFilmTvBox = byId("premFilmTvBox");
     const premSocialBox = byId("premSocialBox");
 
@@ -889,7 +803,6 @@
     byId("premTabSocial").addEventListener("click", () => {
       premFilmTvBox.style.display = "none";
       premSocialBox.style.display = "block";
-      byId("premExplain").textContent = "";
     });
 
     const sliders = [
@@ -924,10 +837,6 @@
         openPayModal();
         return;
       }
-      if(!hasApiKey()){
-        byId("premExplain").textContent = "Inserisci la tua TMDB API key nel codice. Cerca TMDB_API_KEY.";
-        return;
-      }
 
       byId("premResults").innerHTML = "";
       byId("premExplain").textContent = "Sto cercando 5 titoli...";
@@ -951,11 +860,9 @@
         }));
 
         renderResults(byId("premResults"), enriched, { mode:"premium", type:S.premType });
-
         byId("premExplain").textContent = explain;
-
       }catch(e){
-        byId("premExplain").textContent = "Errore. Controlla API key e rete.";
+        byId("premExplain").textContent = "Errore di rete o TMDB.";
       }
     }
 
@@ -978,13 +885,11 @@
         ["romance", G.romance],
         ["drama", G.drama]
       ];
-
       const chosen = map
         .filter(([k]) => w[k] > 0)
         .sort((a,b) => w[b[0]] - w[a[0]])
         .slice(0, 3)
         .map(([,id]) => id);
-
       return chosen.join(",");
     }
 
@@ -1005,7 +910,7 @@
         await navigator.clipboard.writeText(APP_DEEPLINK);
         alert("Link copiato.");
       }catch(e){
-        alert("Non riesco a copiare. Copia manualmente: " + APP_DEEPLINK);
+        alert("Copia manualmente: " + APP_DEEPLINK);
       }
     });
 
@@ -1027,12 +932,10 @@
        HISTORY E TOP WEEK
        =========================== */
     function getHistory(){
-      try{
-        return JSON.parse(localStorage.getItem("mf_history") || "[]");
-      }catch(e){
-        return [];
-      }
+      try{ return JSON.parse(localStorage.getItem("mf_history") || "[]"); }
+      catch(e){ return []; }
     }
+
     function pushHistory(item){
       const h = getHistory();
       const key = item.media_type + ":" + item.id;
@@ -1042,22 +945,16 @@
     }
 
     async function loadTopWeek(){
-      if(!hasApiKey()){
-        byId("premTopWeek").innerHTML = "";
-        return;
-      }
       try{
         const list = await tmdb("/trending/all/week");
         const picked = (list.results || []).filter(x => x.media_type === "movie" || x.media_type === "tv").slice(0, 5);
-
         const enriched = await Promise.all(picked.map(async (m) => {
           const providers = await getProviders(m.media_type, m.id);
           return { ...m, providers };
         }));
-
-        renderResults(byId("premTopWeek"), enriched, { mode:"premium", type:"all", compact:true, label:"Top settimana" });
+        renderResults(byId("premTopWeek"), enriched, { mode:"premium", type:"all", compact:true });
       }catch(e){
-        byId("premTopWeek").innerHTML = "";
+        byId("premTopWeek").innerHTML = '<div class="muted" style="font-size:13px">Top settimana non disponibile.</div>';
       }
     }
 
@@ -1067,7 +964,7 @@
         byId("premHistory").innerHTML = '<div class="muted" style="font-size:13px">Nessun titolo visto di recente.</div>';
         return;
       }
-      renderResults(byId("premHistory"), h.slice(0, 5), { mode:"premium", type:"all", compact:true, label:"Ultimi visti" });
+      renderResults(byId("premHistory"), h.slice(0, 5), { mode:"premium", type:"all", compact:true });
     }
 
     async function loadPremiumPanels(){
@@ -1083,10 +980,6 @@
     /* ===========================
        TMDB HELPERS
        =========================== */
-    function hasApiKey(){
-      return TMDB_API_KEY && TMDB_API_KEY !== "INSERISCI_LA_TUA_KEY";
-    }
-
     async function tmdb(path, params){
       const url = new URL(TMDB_BASE + path);
       url.searchParams.set("api_key", TMDB_API_KEY);
@@ -1117,18 +1010,12 @@
       const data = await tmdb("/" + type + "/" + id + "/watch/providers", {});
       const it = (data.results && data.results[REGION]) ? data.results[REGION] : null;
       if(!it) return { flatrate:[], rent:[], buy:[] };
-
-      return {
-        flatrate: it.flatrate || [],
-        rent: it.rent || [],
-        buy: it.buy || []
-      };
+      return { flatrate: it.flatrate || [], rent: it.rent || [], buy: it.buy || [] };
     }
 
     function pickUnique(list, pool, take){
       const clean = (list || []).filter(x => x && x.id && (x.poster_path || x.backdrop_path));
       const slice = clean.slice(0, pool);
-      // piccolo shuffle stabile
       for(let i=slice.length-1;i>0;i--){
         const j = Math.floor(Math.random()*(i+1));
         [slice[i], slice[j]] = [slice[j], slice[i]];
@@ -1136,12 +1023,8 @@
       return slice.slice(0, take);
     }
 
-    /* ===========================
-       RENDER RESULTS
-       =========================== */
     function renderResults(container, items, opts){
       const mode = opts.mode;
-      const type = opts.type;
       const compact = !!opts.compact;
 
       if(!items || items.length === 0){
@@ -1158,9 +1041,8 @@
         const vote = (typeof m.vote_average === "number") ? m.vote_average.toFixed(1) : "n.d.";
         const overview = (m.overview || "").trim();
         const shortOv = overview ? clamp(overview, compact ? 90 : (mode==="basic" ? 120 : 220)) : "Trama non disponibile.";
-
-        const poster = m.poster_path ? (IMG + m.poster_path) : "";
-        const mediaType = m.media_type || (type === "all" ? "movie" : type);
+        const poster = m.poster_path ? ("https://image.tmdb.org/t/p/w342" + m.poster_path) : "";
+        const mediaType = m.media_type || opts.type;
 
         const box = document.createElement("div");
         box.className = "result";
@@ -1185,7 +1067,7 @@
 
             <div class="row" style="margin-top:10px">
               <button class="btn small ${mode==="basic" ? "green" : "primary"}" data-act="open" data-id="${m.id}" data-type="${mediaType}">Dettagli</button>
-              <button class="btn small ghost" data-act="start" data-id="${m.id}" data-type="${mediaType}">Avvia</button>
+              <button class="btn small ghost" data-act="start">Avvia</button>
             </div>
           </div>
         `;
@@ -1194,14 +1076,11 @@
           const b = ev.target.closest("button");
           if(!b) return;
           const act = b.getAttribute("data-act");
-          const id = Number(b.getAttribute("data-id"));
-          const t = b.getAttribute("data-type");
 
           if(act === "open"){
-            // salva in cronologia
             pushHistory({
               id: m.id,
-              media_type: t,
+              media_type: mediaType,
               title: m.title || undefined,
               name: m.name || undefined,
               poster_path: m.poster_path || null,
@@ -1212,18 +1091,14 @@
               popularity: m.popularity,
               providers: m.providers
             });
-            if(S.profile === "premium"){
-              loadPremiumHistory();
-            }
+            if(S.profile === "premium") loadPremiumHistory();
             alert("Demo. Qui apri una pagina dettagli con trama estesa e statistiche complete.");
           }
 
           if(act === "start"){
             try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
             show("secFinal");
-            setTimeout(() => {
-              try{ window.close(); }catch(e){}
-            }, 900);
+            setTimeout(() => { try{ window.close(); }catch(e){} }, 900);
           }
         });
 
@@ -1239,16 +1114,15 @@
       const buy = (p.buy || []).slice(0, 4);
 
       if(mode === "basic"){
-        // Basic: mostra solo presenza online, 2 o 3 provider max
         const list = fl.length ? fl : (rent.length ? rent : buy);
         if(list.length === 0){
           return '<div class="providers"><span class="muted">Non ho trovato piattaforme in IT.</span></div>';
         }
-        const shown = list.slice(0, 3).map(x => provChip(x, fl.length ? "Gratis" : (rent.length ? "Noleggio" : "Acquisto"))).join("");
+        const tag = fl.length ? "Gratis" : (rent.length ? "Noleggio" : "Acquisto");
+        const shown = list.slice(0, 3).map(x => provChip(x, tag)).join("");
         return `<div class="providers">${shown}</div>`;
       }
 
-      // Premium: mostra tutte le categorie
       const parts = [];
       if(fl.length) parts.push(`<span class="badge">Gratis</span>` + fl.slice(0,4).map(x => provChip(x,"")).join(""));
       if(rent.length) parts.push(`<span class="badge">Noleggio</span>` + rent.slice(0,4).map(x => provChip(x,"")).join(""));
@@ -1257,12 +1131,11 @@
       if(parts.length === 0){
         return '<div class="providers"><span class="muted">Non ho trovato piattaforme in IT.</span></div>';
       }
-
       return `<div class="providers">${parts.join("")}</div>`;
     }
 
     function provChip(x, tag){
-      const logo = x.logo_path ? (LOGO + x.logo_path) : "";
+      const logo = x.logo_path ? ("https://image.tmdb.org/t/p/w45" + x.logo_path) : "";
       const name = x.provider_name || "Provider";
       const t = tag ? `<span class="muted">${tag}</span>` : "";
       return `
@@ -1285,33 +1158,32 @@
       }[m]));
     }
 
-    function byId(id){ return document.getElementById(id); }
-
     /* ===========================
        BOOT
+       Splash dura 2 secondi
        =========================== */
     (function boot(){
-      // Splash breve, poi profili
       show("secSplash");
-      setTimeout(() => show("secProfiles"), 900);
 
-      // Stato
-      refreshBasicLimitUI();
-      updatePremiumStatus();
+      // 2 secondi pieni prima di passare ai profili
+      setTimeout(() => {
+        show("secProfiles");
 
-      // Se l’utente aveva già scelto profilo
-      if(S.profile === "basic"){
-        show("secBasic");
         refreshBasicLimitUI();
-      }
-      if(S.profile === "premium"){
-        if(S.premium){
+        updatePremiumStatus();
+
+        // riprende l’ultimo profilo scelto
+        const p = localStorage.getItem("mf_profile") || "none";
+        if(p === "basic"){
+          show("secBasic");
+          refreshBasicLimitUI();
+        }
+        if(p === "premium" && (localStorage.getItem("mf_premium") === "true")){
           show("secPremium");
           loadPremiumPanels();
         }
-      }
+      }, 2000);
     })();
   </script>
 </body>
 </html>
-```0
