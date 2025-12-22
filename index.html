@@ -245,7 +245,7 @@
     }
 
     /* =======================
-       CINEMA EXIT EFFECT
+       CINEMA EXIT 2.0
     ======================= */
     .cinemaOverlay{
       position:fixed;inset:0;
@@ -257,18 +257,49 @@
     }
     .cinemaOverlay.show{display:block}
 
+    .flash{
+      position:absolute;inset:0;
+      background:#fff;
+      opacity:0;
+      pointer-events:none;
+    }
+    .cinemaOverlay.flashOn .flash{
+      animation: flash 240ms ease forwards;
+    }
+    @keyframes flash{
+      0%{opacity:0}
+      20%{opacity:.85}
+      100%{opacity:0}
+    }
+
+    .curtain{
+      position:absolute;top:0;bottom:0;
+      width:55%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,.06), transparent 55%),
+        linear-gradient(90deg, rgba(140,0,0,.65), rgba(45,0,0,.80));
+      filter: saturate(115%);
+      box-shadow: 0 0 80px rgba(0,0,0,.7) inset;
+    }
+    .curtain.left{left:-55%}
+    .curtain.right{right:-55%}
+    .cinemaOverlay.curtainsOn .curtain.left{animation: curtainL 720ms cubic-bezier(.16,.9,.14,1) forwards}
+    .cinemaOverlay.curtainsOn .curtain.right{animation: curtainR 720ms cubic-bezier(.16,.9,.14,1) forwards}
+    @keyframes curtainL{to{transform: translateX(55%)}}
+    @keyframes curtainR{to{transform: translateX(-55%)}}
+
     .filmGrain{
       position:absolute;inset:-30%;
       background-image:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 45%),
-        radial-gradient(circle at 70% 60%, rgba(255,255,255,.03), transparent 50%),
-        radial-gradient(circle at 35% 80%, rgba(255,255,255,.025), transparent 55%);
-      opacity:.35;
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.05), transparent 45%),
+        radial-gradient(circle at 70% 60%, rgba(255,255,255,.035), transparent 50%),
+        radial-gradient(circle at 35% 80%, rgba(255,255,255,.03), transparent 55%);
+      opacity:.34;
       mix-blend-mode: screen;
       animation: grainMove 900ms steps(2) infinite;
       transform: rotate(7deg);
       pointer-events:none;
-      filter: contrast(120%);
+      filter: contrast(125%);
     }
     @keyframes grainMove{
       0%{transform:translate(0,0) rotate(7deg)}
@@ -282,18 +313,18 @@
       position:absolute;inset:0;
       background: repeating-linear-gradient(
         to bottom,
-        rgba(255,255,255,.03),
-        rgba(255,255,255,.03) 1px,
+        rgba(255,255,255,.035),
+        rgba(255,255,255,.035) 1px,
         rgba(0,0,0,0) 3px,
         rgba(0,0,0,0) 6px
       );
-      opacity:.08;
+      opacity:.085;
       pointer-events:none;
     }
 
     .vignette{
       position:absolute;inset:0;
-      background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 35%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.9) 100%);
+      background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 33%, rgba(0,0,0,.58) 78%, rgba(0,0,0,.95) 100%);
       pointer-events:none;
       opacity:1;
     }
@@ -341,19 +372,34 @@
     }
 
     .cinemaTitle{
-      margin:0 0 8px;
+      margin:0;
       font-size:18px;
       color:#fff;
       letter-spacing:.2px;
       line-height:1.25;
       text-shadow: 0 10px 22px rgba(0,0,0,.45);
+      min-height: 24px;
+    }
+
+    .subtitle{
+      margin:8px 0 0;
+      color: rgba(255,255,255,.75);
+      font-size:12px;
+      line-height:1.35;
+      opacity:0;
+      transform: translateY(6px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .cinemaOverlay.ready .subtitle{
+      opacity:1;
+      transform:none;
     }
 
     .dots{
       display:flex;
       gap:8px;
       justify-content:center;
-      margin-top:10px;
+      margin-top:12px;
       opacity:.9;
     }
     .dot{
@@ -376,7 +422,7 @@
       gap:10px;
       flex-wrap:wrap;
       margin-top:14px;
-      opacity:.0;
+      opacity:0;
       transform: translateY(6px);
       transition: opacity .2s ease, transform .2s ease;
     }
@@ -456,6 +502,7 @@
           <div class="pill">Basic, test senza limiti</div>
           <div class="pill">Trama breve in Basic</div>
           <div class="pill">Trama più lunga in Premium</div>
+          <div class="pill">Ricerca migliorata, più varietà</div>
         </div>
         <div class="devNote" id="devStartNote"></div>
       </div>
@@ -487,7 +534,7 @@
 
       <div class="card">
         <h3>Uscita</h3>
-        <p>Premi Esci per chiudere con effetto.</p>
+        <p>Premi Esci per chiudere con effetto cinematografico.</p>
         <div class="btnRow">
           <button class="danger" id="btnExitFromStart">Esci</button>
         </div>
@@ -617,6 +664,11 @@
 
   <!-- CINEMA EXIT OVERLAY -->
   <div id="cinemaOverlay" class="cinemaOverlay" aria-hidden="true">
+    <div class="flash" aria-hidden="true"></div>
+
+    <div class="curtain left" aria-hidden="true"></div>
+    <div class="curtain right" aria-hidden="true"></div>
+
     <div class="filmGrain" aria-hidden="true"></div>
     <div class="scanlines" aria-hidden="true"></div>
     <div class="projectorFlicker" aria-hidden="true"></div>
@@ -624,7 +676,8 @@
 
     <div class="cinemaCenter">
       <div id="cinemaCard" class="cinemaCard">
-        <p class="cinemaTitle">Mettiti comodo inizia lo spettacolo</p>
+        <p id="cinemaTitle" class="cinemaTitle"></p>
+        <p class="subtitle" id="cinemaSub">Sto preparando lo schermo</p>
         <div class="dots" aria-hidden="true">
           <div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
@@ -702,6 +755,9 @@ const PLOT_MAX_PREMIUM = 650;
 
 const el = (id) => document.getElementById(id);
 
+/* =======================
+   DEV NOTES
+======================= */
 function setDevMode(){
   if(DEV_NOTES_ENABLED){
     document.body.classList.add("dev");
@@ -719,6 +775,9 @@ function devSet(id, text){
   n.textContent = text;
 }
 
+/* =======================
+   UI
+======================= */
 function toast(msg){
   const t = el("toast");
   t.textContent = msg;
@@ -776,6 +835,9 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 
+/* =======================
+   PREMIUM
+======================= */
 function isPremiumPurchased(){
   return localStorage.getItem(LS.premium) === "1";
 }
@@ -792,10 +854,13 @@ function refreshPremiumStatus(){
 function refreshPremiumGateInfo(){
   const info = el("premiumGateInfo");
   info.textContent = isPremiumPurchased()
-    ? "Ok. Premi Cerca per ottenere 5 risultati coerenti con gli slider."
+    ? "Ok. Premi Cerca per ottenere 5 risultati più pertinenti e vari."
     : "Premium bloccato. Premi Sblocca Premium nella home, oppure usa Basic.";
 }
 
+/* =======================
+   BASIC LIMIT
+======================= */
 function canBasicSearch(){
   if(BASIC_TEST_MODE_UNLIMITED) return true;
   const last = localStorage.getItem(LS.lastBasicSearchDate) || "";
@@ -816,6 +881,9 @@ function refreshBasicLimitInfo(){
     : "Hai già fatto la ricerca oggi. Riprova domani.";
 }
 
+/* =======================
+   SHOWN SETS
+======================= */
 function loadShownSet(kind){
   const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
   try{
@@ -830,7 +898,7 @@ function loadShownSet(kind){
 }
 function saveShownSet(kind, set){
   const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
-  const arr = Array.from(set).slice(0, 1500);
+  const arr = Array.from(set).slice(0, 2200);
   localStorage.setItem(key, JSON.stringify(arr));
 }
 function resetShown(kind){
@@ -838,6 +906,9 @@ function resetShown(kind){
   localStorage.removeItem(key);
 }
 
+/* =======================
+   PROVIDERS PICK
+======================= */
 function buildProviderPick(containerId){
   const box = el(containerId);
   box.innerHTML = "";
@@ -857,6 +928,9 @@ function readPickedProviders(containerId){
   return ids.join("|");
 }
 
+/* =======================
+   PREMIUM SLIDERS
+======================= */
 const PREMIUM_GENRES = [
   { key:"azione", label:"Azione" },
   { key:"comico", label:"Comico" },
@@ -893,23 +967,46 @@ function buildPremiumSliders(){
 function readPremiumWeights(){
   const weights = {};
   PREMIUM_GENRES.forEach(g => {
-    const v = Number(el("s_"+g.key).value || 0);
-    weights[g.key] = v;
+    weights[g.key] = Number(el("s_"+g.key).value || 0);
   });
   return weights;
 }
 
-function pickTopGenres(weights, maxCount){
-  const arr = Object.keys(weights)
-    .map(k => ({ k, v: weights[k] }))
-    .filter(x => x.v > 0)
-    .sort((a,b) => b.v - a.v);
+/* =======================
+   SEARCH IMPROVEMENTS
+   Obiettivi:
+   1 più varietà, meno ripetizioni
+   2 risultati più pertinenti agli slider
+   3 meno dipendenza da una sola pagina o un solo sort
+======================= */
+function buildGenreSelectionFromWeights(weights){
+  const entries = Object.keys(weights).map(k => ({ k, v: weights[k] })).filter(x => x.v > 0);
+  if(entries.length === 0) return { chosenKeys: [], chosenIds: [] };
 
-  if(arr.length === 0) return [];
-  return arr.slice(0, maxCount).map(x => x.k);
+  entries.sort((a,b) => b.v - a.v);
+
+  const hard = entries.filter(x => x.v >= 4).map(x => x.k);
+  const mid = entries.filter(x => x.v === 3).map(x => x.k);
+  const soft = entries.filter(x => x.v <= 2).map(x => x.k);
+
+  const chosen = [];
+  hard.forEach(k => chosen.push(k));
+  if(chosen.length < 3){
+    shuffle(mid);
+    mid.forEach(k => { if(chosen.length < 3) chosen.push(k); });
+  }
+  if(chosen.length < 2){
+    shuffle(soft);
+    soft.forEach(k => { if(chosen.length < 2) chosen.push(k); });
+  }
+  if(chosen.length > 4){
+    chosen.length = 4;
+  }
+
+  return { chosenKeys: chosen, chosenIds: [] };
 }
 
-function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
+function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie, loosen }){
   const params = new URLSearchParams();
   params.set("api_key", TMDB_API_KEY);
   params.set("language", TMDB_LANG);
@@ -919,8 +1016,13 @@ function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
   params.set("include_adult", "false");
   params.set("include_video", "false");
 
-  params.set("vote_count.gte", "120");
-  params.set("vote_average.gte", "6.0");
+  if(loosen){
+    params.set("vote_count.gte", "40");
+    params.set("vote_average.gte", "5.8");
+  }else{
+    params.set("vote_count.gte", "110");
+    params.set("vote_average.gte", "6.0");
+  }
 
   if(kind === "movie"){
     params.set("primary_release_date.gte", "1980-01-01");
@@ -939,9 +1041,11 @@ function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
     params.set("certification.lte", BASIC_CERT_LTE);
   }
 
-  const sortPool = ["popularity.desc","vote_average.desc","revenue.desc"];
-  params.set("sort_by", sortPool[randInt(0, sortPool.length-1)]);
+  const sortPool = loosen
+    ? ["popularity.desc","vote_average.desc","primary_release_date.desc","revenue.desc"]
+    : ["popularity.desc","vote_average.desc","revenue.desc"];
 
+  params.set("sort_by", sortPool[randInt(0, sortPool.length-1)]);
   return params;
 }
 
@@ -973,9 +1077,7 @@ function mergeProviders(p){
   const add = (arr) => {
     (arr || []).forEach(x => {
       if(!x || !x.provider_id) return;
-      if(!map.has(x.provider_id)){
-        map.set(x.provider_id, x);
-      }
+      if(!map.has(x.provider_id)) map.set(x.provider_id, x);
     });
   };
   add(p.flatrate);
@@ -985,8 +1087,7 @@ function mergeProviders(p){
 }
 
 function hasAnyProviderInIT(p){
-  const merged = mergeProviders(p);
-  return merged.length > 0;
+  return mergeProviders(p).length > 0;
 }
 
 async function fetchDetails(kind, id, language){
@@ -1021,55 +1122,132 @@ async function ensureOverview(kind, item){
   return item;
 }
 
-async function getRandomItems({ kind, genreCsv, providerCsv, count, isBasicMovie }){
+function scoreCandidate(item, targetGenreIds, weightSum){
+  const pop = typeof item.popularity === "number" ? item.popularity : 0;
+  const voteAvg = typeof item.vote_average === "number" ? item.vote_average : 0;
+  const voteCnt = typeof item.vote_count === "number" ? item.vote_count : 0;
+
+  const g = Array.isArray(item.genre_ids) ? item.genre_ids : [];
+  let match = 0;
+  targetGenreIds.forEach(id => { if(g.includes(id)) match++; });
+
+  const s =
+    (pop * 1.0) +
+    (voteAvg * 45) +
+    (Math.min(voteCnt, 4500) * 0.018) +
+    (match * 220) +
+    (weightSum * 18);
+
+  return { score: s, match };
+}
+
+async function getBetterItems({
+  kind,
+  targetGenreIds,
+  providerCsv,
+  count,
+  isBasicMovie
+}){
   const shown = loadShownSet(kind);
-  const params = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie });
 
-  const maxTries = 9;
-  const pageMax = 20;
-  const collected = [];
+  const genreCsv = targetGenreIds.join(",");
+  const loosen = false;
+  const loosen2 = true;
 
-  for(let t=0; t<maxTries && collected.length < count; t++){
-    const page = randInt(1, pageMax);
-    const data = await fetchDiscover({ kind, params: new URLSearchParams(params.toString()), page });
+  const paramsA = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie, loosen });
+  const paramsB = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie, loosen: loosen2 });
 
-    const results = Array.isArray(data.results) ? data.results.slice() : [];
-    shuffle(results);
+  const weightSum = Math.max(1, targetGenreIds.length);
 
-    for(const raw of results){
-      const id = raw && raw.id ? String(raw.id) : "";
-      if(!id) continue;
-      if(shown.has(id)) continue;
+  const candidates = new Map();
 
-      const poster = raw.poster_path ? raw.poster_path : "";
-      if(!poster) continue;
+  async function pull(params){
+    let first;
+    try{
+      first = await fetchDiscover({ kind, params: new URLSearchParams(params.toString()), page: 1 });
+    }catch{
+      return;
+    }
+    const totalPages = Math.max(1, Math.min(500, Number(first.total_pages || 1)));
 
-      let providers = null;
+    const pagesToTry = [];
+    pagesToTry.push(1);
+
+    for(let i=0;i<7;i++){
+      const p = randInt(1, totalPages);
+      pagesToTry.push(p);
+    }
+
+    shuffle(pagesToTry);
+
+    for(const p of pagesToTry){
+      let data;
       try{
-        providers = await getProvidersForItem(kind, id);
+        data = (p === 1) ? first : await fetchDiscover({ kind, params: new URLSearchParams(params.toString()), page: p });
       }catch{
-        providers = null;
-      }
-
-      if(!hasAnyProviderInIT(providers)){
         continue;
       }
 
-      let item = raw;
-      try{
-        item = await ensureOverview(kind, item);
-      }catch{}
+      const results = Array.isArray(data.results) ? data.results.slice() : [];
+      shuffle(results);
 
-      shown.add(id);
-      collected.push({ item, providers });
-      if(collected.length >= count) break;
+      for(const raw of results){
+        const id = raw && raw.id ? String(raw.id) : "";
+        if(!id) continue;
+        if(shown.has(id)) continue;
+        if(candidates.has(id)) continue;
+
+        if(!raw.poster_path) continue;
+
+        const sc = scoreCandidate(raw, targetGenreIds, weightSum);
+        candidates.set(id, { item: raw, score: sc.score, match: sc.match });
+        if(candidates.size >= 70) return;
+      }
+      if(candidates.size >= 70) return;
     }
   }
 
+  await pull(paramsA);
+  if(candidates.size < 26){
+    await pull(paramsB);
+  }
+
+  const list = Array.from(candidates.values());
+  list.sort((a,b) => b.score - a.score);
+
+  const pickPool = list.slice(0, Math.max(14, count * 6));
+  shuffle(pickPool);
+
+  const picked = [];
+
+  for(const c of pickPool){
+    if(picked.length >= count) break;
+
+    let providers = null;
+    try{
+      providers = await getProvidersForItem(kind, c.item.id);
+    }catch{
+      providers = null;
+    }
+    if(!hasAnyProviderInIT(providers)) continue;
+
+    let item = c.item;
+    try{
+      item = await ensureOverview(kind, item);
+    }catch{}
+
+    const id = String(item.id);
+    shown.add(id);
+    picked.push({ item, providers, score: c.score, match: c.match });
+  }
+
   saveShownSet(kind, shown);
-  return collected;
+  return picked;
 }
 
+/* =======================
+   RENDER
+======================= */
 function formatYear(kind, item){
   const d = kind === "movie" ? item.release_date : item.first_air_date;
   if(!d) return "";
@@ -1159,6 +1337,8 @@ DEV INFO
 kind: ${kind}
 tmdb_id: ${escapeHtml(String(item.id))}
 providers_it: ${mergeProviders(providers).length}
+score: ${escapeHtml(String(Math.round(e.score || 0)))}
+match_genres: ${escapeHtml(String(e.match || 0))}
 note: in app ufficiale queste note spariscono
       </div>
     ` : "";
@@ -1211,6 +1391,9 @@ note: in app ufficiale queste note spariscono
   });
 }
 
+/* =======================
+   BASIC
+======================= */
 function readBasicSelectedGenres(){
   const ids = [];
   document.querySelectorAll("#basicGenres input[type='checkbox']").forEach(cb => {
@@ -1220,7 +1403,7 @@ function readBasicSelectedGenres(){
       if(id) ids.push(id);
     }
   });
-  return ids.join(",");
+  return ids;
 }
 
 async function runBasic(){
@@ -1230,8 +1413,8 @@ async function runBasic(){
     return;
   }
 
-  const genreCsv = readBasicSelectedGenres();
-  if(!genreCsv){
+  const genreIds = readBasicSelectedGenres();
+  if(!genreIds.length){
     toast("Seleziona almeno 1 genere.");
     return;
   }
@@ -1242,9 +1425,9 @@ async function runBasic(){
   el("basicResults").innerHTML = `<div class="card"><h3>Ricerca in corso</h3><p>Sto cercando film disponibili in Italia.</p></div>`;
 
   try{
-    const entries = await getRandomItems({
+    const entries = await getBetterItems({
       kind: "movie",
-      genreCsv,
+      targetGenreIds: genreIds,
       providerCsv,
       count: 3,
       isBasicMovie: true
@@ -1261,17 +1444,17 @@ async function runBasic(){
   }
 }
 
+/* =======================
+   PREMIUM
+======================= */
 function getPremiumKind(){
   const v = document.querySelector('input[name="premiumType"]:checked');
   return v ? v.value : "movie";
 }
 
-function buildGenreCsvForPremium(kind, weights){
-  const top = pickTopGenres(weights, 3);
-  if(top.length === 0) return "";
+function mapGenreIdsForKind(kind, keys){
   const map = kind === "movie" ? GENRE_MAP_MOVIE : GENRE_MAP_TV;
-  const ids = top.map(k => map[k]).filter(Boolean);
-  return ids.join(",");
+  return keys.map(k => map[k]).filter(Boolean);
 }
 
 async function runPremium(){
@@ -1283,10 +1466,16 @@ async function runPremium(){
 
   const kind = getPremiumKind();
   const weights = readPremiumWeights();
+  const sel = buildGenreSelectionFromWeights(weights);
 
-  const genreCsv = buildGenreCsvForPremium(kind, weights);
-  if(!genreCsv){
+  if(!sel.chosenKeys.length){
     toast("Alza almeno 1 slider.");
+    return;
+  }
+
+  const targetGenreIds = mapGenreIdsForKind(kind, sel.chosenKeys);
+  if(!targetGenreIds.length){
+    toast("Generi non validi.");
     return;
   }
 
@@ -1296,9 +1485,9 @@ async function runPremium(){
   el("premiumResults").innerHTML = `<div class="card"><h3>Ricerca in corso</h3><p>Sto cercando titoli disponibili in Italia.</p></div>`;
 
   try{
-    const entries = await getRandomItems({
+    const entries = await getBetterItems({
       kind,
-      genreCsv,
+      targetGenreIds,
       providerCsv,
       count: 5,
       isBasicMovie: false
@@ -1314,59 +1503,132 @@ async function runPremium(){
 }
 
 /* =======================
-   CINEMA EXIT
-   Effetto:
-   1 overlay nero
-   2 grana, scanlines, flicker
-   3 vibrazione
-   4 tremolio forte per 1s
-   5 prova chiusura. se fallisce mostra bottoni
+   CINEMA EXIT 2.0
 ======================= */
-function tryClose(){
-  try{ history.back(); }catch{}
-  try{ window.close(); }catch{}
+let audioCtx = null;
+
+function audioEnsure(){
+  if(audioCtx) return audioCtx;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if(!Ctx) return null;
+  audioCtx = new Ctx();
+  return audioCtx;
+}
+
+function audioClick(atMs, gainValue, freq){
+  const ctx = audioEnsure();
+  if(!ctx) return;
+
+  const t0 = ctx.currentTime + (atMs / 1000);
+
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+
+  o.type = "square";
+  o.frequency.setValueAtTime(freq, t0);
+
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0001, gainValue), t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.06);
+
+  o.connect(g);
+  g.connect(ctx.destination);
+
+  o.start(t0);
+  o.stop(t0 + 0.07);
+}
+
+function audioProjectorSequence(){
+  const ctx = audioEnsure();
+  if(!ctx) return;
+
+  try{
+    if(ctx.state === "suspended") ctx.resume();
+  }catch{}
+
+  audioClick(0,   0.07, 120);
+  audioClick(90,  0.06, 150);
+  audioClick(210, 0.06, 110);
+  audioClick(340, 0.05, 170);
 }
 
 function vibratePattern(){
   try{
     if(navigator.vibrate){
-      navigator.vibrate([60,30,60,30,90,40,120,60,160]);
+      navigator.vibrate([50,30,70,40,90,50,120,60,160]);
     }
   }catch{}
+}
+
+function typeText(elm, text, speedMs){
+  elm.textContent = "";
+  let i = 0;
+  const t = setInterval(() => {
+    i++;
+    elm.textContent = text.slice(0, i);
+    if(i >= text.length) clearInterval(t);
+  }, speedMs);
+}
+
+function tryClose(){
+  try{ history.back(); }catch{}
+  try{ window.close(); }catch{}
 }
 
 function startCinemaExit(){
   const overlay = el("cinemaOverlay");
   const card = el("cinemaCard");
+  const title = el("cinemaTitle");
 
   overlay.classList.add("show");
   overlay.setAttribute("aria-hidden","false");
   overlay.classList.remove("showButtons");
+  overlay.classList.remove("ready");
+  overlay.classList.remove("curtainsOn");
+  overlay.classList.remove("flashOn");
+
+  typeText(title, "Mettiti comodo inizia lo spettacolo", 18);
+
+  audioProjectorSequence();
+  vibratePattern();
 
   card.classList.add("shakeHard");
-  vibratePattern();
+
+  setTimeout(() => {
+    overlay.classList.add("flashOn");
+  }, 70);
+
+  setTimeout(() => {
+    overlay.classList.add("curtainsOn");
+  }, 160);
 
   setTimeout(() => {
     card.classList.remove("shakeHard");
-  }, 1000);
+    overlay.classList.add("ready");
+  }, 950);
 
   setTimeout(() => {
     tryClose();
-
     setTimeout(() => {
       overlay.classList.add("showButtons");
-    }, 350);
-  }, 1000);
+    }, 380);
+  }, 1200);
 }
 
 function cancelCinemaExit(){
   const overlay = el("cinemaOverlay");
   const card = el("cinemaCard");
+
   overlay.classList.remove("show");
   overlay.classList.remove("showButtons");
+  overlay.classList.remove("ready");
+  overlay.classList.remove("curtainsOn");
+  overlay.classList.remove("flashOn");
   overlay.setAttribute("aria-hidden","true");
+
   card.classList.remove("shakeHard");
   try{ if(navigator.vibrate) navigator.vibrate(0); }catch{}
+
   toast("Ok. Resta in app.");
 }
 
@@ -1374,6 +1636,9 @@ function forceCinemaExit(){
   tryClose();
 }
 
+/* =======================
+   INIT
+======================= */
 function init(){
   setDevMode();
 
@@ -1388,7 +1653,8 @@ function init(){
   devSet("devStartNote",
 `DEV INFO
 DEV_NOTES_ENABLED: ${DEV_NOTES_ENABLED}
-Per togliere le note blu: DEV_NOTES_ENABLED = false`);
+Ricerca migliorata: campionamento multi pagina, punteggio, più varietà
+Chiusura cinema 2.0: flash, tendine, suono, typewriter`);
 
   devSet("devBasicHomeNote",
 `DEV INFO BASIC
@@ -1397,21 +1663,21 @@ Limite giornaliero: ${BASIC_TEST_MODE_UNLIMITED ? "disattivo per test" : "attivo
 
   devSet("devPremiumHomeNote",
 `DEV INFO PREMIUM
-Filtro piattaforme facoltativo.
-Conferma Italia: controllo watch/providers IT su ogni titolo.`);
+Selezione generi: prende 2 a 4 generi in base agli slider
+Ricerca: punteggio con match generi e qualità, poi verifica provider IT`);
 
   devSet("devExitNote",
-`DEV INFO USCITA CINEMA
-Overlay nero, grana, flicker, scanlines.
-Vibrazione e tremolio 1s.
-Poi prova history.back e window.close.
-Se non chiude, compaiono i bottoni.`);
+`DEV INFO USCITA
+Flash bianco, tendine laterali, grana, flicker, scanlines
+Suono stile proiettore via WebAudio
+Vibrazione se supportata
+Poi prova history.back e window.close, se non chiude mostra i bottoni`);
 
-  devSet("devBasicScreenNote","DEV INFO BASIC. Discover movie + check providers IT.");
+  devSet("devBasicScreenNote","DEV INFO BASIC. Campionamento multi pagina e anti ripetizione.");
   devSet("devProvidersNote","DEV INFO. La app mostra provider IT unificati, senza distinguere noleggio o abbonamento.");
-  devSet("devBasicSearchNote",`DEV INFO. Trama breve max ${PLOT_MAX_BASIC}.`);
-  devSet("devPremiumScreenNote","DEV INFO PREMIUM. Discover movie o tv. Top 3 slider.");
-  devSet("devPremiumSearchNote",`DEV INFO. Trama lunga max ${PLOT_MAX_PREMIUM}.`);
+  devSet("devBasicSearchNote",`DEV INFO. Trama breve max ${PLOT_MAX_BASIC}. Risultati 3.`);
+  devSet("devPremiumScreenNote","DEV INFO PREMIUM. Generi selezionati da slider e ricerca con punteggio.");
+  devSet("devPremiumSearchNote",`DEV INFO. Trama lunga max ${PLOT_MAX_PREMIUM}. Risultati 5.`);
   devSet("devCinemaExitNote","DEV INFO. Se non si chiude, usa Esci o Annulla.");
 
   el("btnGoBasic").addEventListener("click", () => {
