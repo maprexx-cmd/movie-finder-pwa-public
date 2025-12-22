@@ -36,9 +36,7 @@
       border-bottom:1px solid var(--border);
     }
     .topbar .wrap{padding:14px}
-    .brand{
-      display:flex;align-items:center;gap:12px;
-    }
+    .brand{display:flex;align-items:center;gap:12px}
     .logo{
       width:38px;height:38px;border-radius:12px;
       background: radial-gradient(circle at 30% 30%, var(--yellow), #fff0 55%),
@@ -101,9 +99,7 @@
       border:1px solid rgba(255,70,70,.25);
       box-shadow:none;
     }
-    button:disabled{
-      opacity:.45;cursor:not-allowed;
-    }
+    button:disabled{opacity:.45;cursor:not-allowed}
 
     .sectionTitle{
       display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
@@ -155,10 +151,7 @@
     }
     .sliderRow .hdr span{font-size:13px;color:var(--muted)}
     .sliderRow .hdr strong{font-size:13px}
-    input[type="range"]{
-      width:100%;
-      accent-color: var(--yellow);
-    }
+    input[type="range"]{width:100%;accent-color: var(--yellow)}
 
     .results{
       margin-top:12px;
@@ -205,11 +198,6 @@
     }
     .provItem span{font-size:12px;color:var(--text)}
     .note{color:var(--muted);font-size:12px;margin-top:10px}
-    .footerRow{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .badge{
-      font-size:12px;color:#120d2a;background: var(--yellow);
-      padding:6px 10px;border-radius:999px;font-weight:800;
-    }
     .tiny{font-size:12px;color:var(--muted)}
     .hr{height:1px;background:var(--border);margin:14px 0}
     .toast{
@@ -227,7 +215,27 @@
     .toast.show{display:block;animation:fade .25s ease forwards}
     a.link{color:var(--yellow);text-decoration:none}
 
-    /* Effetto uscita app */
+    .actionRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .watchBtn{
+      background: var(--yellow);
+      color:#0b0720;
+      font-weight:900;
+      padding:10px 12px;
+      border-radius:14px;
+      border:0;
+      cursor:pointer;
+      box-shadow: 0 12px 26px rgba(255,212,0,.22);
+    }
+    .openBtn{
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border:1px solid var(--border);
+      box-shadow:none;
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+    }
+
     body.closing{
       overflow:hidden;
       animation: appClose .34s ease forwards;
@@ -267,7 +275,7 @@
       <div class="grid2">
         <div class="card">
           <h3>Basic</h3>
-          <p>Film בלבד. 4 generi. 1 ricerca al giorno. 3 risultati.</p>
+          <p>Film. 4 generi. 1 ricerca al giorno. 3 risultati.</p>
           <div class="btnRow">
             <button id="btnGoBasic">Entra in Basic</button>
             <button class="secondary" id="btnInfoBasic">Dettagli</button>
@@ -438,7 +446,8 @@ const LS = {
   premium: "mf_premium_purchased",
   lastBasicSearchDate: "mf_basic_last_search_date",
   shownMovies: "mf_shown_movies",
-  shownTv: "mf_shown_tv"
+  shownTv: "mf_shown_tv",
+  picked: "mf_picked_to_watch"
 };
 
 const GENRE_MAP_MOVIE = {
@@ -479,6 +488,9 @@ const PROVIDERS = [
   { id: 283, name: "Crunchyroll" },
   { id: 386, name: "Peacock" }
 ];
+
+const PLOT_MAX_BASIC = 220;
+const PLOT_MAX_PREMIUM = 650;
 
 const el = (id) => document.getElementById(id);
 
@@ -692,13 +704,8 @@ function buildDiscoverParams({ kind, genreCsv, providerCsv, monetizationCsv }){
   }
 
   if(genreCsv) params.set("with_genres", genreCsv);
-
-  if(providerCsv){
-    params.set("with_watch_providers", providerCsv);
-  }
-  if(monetizationCsv){
-    params.set("with_watch_monetization_types", monetizationCsv);
-  }
+  if(providerCsv) params.set("with_watch_providers", providerCsv);
+  if(monetizationCsv) params.set("with_watch_monetization_types", monetizationCsv);
 
   const sortPool = ["popularity.desc","vote_average.desc","revenue.desc"];
   params.set("sort_by", sortPool[randInt(0, sortPool.length-1)]);
@@ -733,6 +740,38 @@ function hasAnyProvider(p){
   return (p.flatrate && p.flatrate.length) || (p.rent && p.rent.length) || (p.buy && p.buy.length);
 }
 
+async function fetchDetails(kind, id, language){
+  const endpoint = kind === "movie" ? `movie/${id}` : `tv/${id}`;
+  const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${encodeURIComponent(TMDB_API_KEY)}&language=${encodeURIComponent(language)}`;
+  return tmdbFetch(url);
+}
+
+async function ensureOverview(kind, item){
+  const current = (item && item.overview) ? String(item.overview).trim() : "";
+  if(current && current.length >= 30) return item;
+
+  try{
+    const it = await fetchDetails(kind, item.id, TMDB_LANG);
+    const itOv = it && it.overview ? String(it.overview).trim() : "";
+    if(itOv && itOv.length >= 30){
+      item.overview = itOv;
+      return item;
+    }
+  }catch{}
+
+  try{
+    const en = await fetchDetails(kind, item.id, "en-US");
+    const enOv = en && en.overview ? String(en.overview).trim() : "";
+    if(enOv && enOv.length >= 30){
+      item.overview = enOv;
+      return item;
+    }
+  }catch{}
+
+  item.overview = item.overview || "";
+  return item;
+}
+
 async function getRandomItems({
   kind,
   genreCsv,
@@ -742,13 +781,7 @@ async function getRandomItems({
   count
 }){
   const shown = loadShownSet(kind);
-
-  const params = buildDiscoverParams({
-    kind,
-    genreCsv,
-    providerCsv,
-    monetizationCsv
-  });
+  const params = buildDiscoverParams({ kind, genreCsv, providerCsv, monetizationCsv });
 
   const maxTries = 7;
   const pageMax = 20;
@@ -761,12 +794,12 @@ async function getRandomItems({
     const results = Array.isArray(data.results) ? data.results.slice() : [];
     shuffle(results);
 
-    for(const item of results){
-      const id = item && item.id ? String(item.id) : "";
+    for(const raw of results){
+      const id = raw && raw.id ? String(raw.id) : "";
       if(!id) continue;
       if(shown.has(id)) continue;
 
-      const poster = item.poster_path ? item.poster_path : "";
+      const poster = raw.poster_path ? raw.poster_path : "";
       if(!poster) continue;
 
       let providers = null;
@@ -776,9 +809,12 @@ async function getRandomItems({
         providers = null;
       }
 
-      if(onlyOnline && !hasAnyProvider(providers)){
-        continue;
-      }
+      if(onlyOnline && !hasAnyProvider(providers)) continue;
+
+      let item = raw;
+      try{
+        item = await ensureOverview(kind, item);
+      }catch{}
 
       shown.add(id);
       collected.push({ item, providers });
@@ -802,11 +838,11 @@ function formatRating(item){
   return `Voto ${v}, voti ${c}`;
 }
 
-function shortPlot(text){
+function shortPlot(text, maxLen){
   if(!text) return "Trama non disponibile.";
   const t = String(text).trim();
-  if(t.length <= 240) return t;
-  return t.slice(0, 240) + "...";
+  if(t.length <= maxLen) return t;
+  return t.slice(0, maxLen) + "...";
 }
 
 function renderProvidersBlock(p){
@@ -842,14 +878,35 @@ function renderProvidersBlock(p){
   return `<div class="providers">${blocks}</div>${link}`;
 }
 
-function renderResults(containerId, kind, entries, titleSuffix){
+function escapeHtml(s){
+  return String(s || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function savePicked(kind, item, providers){
+  const payload = {
+    ts: Date.now(),
+    kind,
+    id: item && item.id ? item.id : null,
+    title: kind === "movie" ? (item.title || "") : (item.name || ""),
+    year: formatYear(kind, item),
+    providerLink: providers && providers.link ? providers.link : ""
+  };
+  localStorage.setItem(LS.picked, JSON.stringify(payload));
+}
+
+function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
   const root = el(containerId);
   if(!entries || !entries.length){
     root.innerHTML = `<div class="card"><h3>Nessun risultato</h3><p>Allarga i filtri o resetta i risultati mostrati.</p></div>`;
     return;
   }
 
-  const html = entries.map(e => {
+  const html = entries.map((e, idx) => {
     const item = e.item;
     const providers = e.providers;
 
@@ -859,26 +916,59 @@ function renderResults(containerId, kind, entries, titleSuffix){
     const pop = typeof item.popularity === "number" ? item.popularity.toFixed(0) : "-";
 
     const posterUrl = POSTER_W342 + item.poster_path;
+    const btnId = `watch_${containerId}_${idx}`;
+    const openId = `open_${containerId}_${idx}`;
+
+    const openBtn = providers && providers.link
+      ? `<button class="openBtn" id="${openId}" type="button">Apri piattaforme</button>`
+      : "";
 
     return `
       <div class="resultCard">
         <div class="poster"><img src="${posterUrl}" alt=""></div>
         <div>
-          <h4>${name || "Titolo"}</h4>
+          <h4>${escapeHtml(name || "Titolo")}</h4>
           <div class="meta">
-            <div>${year ? "Anno " + year : "Anno -"}</div>
-            <div>${rating}</div>
-            <div>Pop ${pop}</div>
-            <div>${titleSuffix}</div>
+            <div>${year ? "Anno " + escapeHtml(year) : "Anno -"}</div>
+            <div>${escapeHtml(rating)}</div>
+            <div>Pop ${escapeHtml(pop)}</div>
+            <div>${escapeHtml(titleSuffix)}</div>
           </div>
-          <p class="plot">${shortPlot(item.overview)}</p>
+          <p class="plot">${escapeHtml(shortPlot(item.overview, plotMaxLen))}</p>
           ${renderProvidersBlock(providers)}
+          <div class="actionRow">
+            <button class="watchBtn" id="${btnId}" type="button">Guarda</button>
+            ${openBtn}
+          </div>
         </div>
       </div>
     `;
   }).join("");
 
   root.innerHTML = html;
+
+  entries.forEach((e, idx) => {
+    const btnId = `watch_${containerId}_${idx}`;
+    const openId = `open_${containerId}_${idx}`;
+    const item = e.item;
+    const providers = e.providers;
+
+    const watchBtn = document.getElementById(btnId);
+    if(watchBtn){
+      watchBtn.addEventListener("click", () => {
+        savePicked(kind, item, providers);
+        toast("Scelto. Chiudo.");
+        exitApp();
+      });
+    }
+
+    const openBtn = document.getElementById(openId);
+    if(openBtn && providers && providers.link){
+      openBtn.addEventListener("click", () => {
+        try{ window.open(providers.link, "_blank", "noopener"); }catch{}
+      });
+    }
+  });
 }
 
 function readBasicSelectedGenres(){
@@ -921,12 +1011,12 @@ async function runBasic(){
       monetizationCsv: "",
       count: 3
     });
-    renderResults("basicResults", "movie", entries, "Basic");
+    renderResults("basicResults", "movie", entries, "Basic", PLOT_MAX_BASIC);
     markBasicSearched();
     refreshBasicLimitInfo();
     toast("Fatto.");
   }catch(err){
-    el("basicResults").innerHTML = `<div class="card"><h3>Errore</h3><p>Controlla rete e riprova.</p><p class="note">${String(err || "")}</p></div>`;
+    el("basicResults").innerHTML = `<div class="card"><h3>Errore</h3><p>Controlla rete e riprova.</p><p class="note">${escapeHtml(String(err || ""))}</p></div>`;
     toast("Errore TMDB.");
   }finally{
     el("btnBasicSearch").disabled = false;
@@ -987,17 +1077,16 @@ async function runPremium(){
       monetizationCsv,
       count: 5
     });
-    renderResults("premiumResults", kind, entries, "Premium");
+    renderResults("premiumResults", kind, entries, "Premium", PLOT_MAX_PREMIUM);
     toast("Fatto.");
   }catch(err){
-    el("premiumResults").innerHTML = `<div class="card"><h3>Errore</h3><p>Controlla rete e riprova.</p><p class="note">${String(err || "")}</p></div>`;
+    el("premiumResults").innerHTML = `<div class="card"><h3>Errore</h3><p>Controlla rete e riprova.</p><p class="note">${escapeHtml(String(err || ""))}</p></div>`;
     toast("Errore TMDB.");
   }finally{
     el("btnPremiumSearch").disabled = false;
   }
 }
 
-/* Effetto uscita */
 function exitApp(){
   if(document.body.classList.contains("closing")) return;
   document.body.classList.add("closing");
