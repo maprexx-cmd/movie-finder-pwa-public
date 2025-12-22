@@ -64,6 +64,10 @@
     .btn.ghost{box-shadow:none;background:transparent;border-color: var(--line)}
     .btn.small{padding:8px 10px;border-radius:12px;font-size:12px}
     .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    .btn.active{
+      border-color: rgba(58,160,255,.45);
+      box-shadow: 0 0 0 4px rgba(58,160,255,.10);
+    }
 
     .grid{
       display:grid;
@@ -192,7 +196,7 @@
       padding:16px;
     }
     .modal h3{margin:0 0 8px 0}
-    .modal p{margin:0;color:var(--muted);line-height:1.35}
+    .modal p{margin:0;line-height:1.35}
 
     .sliderRow{
       display:grid;
@@ -204,7 +208,7 @@
     }
     input[type="range"]{width:100%}
 
-    .copyHint{display:none;margin-left:10px;color:var(--muted);font-size:12px}
+    .copyHint{display:none;margin-left:10px;font-size:12px}
     .copyHint.on{display:inline}
 
     .cinema{
@@ -280,7 +284,7 @@
       <div class="logo" aria-hidden="true"></div>
       <div>
         <h1>Movie Finder</h1>
-        <small>TMDB, poster, trama, piattaforme in IT</small>
+        <small>TMDB, solo titoli disponibili online in IT</small>
       </div>
     </div>
 
@@ -298,8 +302,8 @@
         <div class="box">
           <div class="bigLogo" aria-hidden="true"></div>
           <h2>Movie Finder</h2>
-          <p>Trova cosa guardare in pochi tocchi. Poster, trama, piattaforme.</p>
-          <div class="service">Tra poco scegli Basic o Premium.</div>
+          <p>Poster, trama, statistiche, piattaforme.</p>
+          <div class="service">Avvio app.</div>
         </div>
       </div>
     </section>
@@ -315,7 +319,7 @@
             <div class="row" style="justify-content:space-between">
               <div>
                 <div style="font-weight:650">Basic</div>
-                <div class="muted" style="font-size:13px;margin-top:2px">3 film consigliati al giorno. Film presenti su piattaforme.</div>
+                <div class="muted" style="font-size:13px;margin-top:2px">3 film al giorno. Solo se disponibili.</div>
               </div>
               <button class="btn green" id="btnBasic">Entra in Basic</button>
             </div>
@@ -323,8 +327,7 @@
             <div class="muted" style="font-size:13px;line-height:1.4">
               Film e Serie TV nel menu, ma Serie TV bloccate.<br/>
               Una sola ricerca al giorno. 3 risultati.<br/>
-              Generi: Azione, Comico, Thriller, Animazione.<br/>
-              Solo titoli con piattaforme in IT.
+              Generi: Azione, Comico, Thriller, Animazione.
             </div>
           </div>
 
@@ -334,32 +337,27 @@
             <div class="row" style="justify-content:space-between">
               <div>
                 <div style="font-weight:650">Premium</div>
-                <div class="muted" style="font-size:13px;margin-top:2px">5 risultati coerenti. Solo titoli con piattaforme in IT.</div>
+                <div class="muted" style="font-size:13px;margin-top:2px">Illimitato. 5 risultati. Film e Serie TV.</div>
               </div>
               <button class="btn primary" id="btnPremium">Entra in Premium</button>
             </div>
             <div class="sep"></div>
             <div class="muted" style="font-size:13px;line-height:1.4">
-              Film e Serie TV sbloccate.<br/>
-              Ricerche illimitate. 5 risultati.<br/>
               Slider intensità 0 a 5.<br/>
-              Piattaforme complete: gratis, noleggio, acquisto.<br/>
-              Solo titoli con piattaforme in IT.
+              Piattaforme: gratis, noleggio, acquisto.
             </div>
           </div>
 
           <div class="sep"></div>
-          <div class="service">
-            Nota. Il pagamento Play Store qui è simulato. In app Android userai Google Play Billing.
-          </div>
+          <div class="service">Nota. Il pagamento Play Store qui è simulato.</div>
         </div>
 
         <div class="card">
-          <h2>Controlli rapidi</h2>
+          <h2>Stato</h2>
           <div class="row">
             <span class="badge">Regione: IT</span>
-            <span class="badge">watch/providers TMDB</span>
-            <span class="badge">Gratis, noleggio, acquisto</span>
+            <span class="badge">Solo disponibili</span>
+            <span class="badge">flatrate, rent, buy</span>
           </div>
           <div class="sep"></div>
           <button class="btn ghost" id="btnResetLocal">Reset demo</button>
@@ -375,7 +373,7 @@
           <div class="row" style="justify-content:space-between">
             <div>
               <h2 style="margin-bottom:4px">Basic</h2>
-              <div class="muted" style="font-size:13px">Una scelta al giorno. 3 risultati. Film soltanto.</div>
+              <div class="muted" style="font-size:13px">Una scelta al giorno. 3 film. Solo disponibili.</div>
             </div>
             <span class="badge serviceBadge" id="basicLimitBadge">Controllo limite</span>
           </div>
@@ -427,7 +425,7 @@
           <div class="row" style="justify-content:space-between">
             <div>
               <h2 style="margin-bottom:4px">Premium</h2>
-              <div class="muted" style="font-size:13px">Ricerche illimitate. 5 risultati. Film e Serie TV.</div>
+              <div class="muted" style="font-size:13px">Illimitato. 5 risultati. Solo disponibili.</div>
             </div>
             <span class="badge serviceBadge" id="premiumStatus">Stato pagamento</span>
           </div>
@@ -435,7 +433,7 @@
           <div class="sep"></div>
 
           <div class="row">
-            <button class="btn small" id="premTabFilm">Film</button>
+            <button class="btn small active" id="premTabFilm">Film</button>
             <button class="btn small" id="premTabTv">Serie TV</button>
             <button class="btn small ghost" id="premTabSocial">Social</button>
           </div>
@@ -444,9 +442,7 @@
 
           <div id="premFilmTvBox">
             <h2 style="font-size:14px;margin:0 0 6px 0">Generi con intensità</h2>
-            <div class="service">
-              Metti 0 se non vuoi quel genere. Metti 5 se lo vuoi molto.
-            </div>
+            <div class="service">Metti 0 se non vuoi quel genere. Metti 5 se lo vuoi molto.</div>
 
             <div class="sep"></div>
 
@@ -492,9 +488,7 @@
 
           <div id="premSocialBox" style="display:none">
             <h2 style="font-size:14px;margin:0 0 8px 0">Social</h2>
-            <div class="service">
-              Condividi cosa stai guardando. Il link invita a scaricare la app.
-            </div>
+            <div class="service">Condividi cosa stai guardando. Il link invita a scaricare la app.</div>
             <div class="sep"></div>
             <div class="row">
               <button class="btn green" id="btnShareNow">Sto guardando questo</button>
@@ -506,11 +500,6 @@
           <div class="sep"></div>
 
           <h2 style="font-size:14px;margin:0 0 8px 0">Ultimi visti e Top settimana</h2>
-          <div class="row">
-            <span class="badge">Ultimi visti</span>
-            <span class="badge">Top 5 settimana</span>
-          </div>
-
           <div class="sep"></div>
           <div class="results" id="premHistory"></div>
           <div class="sep"></div>
@@ -591,7 +580,6 @@
     const G = { action:28, comedy:35, thriller:53, animation:16, romance:10749, drama:18 };
 
     const S = {
-      profile: localStorage.getItem("mf_profile") || "none",
       premium: localStorage.getItem("mf_premium") === "true",
       premType: "movie"
     };
@@ -623,8 +611,11 @@
       return yyyy + "-" + mm + "-" + dd;
     }
 
-    function setProfile(p){ S.profile = p; localStorage.setItem("mf_profile", p); }
-    function setPremium(on){ S.premium = !!on; localStorage.setItem("mf_premium", String(!!on)); updatePremiumStatus(); }
+    function setPremium(on){
+      S.premium = !!on;
+      localStorage.setItem("mf_premium", String(!!on));
+      updatePremiumStatus();
+    }
 
     byId("btnCopy").addEventListener("click", async () => {
       const hint = byId("copyHint");
@@ -638,10 +629,11 @@
       }
     });
 
-    byId("btnHome").addEventListener("click", () => show("secProfiles"));
+    byId("btnHome").addEventListener("click", () => {
+      show("secProfiles");
+    });
 
     byId("btnResetLocal").addEventListener("click", () => {
-      localStorage.removeItem("mf_profile");
       localStorage.removeItem("mf_premium");
       localStorage.removeItem("mf_basic_last_date");
       localStorage.removeItem("mf_history");
@@ -649,19 +641,17 @@
     });
 
     byId("btnBasic").addEventListener("click", () => {
-      setProfile("basic");
       show("secBasic");
       refreshBasicLimitUI();
       byId("basicResults").innerHTML = "";
-      setService("basicHint", "");
+      setService("basicHint", "Scegli i generi e poi premi Cerca oggi.");
       setService("basicServiceNote", "");
     });
 
     byId("btnPremium").addEventListener("click", () => {
-      setProfile("premium");
       if(!S.premium){ openPayModal(); return; }
       show("secPremium");
-      loadPremiumPanels();
+      initPremiumView();
     });
 
     const payModal = byId("payModal");
@@ -671,8 +661,9 @@
       setPremium(true);
       closePayModal();
       show("secPremium");
-      loadPremiumPanels();
+      initPremiumView();
     });
+
     function openPayModal(){ payModal.classList.add("on"); }
     function closePayModal(){ payModal.classList.remove("on"); }
     function updatePremiumStatus(){ byId("premiumStatus").textContent = S.premium ? "Premium attivo" : "Non attivo"; }
@@ -680,14 +671,6 @@
 
     const netHint = byId("netHint");
     function setNetHint(msg){ if(netHint) netHint.textContent = msg || ""; }
-
-    function basicCanSearch(){ return (localStorage.getItem("mf_basic_last_date") || "") !== todayKey(); }
-    function refreshBasicLimitUI(){ byId("basicLimitBadge").textContent = basicCanSearch() ? "Ricerca disponibile oggi" : "Già usata oggi"; }
-
-    const limitModal = byId("limitModal");
-    byId("btnLimitClose").addEventListener("click", () => limitModal.classList.remove("on"));
-    byId("btnComeBack").addEventListener("click", () => limitModal.classList.remove("on"));
-    byId("btnUpgrade").addEventListener("click", () => { limitModal.classList.remove("on"); setProfile("premium"); openPayModal(); });
 
     const basicGenresBox = byId("basicGenres");
     let basicSelected = new Set([G.action]);
@@ -711,6 +694,22 @@
       setService("basicHint", "Seleziona almeno un genere.");
     });
 
+    function basicCanSearch(){
+      return (localStorage.getItem("mf_basic_last_date") || "") !== todayKey();
+    }
+    function refreshBasicLimitUI(){
+      byId("basicLimitBadge").textContent = basicCanSearch() ? "Ricerca disponibile oggi" : "Già usata oggi";
+    }
+
+    const limitModal = byId("limitModal");
+    byId("btnLimitClose").addEventListener("click", () => limitModal.classList.remove("on"));
+    byId("btnComeBack").addEventListener("click", () => limitModal.classList.remove("on"));
+    byId("btnUpgrade").addEventListener("click", () => {
+      limitModal.classList.remove("on");
+      if(!S.premium){ openPayModal(); }
+      else{ show("secPremium"); initPremiumView(); }
+    });
+
     byId("btnBasicSearch").addEventListener("click", async () => {
       refreshBasicLimitUI();
 
@@ -719,7 +718,7 @@
 
       byId("basicResults").innerHTML = "";
       setService("basicServiceNote", "");
-      setService("basicHint", "Sto cercando 3 titoli presenti su piattaforme...");
+      setService("basicHint", "Sto cercando 3 film disponibili in IT...");
 
       try{
         const ids = [...basicSelected].join(",");
@@ -727,25 +726,25 @@
           with_genres: ids,
           include_adult: "false",
           sort_by: "popularity.desc"
-        }, 4);
+        }, 5);
 
         const weights = {};
-        [...basicSelected].forEach(g => weights[g] = 3);
+        [...basicSelected].forEach(g => weights[g] = 4);
 
-        const scored = scoreItems(pool, weights);
+        const scored = scoreItems(pool, weights, { requireAnyGenreIds: [...basicSelected] });
 
         const final = await buildFinalWithProviders({
           type: "movie",
           scoredItems: scored,
           take: 3,
-          maxProviderChecks: 55
+          maxProviderChecks: 80
         });
 
-        if(final.length < 3){
-          setService("basicServiceNote", "Ho trovato pochi titoli disponibili. Prova a selezionare più generi.");
-        }
-
         renderResults(byId("basicResults"), final, { mode:"basic", type:"movie" });
+
+        if(final.length < 3){
+          setService("basicServiceNote", "Ho trovato pochi titoli disponibili. Seleziona più generi e riprova domani.");
+        }
 
         localStorage.setItem("mf_basic_last_date", todayKey());
         refreshBasicLimitUI();
@@ -758,25 +757,36 @@
     const premFilmTvBox = byId("premFilmTvBox");
     const premSocialBox = byId("premSocialBox");
 
-    byId("premTabFilm").addEventListener("click", () => {
+    const btnTabFilm = byId("premTabFilm");
+    const btnTabTv = byId("premTabTv");
+    const btnTabSocial = byId("premTabSocial");
+
+    function setActiveTab(which){
+      [btnTabFilm, btnTabTv].forEach(b => b.classList.remove("active"));
+      if(which === "movie") btnTabFilm.classList.add("active");
+      if(which === "tv") btnTabTv.classList.add("active");
+    }
+
+    btnTabFilm.addEventListener("click", () => {
       S.premType = "movie";
+      setActiveTab("movie");
       premFilmTvBox.style.display = "block";
       premSocialBox.style.display = "none";
       setService("premExplain", "Film. Regola gli slider e cerca.");
-      loadPremiumHistory();
     });
 
-    byId("premTabTv").addEventListener("click", () => {
+    btnTabTv.addEventListener("click", () => {
       S.premType = "tv";
+      setActiveTab("tv");
       premFilmTvBox.style.display = "block";
       premSocialBox.style.display = "none";
       setService("premExplain", "Serie TV. Regola gli slider e cerca.");
-      loadPremiumHistory();
     });
 
-    byId("premTabSocial").addEventListener("click", () => {
+    btnTabSocial.addEventListener("click", () => {
       premFilmTvBox.style.display = "none";
       premSocialBox.style.display = "block";
+      setService("premExplain", "");
     });
 
     const sliders = [
@@ -804,39 +814,64 @@
 
       byId("premResults").innerHTML = "";
       setService("premServiceNote", "");
-      setService("premExplain", "Sto cercando 5 titoli presenti su piattaforme...");
+      setService("premExplain", "Sto cercando 5 titoli disponibili in IT...");
 
       try{
         const w = getPremiumWeights();
-        const explain = explainWeights(w, isSurprise);
 
-        const withGenres = isSurprise ? "" : topGenresCsv(w, 5);
+        if(!isSurprise){
+          const sum = w.action + w.comedy + w.thriller + w.romance + w.drama;
+          if(sum === 0){
+            setService("premExplain", "Alza almeno uno slider sopra 0, oppure usa Sorprendimi.");
+            return;
+          }
+        }
+
+        const weightsByGenreId = premiumWeightsToGenreIdMap(w);
+        const pickedGenreIds = Object.keys(weightsByGenreId).map(x => Number(x));
+        const withGenres = (isSurprise || pickedGenreIds.length === 0) ? "" : topGenresCsv(w, 4);
 
         const pool = await discoverPool(S.premType, {
           with_genres: withGenres,
           include_adult: "true",
           sort_by: "popularity.desc"
-        }, 5);
+        }, 7);
 
-        const weightsByGenreId = premiumWeightsToGenreIdMap(w);
-        const scored = scoreItems(pool, weightsByGenreId);
+        const scored = scoreItems(pool, weightsByGenreId, {
+          requireAnyGenreIds: isSurprise ? [] : pickedGenreIds
+        });
 
         const final = await buildFinalWithProviders({
           type: S.premType,
           scoredItems: scored,
           take: 5,
-          maxProviderChecks: 85
+          maxProviderChecks: 120
         });
 
+        renderResults(byId("premResults"), final, { mode:"premium", type:S.premType });
+
         if(final.length < 5){
-          setService("premServiceNote", "Ho trovato pochi titoli disponibili. Alza qualche slider o usa più generi.");
+          setService("premServiceNote", "Ho trovato pochi titoli disponibili. Aumenta i generi o cambia pesi.");
+        } else {
+          setService("premServiceNote", "Risultati filtrati. Tutti disponibili su piattaforme in IT.");
         }
 
-        renderResults(byId("premResults"), final, { mode:"premium", type:S.premType });
-        setService("premExplain", explain);
+        setService("premExplain", explainWeights(w, isSurprise));
       }catch(e){
         setService("premExplain", "Errore di rete o TMDB.");
       }
+    }
+
+    function initPremiumView(){
+      premFilmTvBox.style.display = "block";
+      premSocialBox.style.display = "none";
+      S.premType = "movie";
+      setActiveTab("movie");
+      setService("premExplain", "Film. Regola gli slider e cerca.");
+      byId("premResults").innerHTML = "";
+      setService("premServiceNote", "");
+      loadPremiumHistory();
+      loadTopWeek();
     }
 
     function getPremiumWeights(){
@@ -871,12 +906,19 @@
     }
 
     function explainWeights(w, isSurprise){
-      if(isSurprise) return "Questi titoli sono stati scelti senza preferenze.";
+      if(isSurprise) return "Scelta casuale. Sempre e solo titoli disponibili.";
       const pairs = Object.entries(w).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]);
       if(pairs.length === 0) return "Metti almeno un genere sopra 0, oppure usa Sorprendimi.";
-      const top = pairs.slice(0,2).map(p => p[0]).join(" e ");
-      const nice = top.replace("action","Azione").replace("comedy","Comico").replace("thriller","Thriller").replace("romance","Romantico").replace("drama","Dramma");
-      return "Questi titoli sono stati scelti perché hai dato più peso a " + nice + ".";
+      const nice = pairs.slice(0,3).map(p => keyToIt(p[0]) + " " + p[1]).join(", ");
+      return "Pesi usati: " + nice + ".";
+    }
+    function keyToIt(k){
+      if(k==="action") return "Azione";
+      if(k==="comedy") return "Comico";
+      if(k==="thriller") return "Thriller";
+      if(k==="romance") return "Romantico";
+      if(k==="drama") return "Dramma";
+      return k;
     }
 
     byId("btnCopyLink").addEventListener("click", async () => {
@@ -892,7 +934,10 @@
       }catch(e){}
     }
 
-    function getHistory(){ try{ return JSON.parse(localStorage.getItem("mf_history") || "[]"); } catch(e){ return []; } }
+    function getHistory(){
+      try{ return JSON.parse(localStorage.getItem("mf_history") || "[]"); }
+      catch(e){ return []; }
+    }
     function pushHistory(item){
       const h = getHistory();
       const key = item.media_type + ":" + item.id;
@@ -900,6 +945,7 @@
       filtered.unshift(item);
       localStorage.setItem("mf_history", JSON.stringify(filtered.slice(0, 8)));
     }
+
     function loadPremiumHistory(){
       const h = getHistory();
       if(h.length === 0){
@@ -911,15 +957,21 @@
 
     async function loadTopWeek(){
       try{
-        const list = await tmdb("/trending/all/week");
-        const picked = (list.results || []).filter(x => x.media_type === "movie" || x.media_type === "tv").slice(0, 10);
+        const list = await tmdb("/trending/all/week", {});
+        const picked = (list.results || []).filter(x => x.media_type === "movie" || x.media_type === "tv");
 
         const out = [];
+        let checks = 0;
         for(const m of picked){
+          if(out.length >= 5) break;
+          if(!m.poster_path) continue;
+          checks++;
+          if(checks > 30) break;
+
           const providers = await getProviders(m.media_type, m.id);
           if(availabilityScore(providers) <= 0) continue;
-          out.push({ ...m, providers, _score: 0 });
-          if(out.length >= 5) break;
+
+          out.push({ ...m, providers, _score: 0, _avail: availabilityScore(providers) });
         }
 
         if(out.length === 0){
@@ -931,16 +983,6 @@
       }catch(e){
         byId("premTopWeek").innerHTML = '<div class="service">Top settimana non disponibile.</div>';
       }
-    }
-
-    async function loadPremiumPanels(){
-      updatePremiumStatus();
-      setService("premExplain", "Film. Regola gli slider e cerca.");
-      premFilmTvBox.style.display = "block";
-      premSocialBox.style.display = "none";
-      S.premType = "movie";
-      loadPremiumHistory();
-      await loadTopWeek();
     }
 
     async function tmdb(path, params){
@@ -963,7 +1005,7 @@
       const base = {
         watch_region: REGION,
         with_watch_monetization_types: "flatrate|rent|buy",
-        "vote_count.gte": 200,
+        "vote_count.gte": 150,
         page: String(page)
       };
       const data = await tmdb(path, { ...base, ...opts });
@@ -1003,10 +1045,24 @@
       return fl*3 + rent*2 + buy*1;
     }
 
-    function scoreItems(items, weightsByGenreId){
+    function scoreItems(items, weightsByGenreId, cfg){
       const w = weightsByGenreId || {};
-      return (items || []).map(m => {
+      const requireAny = (cfg && cfg.requireAnyGenreIds) ? cfg.requireAnyGenreIds : [];
+      const reqSet = new Set(requireAny);
+
+      const out = [];
+
+      for(const m of (items || [])){
         const genres = m.genre_ids || [];
+
+        if(reqSet.size > 0){
+          let ok = false;
+          for(const gid of genres){
+            if(reqSet.has(gid)){ ok = true; break; }
+          }
+          if(!ok) continue;
+        }
+
         let gscore = 0;
         for(const gid of genres){
           if(w[gid]) gscore += w[gid];
@@ -1017,24 +1073,26 @@
         const pop = typeof m.popularity === "number" ? m.popularity : 0;
 
         const score =
-          (gscore * 6) +
-          (voteAvg * 2.2) +
-          Math.log10(voteCnt + 1) * 4 +
-          (pop * 0.03);
+          (gscore * 9) +
+          (voteAvg * 2.0) +
+          Math.log10(voteCnt + 1) * 3.5 +
+          (pop * 0.02);
 
-        return { ...m, _score: score };
-      }).sort((a,b) => b._score - a._score);
+        out.push({ ...m, _score: score });
+      }
+
+      out.sort((a,b) => b._score - a._score);
+      return out;
     }
 
     async function buildFinalWithProviders(cfg){
       const type = cfg.type;
       const scoredItems = cfg.scoredItems || [];
       const take = cfg.take || 3;
-      const maxChecks = cfg.maxProviderChecks || 60;
+      const maxChecks = cfg.maxProviderChecks || 80;
 
       const out = [];
       const used = new Set();
-
       let checked = 0;
 
       for(const m of scoredItems){
@@ -1048,7 +1106,6 @@
 
         const providers = await getProviders(type, m.id);
         const avail = availabilityScore(providers);
-
         if(avail <= 0) continue;
 
         out.push({ ...m, providers, _avail: avail });
@@ -1093,7 +1150,7 @@
             <div class="rmeta">
               <span class="badge">Voto ${vote}</span>
               <span class="badge">${mediaType === "tv" ? "Serie TV" : "Film"}</span>
-              ${mode==="premium" ? `<span class="badge serviceBadge">Coerenza ${Math.round((m._score || 0))}</span>` : `<span class="badge serviceBadge">Scelta ${idx+1}</span>`}
+              ${mode==="basic" ? `<span class="badge serviceBadge">Scelta ${idx+1}</span>` : `<span class="badge serviceBadge">Coerenza ${Math.round((m._score || 0))}</span>`}
               ${mode==="premium" ? `<span class="badge serviceBadge">Disponibilità ${m._avail || 0}</span>` : ``}
             </div>
 
@@ -1127,7 +1184,7 @@
               popularity: m.popularity,
               providers: m.providers
             });
-            if(S.profile === "premium") loadPremiumHistory();
+            loadPremiumHistory();
             alert("Demo. Qui apri una pagina dettagli con trama estesa e statistiche complete.");
           }
 
@@ -1224,19 +1281,8 @@
         }catch(e){
           setNetHint("Connessione TMDB non disponibile.");
         }
-
-        const p = localStorage.getItem("mf_profile") || "none";
-        if(p === "basic"){
-          show("secBasic");
-          refreshBasicLimitUI();
-        }
-        if(p === "premium" && (localStorage.getItem("mf_premium") === "true")){
-          show("secPremium");
-          loadPremiumPanels();
-        }
       }, 2000);
     })();
   </script>
 </body>
 </html>
-```0
