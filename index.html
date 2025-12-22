@@ -2,1792 +2,757 @@
 <html lang="it">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#1b0b2e" />
   <title>Movie Finder</title>
+
   <style>
     :root{
-      --bg:#0b0720;
-      --text:#f3f1ff;
-      --muted:#b9b2e6;
-      --violet:#7c3aed;
-      --violet2:#5b21b6;
-      --yellow:#ffd400;
-      --border: rgba(255,255,255,.10);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius:18px;
-      --devBlue:#4aa3ff;
-      --devBlueBg: rgba(74,163,255,.10);
-      --devBlueBorder: rgba(74,163,255,.22);
+      --bg:#0b0612;
+      --panel:#120a1f;
+      --txt:#f2eefb;
+      --muted:#bdb3d6;
+      --accent:#b300ff;
+      --accent2:#ffe600;
+      --danger:#ff4d4d;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius: 18px;
+      --gap: 14px;
+      --w: 980px;
+      --font: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
     }
-
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -10%, rgba(124,58,237,.35), transparent 60%),
-                  radial-gradient(900px 500px at 10% 30%, rgba(255,212,0,.10), transparent 55%),
-                  linear-gradient(180deg, #070516, var(--bg));
-      color:var(--text);
-      min-height:100vh;
+      font-family:var(--font);
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(179,0,255,.25), transparent 55%),
+        radial-gradient(1100px 700px at 80% 30%, rgba(255,230,0,.12), transparent 60%),
+        linear-gradient(180deg, #06030a, var(--bg));
+      overflow-x:hidden;
     }
-
-    .wrap{max-width:1040px;margin:0 auto;padding:18px 14px 80px}
-    .topbar{
-      position:sticky;top:0;z-index:5;
-      backdrop-filter: blur(10px);
-      background: rgba(7,5,22,.70);
-      border-bottom:1px solid var(--border);
-    }
-    .topbar .wrap{padding:14px}
-
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand h1{font-size:18px;margin:0}
-    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-
-    .screen{display:none;animation:fade .35s ease forwards}
-    .screen.active{display:block}
-    @keyframes fade{from{opacity:0;transform: translateY(6px)}to{opacity:1;transform:none}}
-
+    .wrap{max-width:var(--w); margin:0 auto; padding:22px 16px 48px}
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
       border-radius:var(--radius);
-      box-shadow: var(--shadow);
-      padding:14px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(10px);
     }
-
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button{
-      appearance:none;border:0;cursor:pointer;
-      padding:12px 14px;border-radius:14px;
-      color:#0b0720;font-weight:800;
-      background: var(--yellow);
-      box-shadow: 0 12px 26px rgba(255,212,0,.22);
-    }
-    button.secondary{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow:none;
-      font-weight:800;
-    }
-    button.danger{
-      background: rgba(255,70,70,.18);
-      color: #ffd6d6;
-      border:1px solid rgba(255,70,70,.25);
-      box-shadow:none;
-      font-weight:800;
-    }
-    button:disabled{opacity:.45;cursor:not-allowed}
-
-    .pill{
-      font-size:12px;color:var(--muted);
-      border:1px solid var(--border);
-      padding:6px 10px;border-radius:999px;
-      background: rgba(255,255,255,.04);
-      display:inline-flex;
+    .row{display:flex; gap:var(--gap); flex-wrap:wrap}
+    .col{flex:1 1 340px; min-width:320px}
+    .header{
+      display:flex;
       align-items:center;
-      gap:8px;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px;
     }
-
-    .sectionTitle{
-      display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
-      margin:18px 2px 10px;
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:52px;height:52px;border-radius:16px;
+      background:
+        radial-gradient(20px 20px at 35% 30%, rgba(255,230,0,.9), transparent 60%),
+        radial-gradient(30px 30px at 70% 70%, rgba(179,0,255,.9), transparent 60%),
+        linear-gradient(135deg, rgba(179,0,255,.75), rgba(255,230,0,.35));
+      border:1px solid rgba(255,255,255,.18);
+      position:relative;
+      overflow:hidden;
     }
-    .sectionTitle h2{margin:0;font-size:16px}
-    .sectionTitle .small{color:var(--muted);font-size:12px}
-
-    .modeBar{
-      display:flex;gap:10px;flex-wrap:wrap;
-      align-items:center;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background: rgba(255,255,255,.03);
-      padding:10px;
+    .logo:before{
+      content:"";
+      position:absolute;
+      inset:10px 12px 14px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.22);
+      transform:skewX(-6deg);
     }
-    .toggle{
-      display:flex;gap:8px;align-items:center;
-      padding:10px 12px;border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-    }
-    .toggle input{accent-color: var(--yellow);}
-
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{
-      display:flex;gap:8px;align-items:center;
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:8px 10px;
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      font-size:13px;
-    }
-    .chip input{accent-color: var(--yellow);}
-
-    .sliders{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-    @media(min-width:860px){ .sliders{grid-template-columns:1fr 1fr} }
-    .sliderRow{
-      border:1px solid var(--border);
+    .title{display:flex; flex-direction:column; line-height:1.1}
+    .title h1{margin:0; font-size:20px}
+    .title p{margin:3px 0 0; color:var(--muted); font-size:13px}
+    .topActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:0;
       border-radius:16px;
+      padding:12px 14px;
+      font-weight:700;
+      cursor:pointer;
+      color:var(--txt);
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .btn:active{transform:translateY(1px)}
+    .btnPrimary{
+      background:linear-gradient(135deg, rgba(179,0,255,.90), rgba(179,0,255,.45));
+      border:1px solid rgba(179,0,255,.55);
+    }
+    .btnSecondary{
+      background:linear-gradient(135deg, rgba(255,230,0,.85), rgba(255,230,0,.35));
+      border:1px solid rgba(255,230,0,.55);
+      color:#1a1026;
+    }
+    .btnDanger{
+      background:rgba(255,77,77,.14);
+      border:1px solid rgba(255,77,77,.35);
+    }
+    .section{padding:16px}
+    .section h2{margin:0 0 10px; font-size:16px}
+    .muted{color:var(--muted); font-size:13px; margin:0}
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:var(--gap);
+      padding:16px;
+    }
+    .panel{grid-column:span 12; padding:16px}
+    @media(min-width:900px){
+      .panelLeft{grid-column:span 5}
+      .panelRight{grid-column:span 7}
+    }
+    .divider{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+    .stack{display:flex; flex-direction:column; gap:12px}
+    .field{display:flex; flex-direction:column; gap:6px}
+    .field label{font-size:12px; color:var(--muted)}
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.28);
+      color:var(--txt);
+      outline:none;
+    }
+    .chips{display:flex; flex-wrap:wrap; gap:10px}
+    .chip{
       padding:10px 12px;
-      background: rgba(255,255,255,.03);
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      cursor:pointer;
+      user-select:none;
+      font-weight:700;
+      font-size:13px;
+      color:var(--txt);
     }
-    .sliderRow .hdr{
-      display:flex;justify-content:space-between;align-items:center;
-      gap:10px;margin-bottom:6px;
+    .chip[aria-pressed="true"]{
+      border-color:rgba(179,0,255,.65);
+      background:rgba(179,0,255,.18);
     }
-    .sliderRow .hdr span{font-size:13px;color:var(--muted)}
-    .sliderRow .hdr strong{font-size:13px}
-    input[type="range"]{width:100%;accent-color: var(--yellow)}
-
-    .results{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
+    .sliderRow{display:flex; gap:10px; align-items:center}
+    .sliderRow input[type="range"]{flex:1}
+    .valBox{
+      min-width:44px;
+      text-align:center;
+      padding:9px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      font-weight:800;
     }
-    .resultCard{
-      display:grid;
-      grid-template-columns:92px 1fr;
-      gap:12px;
+    .results{display:flex; flex-direction:column; gap:12px}
+    .result{
+      display:flex; gap:12px;
       padding:12px;
       border-radius:18px;
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
     }
     .poster{
-      width:92px;height:138px;border-radius:14px;
-      background: rgba(255,255,255,.05);
-      border:1px solid var(--border);
-      overflow:hidden;
-      display:flex;align-items:center;justify-content:center;
-      color: var(--muted);font-size:11px;text-align:center;padding:8px;
-    }
-    .poster img{width:100%;height:100%;object-fit:cover;display:block}
-    .resultCard h4{margin:0 0 6px;font-size:15px}
-    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-bottom:8px}
-    .plot{margin:0;color:var(--text);opacity:.92;font-size:13px;line-height:1.35}
-    .note{color:var(--muted);font-size:12px;margin-top:10px}
-    .tiny{font-size:12px;color:var(--muted)}
-    .hr{height:1px;background:var(--border);margin:14px 0}
-
-    .providers{margin-top:10px;display:grid;gap:10px}
-    .provGroup{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:10px 10px;
-      background: rgba(0,0,0,.10);
-    }
-    .provGroup .t{font-size:12px;color:var(--muted);margin:0 0 8px}
-    .provList{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .provItem{display:flex;gap:8px;align-items:center}
-    .provItem img{
-      width:22px;height:22px;border-radius:6px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.05);
-    }
-    .provItem span{font-size:12px;color:var(--text)}
-    a.link{color:var(--yellow);text-decoration:none}
-
-    .actionRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .watchBtn{
-      background: var(--yellow);
-      color:#0b0720;
-      font-weight:900;
-      padding:10px 12px;
+      width:72px; height:108px;
       border-radius:14px;
-      border:0;
-      cursor:pointer;
-      box-shadow: 0 12px 26px rgba(255,212,0,.22);
-    }
-    .openBtn{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow:none;
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:800;
-    }
-
-    .toast{
-      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-      background: rgba(0,0,0,.75);
-      border:1px solid var(--border);
-      color: var(--text);
-      padding:10px 12px;border-radius:14px;
-      max-width:92vw;
-      display:none;
-      z-index:80;
-      font-size:13px;
-      backdrop-filter: blur(10px);
-    }
-    .toast.show{display:block;animation:fade .25s ease forwards}
-
-    /* SPLASH ART */
-    .splashBox{
-      margin-top:14px;
-      padding:16px;
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(124,58,237,.18), rgba(255,212,0,.05));
-      box-shadow: var(--shadow);
-    }
-    .splashTop{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:12px;
-    }
-    .iconWrap{
-      width:56px;height:56px;border-radius:18px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      box-shadow: 0 18px 40px rgba(0,0,0,.35);
-      display:flex;align-items:center;justify-content:center;
-      overflow:hidden;
-    }
-    .appTitle{margin:0;font-size:20px;letter-spacing:.2px}
-    .appSub{margin:4px 0 0;color:var(--muted);font-size:12px}
-    .splashArt{
-      margin-top:12px;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 18px;
-      background: rgba(0,0,0,.14);
-      overflow:hidden;
-    }
-    .splashArt svg{display:block;width:100%;height:auto}
-    .splashFooter{
-      margin-top:10px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
-    /* LOGIN */
-    .field{
-      margin-top:10px;
-      display:grid;
-      gap:8px;
-    }
-    .field label{
-      font-size:12px;
-      color: var(--muted);
-    }
-    .field input{
-      width:100%;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      padding:12px 12px;
-      outline:none;
-      font-size:14px;
-    }
-
-    /* CINEMA EXIT OLD PROJECTOR, 3s */
-    .cinemaOverlay{
-      position:fixed;inset:0;
-      background:#000;
-      display:none;
-      z-index:9999;
-      overflow:hidden;
-      touch-action:none;
-    }
-    .cinemaOverlay.show{display:block}
-
-    .filmGrain{
-      position:absolute;inset:-30%;
-      background-image:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.05), transparent 45%),
-        radial-gradient(circle at 70% 60%, rgba(255,255,255,.035), transparent 50%),
-        radial-gradient(circle at 35% 80%, rgba(255,255,255,.03), transparent 55%);
-      opacity:.34;
-      mix-blend-mode: screen;
-      animation: grainMove 920ms steps(2) infinite;
-      transform: rotate(7deg);
-      pointer-events:none;
-      filter: contrast(130%);
-    }
-    @keyframes grainMove{
-      0%{transform:translate(0,0) rotate(7deg)}
-      25%{transform:translate(-2%,1%) rotate(7deg)}
-      50%{transform:translate(1%,-2%) rotate(7deg)}
-      75%{transform:translate(2%,2%) rotate(7deg)}
-      100%{transform:translate(0,0) rotate(7deg)}
-    }
-
-    .scanlines{
-      position:absolute;inset:0;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.040),
-        rgba(255,255,255,.040) 1px,
-        rgba(0,0,0,0) 3px,
-        rgba(0,0,0,0) 6px
-      );
-      opacity:.09;
-      pointer-events:none;
-    }
-
-    .vignette{
-      position:absolute;inset:0;
-      background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 34%, rgba(0,0,0,.60) 78%, rgba(0,0,0,.96) 100%);
-      pointer-events:none;
-      opacity:1;
-    }
-
-    .projectorFlicker{
-      position:absolute;inset:0;
-      background: rgba(255,255,255,.03);
-      opacity:0;
-      animation: flicker 150ms infinite;
-      pointer-events:none;
-      mix-blend-mode: overlay;
-    }
-    @keyframes flicker{
-      0%{opacity:0}
-      10%{opacity:.18}
-      20%{opacity:.03}
-      30%{opacity:.16}
-      40%{opacity:.04}
-      50%{opacity:.22}
-      60%{opacity:.03}
-      70%{opacity:.14}
-      80%{opacity:.05}
-      90%{opacity:.18}
-      100%{opacity:.00}
-    }
-
-    .cinemaCenter{
-      position:absolute;inset:0;
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+      flex:0 0 auto;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:22px;
+      font-size:11px;
+      color:var(--muted);
+      overflow:hidden;
+    }
+    .meta{flex:1}
+    .meta h3{margin:0; font-size:14px}
+    .meta .sub{margin:5px 0 0; font-size:12px; color:var(--muted)}
+    .meta .plot{margin:8px 0 0; font-size:13px; line-height:1.25}
+    .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .tag{
+      padding:6px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:11px;
+      color:var(--muted);
+    }
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      padding:12px 14px;
+      border-radius:999px;
+      background:rgba(0,0,0,.65);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--txt);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease;
+      max-width:min(92vw,700px);
       text-align:center;
     }
-
-    .cinemaCard{
-      width:min(560px, 92vw);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:20px;
-      padding:18px 16px 16px;
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 18px 60px rgba(0,0,0,.7);
-      backdrop-filter: blur(8px);
-      transform: translateZ(0);
-    }
-
-    .cinemaTitle{
-      margin:0;
-      font-size:18px;
-      color:#fff;
-      letter-spacing:.2px;
-      line-height:1.25;
-      text-shadow: 0 10px 22px rgba(0,0,0,.45);
-      min-height:24px;
-    }
-
-    .subtitle{
-      margin:8px 0 0;
-      color: rgba(255,255,255,.75);
-      font-size:12px;
-      line-height:1.35;
-      opacity:.0;
-      transform: translateY(6px);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .cinemaOverlay.ready .subtitle{
-      opacity:1;
-      transform:none;
-    }
-
-    .dots{
-      display:flex;
-      gap:8px;
-      justify-content:center;
-      margin-top:12px;
-      opacity:.9;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,.55);
-      animation: dotPulse 900ms infinite;
-    }
-    .dot:nth-child(2){animation-delay:150ms}
-    .dot:nth-child(3){animation-delay:300ms}
-    @keyframes dotPulse{
-      0%{transform:translateY(0);opacity:.45}
-      30%{transform:translateY(-3px);opacity:1}
-      60%{transform:translateY(0);opacity:.55}
-      100%{transform:translateY(0);opacity:.45}
-    }
-
-    .cinemaBtns{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-      opacity:0;
-      transform: translateY(6px);
-      transition: opacity .2s ease, transform .2s ease;
-    }
-    .cinemaOverlay.showButtons .cinemaBtns{
-      opacity:1;
-      transform:none;
-    }
-
-    .cinemaBtnExit{
-      background: rgba(255,70,70,.20);
-      color:#ffd6d6;
-      border:1px solid rgba(255,70,70,.28);
-      box-shadow:none;
-      padding:10px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:900;
-    }
-    .cinemaBtnCancel{
-      background: rgba(255,255,255,.08);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:none;
-      padding:10px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:900;
-    }
-
-    /* DEV NOTES */
-    .devNote{
-      display:none;
-      margin-top:10px;
-      padding:10px 10px;
-      border-radius:14px;
-      border:1px solid var(--devBlueBorder);
-      background: var(--devBlueBg);
-      color: var(--devBlue);
-      font-size:12px;
-      line-height:1.35;
-      white-space:pre-wrap;
-    }
-    body.dev .devNote{display:block}
+    .toast.show{opacity:1}
+    .hidden{display:none !important}
+    .right{display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap}
+    .small{font-size:12px; color:var(--muted)}
   </style>
 </head>
 
 <body>
-  <div class="topbar">
-    <div class="wrap">
-      <div class="brand">
-        <div style="width:38px;height:38px;border-radius:12px;background:radial-gradient(circle at 30% 30%, var(--yellow), #fff0 55%),linear-gradient(135deg, var(--violet), var(--violet2));box-shadow:0 10px 24px rgba(124,58,237,.35)"></div>
-        <div>
-          <h1>Movie Finder</h1>
-          <p>Disponibili in Italia, risultati ordinati per pertinenza e novità</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="wrap">
-
-    <!-- SPLASH -->
-    <div id="screenSplash" class="screen active">
-      <div class="splashBox">
-        <div class="splashTop">
-          <div class="iconWrap" aria-hidden="true" title="Icona Movie Finder">
-            <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
-              <defs>
-                <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#7c3aed"/>
-                  <stop offset="1" stop-color="#5b21b6"/>
-                </linearGradient>
-                <radialGradient id="g2" cx="30%" cy="30%" r="70%">
-                  <stop offset="0" stop-color="#ffd400"/>
-                  <stop offset="1" stop-color="rgba(255,212,0,0)"/>
-                </radialGradient>
-              </defs>
-              <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#g1)"/>
-              <circle cx="20" cy="18" r="18" fill="url(#g2)" opacity="0.9"/>
-              <path d="M22 40c0-6 5-11 11-11h10c2 0 3 1 3 3v8c0 2-1 3-3 3H33c-6 0-11-5-11-11z" fill="rgba(255,255,255,.16)"/>
-              <path d="M18 44l10-22c.4-.9 1.2-1.4 2.1-1.4h4.6c1 0 1.6.9 1.2 1.8L26 46c-.4.9-1.2 1.4-2.1 1.4h-4.6c-1 0-1.6-.9-1.3-1.8z" fill="rgba(255,255,255,.18)"/>
-              <path d="M36 23l10 6-10 6z" fill="#ffd400" opacity=".95"/>
-              <rect x="14" y="48" width="36" height="4" rx="2" fill="rgba(255,255,255,.18)"/>
-            </svg>
-          </div>
-          <div>
-            <p class="appTitle" style="margin:0">Movie Finder</p>
-            <p class="appSub">Max des OSMUS</p>
-          </div>
+    <div class="card header">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <h1>Movie Finder</h1>
+          <p>Trova film e serie in base ai tuoi gusti</p>
         </div>
-
-        <div class="splashArt" aria-hidden="true">
-          <svg viewBox="0 0 900 420" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="rgba(124,58,237,.20)"/>
-                <stop offset="1" stop-color="rgba(0,0,0,.25)"/>
-              </linearGradient>
-              <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="rgba(255,212,0,0)"/>
-                <stop offset="0.35" stop-color="rgba(255,212,0,.20)"/>
-                <stop offset="1" stop-color="rgba(255,212,0,0)"/>
-              </linearGradient>
-            </defs>
-
-            <rect x="0" y="0" width="900" height="420" fill="url(#bg)"/>
-
-            <!-- floor -->
-            <path d="M0 320C120 290 240 330 360 310s240-10 540 30v80H0z" fill="rgba(0,0,0,.35)"/>
-
-            <!-- sofa -->
-            <path d="M250 285c-30 0-55 22-55 50v35h410v-35c0-28-25-50-55-50z" fill="rgba(255,255,255,.10)"/>
-            <path d="M210 305c-20 8-32 25-32 45v20h52v-28c0-18 8-30 18-37z" fill="rgba(255,255,255,.07)"/>
-            <path d="M690 305c20 8 32 25 32 45v20h-52v-28c0-18-8-30-18-37z" fill="rgba(255,255,255,.07)"/>
-            <path d="M285 270c0-22 18-40 40-40h250c22 0 40 18 40 40v25H285z" fill="rgba(255,255,255,.08)"/>
-
-            <!-- tv -->
-            <rect x="560" y="105" width="260" height="170" rx="18" fill="rgba(255,255,255,.12)"/>
-            <rect x="575" y="120" width="230" height="125" rx="12" fill="rgba(0,0,0,.55)"/>
-            <rect x="640" y="280" width="100" height="18" rx="9" fill="rgba(255,255,255,.10)"/>
-            <rect x="680" y="298" width="20" height="38" rx="10" fill="rgba(255,255,255,.08)"/>
-
-            <!-- projector -->
-            <rect x="90" y="165" width="170" height="95" rx="18" fill="rgba(255,255,255,.10)"/>
-            <circle cx="120" cy="212" r="18" fill="rgba(255,255,255,.14)"/>
-            <circle cx="175" cy="212" r="26" fill="rgba(0,0,0,.35)"/>
-            <circle cx="175" cy="212" r="18" fill="rgba(255,212,0,.20)"/>
-            <rect x="245" y="190" width="22" height="44" rx="8" fill="rgba(255,255,255,.10)"/>
-            <rect x="100" y="258" width="150" height="14" rx="7" fill="rgba(0,0,0,.25)"/>
-
-            <!-- beam -->
-            <path d="M205 212 L575 160 L575 230 Z" fill="url(#beam)"/>
-            <path d="M205 212 L575 155" stroke="rgba(255,212,0,.10)" stroke-width="3"/>
-            <path d="M205 212 L575 235" stroke="rgba(255,212,0,.10)" stroke-width="3"/>
-
-            <!-- subtle particles -->
-            <circle cx="360" cy="150" r="2" fill="rgba(255,255,255,.18)"/>
-            <circle cx="420" cy="170" r="2" fill="rgba(255,255,255,.14)"/>
-            <circle cx="470" cy="190" r="2" fill="rgba(255,255,255,.12)"/>
-            <circle cx="520" cy="160" r="2" fill="rgba(255,255,255,.12)"/>
-          </svg>
-        </div>
-
-        <div class="splashFooter">
-          <div class="pill">Movie Finder</div>
-          <div class="pill">Max des OSMUS</div>
-        </div>
-
-        <div class="btnRow">
-          <button id="btnEnterBasic">Entra in Basic</button>
-          <button class="secondary" id="btnEnterPremium">Entra in Premium</button>
-          <button class="secondary" id="btnSimulatePurchase">Simula acquisto Premium</button>
-        </div>
-
-        <p class="note" id="purchaseHint"></p>
-        <div class="devNote" id="devSplashNote"></div>
+      </div>
+      <div class="topActions">
+        <span id="modePill" class="pill">Modalità: Home</span>
+        <button class="btn btnDanger" id="btnExitTop">Esci</button>
       </div>
     </div>
 
-    <!-- LOGIN -->
-    <div id="screenLogin" class="screen">
-      <div class="card">
-        <h3 style="margin:0 0 6px">Login Premium</h3>
-        <p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">
-          Inserisci email e password.
-        </p>
-
-        <div class="field">
-          <label for="loginEmail">Email</label>
-          <input id="loginEmail" type="email" autocomplete="email" placeholder="email" />
-        </div>
-
-        <div class="field">
-          <label for="loginPass">Password</label>
-          <input id="loginPass" type="password" autocomplete="current-password" placeholder="password" />
-        </div>
-
-        <div class="btnRow">
-          <button id="btnDoLogin">Accedi</button>
-          <button class="secondary" id="btnBackFromLogin">Indietro</button>
-        </div>
-
-        <p class="note" id="loginInfo"></p>
-        <div class="devNote" id="devLoginNote"></div>
-      </div>
-    </div>
-
-    <!-- HOME -->
-    <div id="screenStart" class="screen">
-      <div class="card">
-        <h3 style="margin:0 0 6px">Seleziona modalità</h3>
-        <p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">
-          Basic. Film. Trama breve. Esclude VM18.
-          Premium. Film e serie. Slider. Trama più lunga.
-        </p>
-
-        <div class="btnRow">
-          <button id="btnGoBasic">Basic</button>
-          <button class="secondary" id="btnGoPremium">Premium</button>
-          <button class="secondary" id="btnLogout">Logout Premium</button>
-          <button class="danger" id="btnExitFromHome">Esci</button>
-        </div>
-
-        <p class="note" id="premiumStatus"></p>
-        <div class="devNote" id="devHomeNote"></div>
-      </div>
-    </div>
-
-    <!-- BASIC -->
-    <div id="screenBasic" class="screen">
-      <div class="sectionTitle">
-        <h2>Basic</h2>
-        <div class="small">Test senza limiti, solo film disponibili in Italia</div>
-      </div>
-
-      <div class="modeBar">
-        <div class="toggle">
-          <input type="radio" checked />
-          <div>
-            <div style="font-weight:900">Film</div>
-            <div class="tiny">Esclude VM18</div>
+    <div id="viewHome" class="card section" style="margin-top:14px;">
+      <h2>Scegli il profilo</h2>
+      <p class="muted">Basic per una scelta rapida. Premium per controllo totale e serie TV.</p>
+      <div class="divider"></div>
+      <div class="row">
+        <div class="col card section" style="background:rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.08);">
+          <h2>Basic</h2>
+          <p class="muted">Solo film. 4 generi. 1 ricerca al giorno. 3 risultati. Trama breve.</p>
+          <div class="divider"></div>
+          <div class="right">
+            <button class="btn btnPrimary" id="btnEnterBasic">Entra in Basic</button>
           </div>
         </div>
 
-        <div style="flex:1"></div>
-
-        <button class="secondary" id="btnBackFromBasic">Indietro</button>
-        <button class="danger" id="btnExitFromBasic">Esci</button>
+        <div class="col card section" style="background:rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.08);">
+          <h2>Premium</h2>
+          <p class="muted">Film e serie TV. Slider intensità. Ricerche illimitate. 5 risultati. Trama completa. Watchlist.</p>
+          <div class="divider"></div>
+          <div class="right">
+            <button class="btn btnSecondary" id="btnEnterPremium">Entra in Premium</button>
+          </div>
+          <p class="small" id="premiumStatusLine" style="margin-top:10px;"></p>
+        </div>
       </div>
-
-      <div class="sectionTitle">
-        <h2>Seleziona generi</h2>
-        <div class="small">Scegli 1 o più</div>
-      </div>
-
-      <div class="chips" id="basicGenres">
-        <label class="chip"><input type="checkbox" value="azione" /> Azione</label>
-        <label class="chip"><input type="checkbox" value="comico" /> Comico</label>
-        <label class="chip"><input type="checkbox" value="thriller" /> Thriller</label>
-        <label class="chip"><input type="checkbox" value="animazione" /> Animazione</label>
-      </div>
-
-      <div class="sectionTitle">
-        <h2>Piattaforme</h2>
-        <div class="small">Filtra facoltativo</div>
-      </div>
-
-      <div class="card">
-        <div class="chips" id="basicProvidersPick"></div>
-        <p class="note">Se non selezioni piattaforme, la app cerca comunque solo titoli disponibili in Italia.</p>
-      </div>
-
-      <div class="btnRow" style="margin-top:12px">
-        <button id="btnBasicSearch">Cerca</button>
-        <button class="secondary" id="btnBasicResetShown">Reset risultati mostrati</button>
-      </div>
-
-      <p class="note" id="basicLimitInfo"></p>
-      <div id="basicResults" class="results"></div>
-
-      <div class="devNote" id="devBasicNote"></div>
     </div>
 
-    <!-- PREMIUM -->
-    <div id="screenPremium" class="screen">
-      <div class="sectionTitle">
-        <h2>Premium</h2>
-        <div class="small">Ricerche illimitate, 5 risultati, ordinati per pertinenza e più nuovi</div>
-      </div>
+    <div id="viewBasic" class="card hidden" style="margin-top:14px;">
+      <div class="grid">
+        <div class="panel panelLeft card" style="background:rgba(0,0,0,.18);">
+          <h2>Basic, genera suggerimenti</h2>
+          <p class="muted">Seleziona i generi. Poi cerca. Una volta al giorno.</p>
+          <div class="divider"></div>
 
-      <div class="modeBar">
-        <label class="toggle">
-          <input id="premiumPickMovie" type="radio" name="premiumType" value="movie" checked />
-          <div>
-            <div style="font-weight:900">Film</div>
-            <div class="tiny">Disponibili in Italia</div>
+          <div class="stack">
+            <div class="field">
+              <label>Tipo contenuto</label>
+              <select disabled><option>Film</option></select>
+              <p class="small">Serie TV disabilitate in Basic.</p>
+            </div>
+
+            <div class="field">
+              <label>Generi</label>
+              <div class="chips" id="basicGenres">
+                <button class="chip" data-genre="Azione" aria-pressed="false">Azione</button>
+                <button class="chip" data-genre="Comico" aria-pressed="false">Comico</button>
+                <button class="chip" data-genre="Thriller" aria-pressed="false">Thriller</button>
+                <button class="chip" data-genre="Animazione" aria-pressed="false">Animazione</button>
+              </div>
+              <p class="small">Seleziona 1 o più generi.</p>
+            </div>
+
+            <div class="right">
+              <button class="btn btnPrimary" id="btnBasicSearch">Cerca</button>
+              <button class="btn" id="btnBasicBack">Torna alla Home</button>
+            </div>
+
+            <p class="small" id="basicLimitInfo"></p>
           </div>
-        </label>
+        </div>
 
-        <label class="toggle">
-          <input id="premiumPickTv" type="radio" name="premiumType" value="tv" />
-          <div>
-            <div style="font-weight:900">Serie TV</div>
-            <div class="tiny">Disponibili in Italia</div>
-          </div>
-        </label>
-
-        <div style="flex:1"></div>
-
-        <button class="secondary" id="btnBackFromPremium">Indietro</button>
-        <button class="danger" id="btnExitFromPremium">Esci</button>
+        <div class="panel panelRight card" style="background:rgba(0,0,0,.18);">
+          <h2>Risultati</h2>
+          <p class="muted">3 proposte. Trama breve.</p>
+          <div class="divider"></div>
+          <div class="results" id="basicResults"></div>
+        </div>
       </div>
-
-      <div class="sectionTitle">
-        <h2>Intensità generi</h2>
-        <div class="small">0, 5</div>
-      </div>
-
-      <div class="sliders" id="premiumSliders"></div>
-
-      <div class="sectionTitle">
-        <h2>Piattaforme</h2>
-        <div class="small">Filtra facoltativo</div>
-      </div>
-
-      <div class="card">
-        <div class="chips" id="premiumProvidersPick"></div>
-        <p class="note">La app non distingue noleggio o abbonamento. Mostra solo dove è disponibile.</p>
-      </div>
-
-      <div class="btnRow" style="margin-top:12px">
-        <button id="btnPremiumSearch">Cerca</button>
-        <button class="secondary" id="btnPremiumResetShown">Reset risultati mostrati</button>
-        <button class="danger" id="btnExitFromPremium2">Esci</button>
-      </div>
-
-      <p class="note" id="premiumGateInfo"></p>
-      <div id="premiumResults" class="results"></div>
-
-      <div class="devNote" id="devPremiumNote"></div>
     </div>
 
+    <div id="viewPremiumLogin" class="card hidden" style="margin-top:14px;">
+      <div class="grid">
+        <div class="panel panelLeft card" style="background:rgba(0,0,0,.18);">
+          <h2>Premium, login</h2>
+          <p class="muted">Accedi per usare le funzioni Premium.</p>
+          <div class="divider"></div>
+
+          <div class="stack">
+            <div class="field">
+              <label>Email</label>
+              <input id="premiumEmail" type="email" autocomplete="username" value="maprexx@gmail.com" />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input id="premiumPass" type="password" autocomplete="current-password" value="Max2025Aa@@@@@" />
+            </div>
+
+            <div class="right">
+              <button class="btn btnSecondary" id="btnPremiumLogin">Accedi</button>
+              <button class="btn" id="btnPremiumBackHome">Torna alla Home</button>
+            </div>
+
+            <p class="small">In release, non salvare password in chiaro. Usa token di sessione.</p>
+          </div>
+        </div>
+
+        <div class="panel panelRight card" style="background:rgba(0,0,0,.18);">
+          <h2>Premium</h2>
+          <p class="muted">Se non hai Premium attivo, la app deve riportarti al paywall.</p>
+          <div class="divider"></div>
+          <div class="stack">
+            <span class="pill">Controllo Premium prima del login</span>
+            <span class="pill">Controllo Premium anche dopo il login</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="viewPremium" class="card hidden" style="margin-top:14px;">
+      <div class="grid">
+        <div class="panel panelLeft card" style="background:rgba(0,0,0,.18);">
+          <h2>Premium, preferenze</h2>
+          <p class="muted">Scegli film o serie TV. Regola i generi con slider.</p>
+          <div class="divider"></div>
+
+          <div class="stack">
+            <div class="field">
+              <label>Tipo contenuto</label>
+              <select id="premiumType">
+                <option value="movie">Film</option>
+                <option value="tv">Serie TV</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Generi e intensità</label>
+              <div class="stack" id="premiumSliders"></div>
+              <p class="small">0 disattivo. 5 massimo.</p>
+            </div>
+
+            <div class="right">
+              <button class="btn btnSecondary" id="btnPremiumSearch">Cerca</button>
+              <button class="btn" id="btnPremiumLogout">Logout</button>
+            </div>
+
+            <div class="divider"></div>
+            <span class="pill" id="premiumSessionPill">Sessione: non attiva</span>
+          </div>
+        </div>
+
+        <div class="panel panelRight card" style="background:rgba(0,0,0,.18);">
+          <h2>Risultati</h2>
+          <p class="muted">5 proposte. Trama completa. Statistiche. Piattaforme.</p>
+          <div class="divider"></div>
+          <div class="results" id="premiumResults"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="toast" class="toast"></div>
 
-  <!-- CINEMA EXIT OVERLAY -->
-  <div id="cinemaOverlay" class="cinemaOverlay" aria-hidden="true">
-    <div class="filmGrain" aria-hidden="true"></div>
-    <div class="scanlines" aria-hidden="true"></div>
-    <div class="projectorFlicker" aria-hidden="true"></div>
-    <div class="vignette" aria-hidden="true"></div>
+  <script>
+    "use strict";
 
-    <div class="cinemaCenter">
-      <div id="cinemaCard" class="cinemaCard">
-        <p id="cinemaTitle" class="cinemaTitle"></p>
-        <p class="subtitle" id="cinemaSub">Sto avviando il proiettore</p>
-        <div class="dots" aria-hidden="true">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        </div>
-        <div class="cinemaBtns" id="cinemaBtns">
-          <button class="cinemaBtnExit" id="btnForceExit" type="button">Esci</button>
-          <button class="cinemaBtnCancel" id="btnCancelExit" type="button">Annulla</button>
-        </div>
-        <div class="devNote" id="devExitNote"></div>
-      </div>
-    </div>
-  </div>
+    const $ = (sel) => document.querySelector(sel);
 
-<script>
-/* IMPOSTAZIONI TEST */
-const DEV_NOTES_ENABLED = false;
+    const views = {
+      home: $("#viewHome"),
+      basic: $("#viewBasic"),
+      premiumLogin: $("#viewPremiumLogin"),
+      premium: $("#viewPremium"),
+    };
 
-const TMDB_API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
-const TMDB_LANG = "it-IT";
-const TMDB_REGION = "IT";
+    const modePill = $("#modePill");
+    const toast = $("#toast");
 
-const TEST_LOGIN_EMAIL = "maprexx@gmail.com";
-const TEST_LOGIN_PASS  = "Max2025Aa@@@@@";
-
-/* FUNZIONALITÀ */
-const POSTER_W342 = "https://image.tmdb.org/t/p/w342";
-const LOGO_W45 = "https://image.tmdb.org/t/p/w45";
-
-const BASIC_TEST_MODE_UNLIMITED = true;
-
-const BASIC_BLOCK_VM18 = true;
-const BASIC_CERT_COUNTRY = "IT";
-const BASIC_CERT_LTE = "14";
-
-const PLOT_MAX_BASIC = 220;
-const PLOT_MAX_PREMIUM = 650;
-
-const EXIT_DURATION_MS = 3000;
-
-const LS = {
-  premiumPurchased: "mf_premium_purchased",
-  premiumLoggedIn: "mf_premium_logged_in",
-  lastBasicSearchDate: "mf_basic_last_search_date",
-  shownMovies: "mf_shown_movies",
-  shownTv: "mf_shown_tv",
-  picked: "mf_picked_to_watch"
-};
-
-const GENRE_MAP_MOVIE = {
-  azione: 28,
-  comico: 35,
-  thriller: 53,
-  animazione: 16,
-  romantico: 10749,
-  dramma: 18,
-  horror: 27,
-  fantascienza: 878,
-  avventura: 12,
-  crime: 80
-};
-
-const GENRE_MAP_TV = {
-  azione: 10759,
-  comico: 35,
-  thriller: 9648,
-  animazione: 16,
-  romantico: 10749,
-  dramma: 18,
-  fantascienza: 10765,
-  avventura: 10759,
-  crime: 80
-};
-
-const PROVIDERS = [
-  { id: 8,   name: "Netflix" },
-  { id: 119, name: "Prime Video" },
-  { id: 337, name: "Disney+" },
-  { id: 350, name: "Apple TV" },
-  { id: 39,  name: "NOW" },
-  { id: 2,   name: "Apple iTunes" },
-  { id: 35,  name: "Rakuten TV" },
-  { id: 283, name: "Crunchyroll" }
-];
-
-const PREMIUM_GENRES = [
-  { key:"azione", label:"Azione" },
-  { key:"comico", label:"Comico" },
-  { key:"thriller", label:"Thriller" },
-  { key:"animazione", label:"Animazione" },
-  { key:"romantico", label:"Romantico" },
-  { key:"dramma", label:"Dramma" },
-  { key:"fantascienza", label:"Fantascienza" },
-  { key:"avventura", label:"Avventura" },
-  { key:"crime", label:"Crime" }
-];
-
-const el = (id) => document.getElementById(id);
-
-/* UI */
-function setDevMode(){
-  if(DEV_NOTES_ENABLED) document.body.classList.add("dev");
-  else document.body.classList.remove("dev");
-}
-function devSet(id, text){
-  const n = el(id);
-  if(!n) return;
-  if(!DEV_NOTES_ENABLED){ n.textContent = ""; return; }
-  n.textContent = text;
-}
-function toast(msg){
-  const t = el("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  clearTimeout(toast._tm);
-  toast._tm = setTimeout(()=>t.classList.remove("show"), 2400);
-}
-function showScreen(name){
-  const screens = ["screenSplash","screenLogin","screenStart","screenBasic","screenPremium"];
-  screens.forEach(s => el(s).classList.remove("active"));
-  el(name).classList.add("active");
-  window.scrollTo({top:0, behavior:"smooth"});
-}
-function escapeHtml(s){
-  return String(s || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function clipText(text, maxLen){
-  if(!text) return "Trama non disponibile.";
-  const t = String(text).trim();
-  if(t.length <= maxLen) return t;
-  return t.slice(0, maxLen) + "...";
-}
-function todayISO(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const da = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${da}`;
-}
-
-/* Random robusto */
-function randInt(min, max){
-  const range = max - min + 1;
-  const buf = new Uint32Array(1);
-  crypto.getRandomValues(buf);
-  return min + (buf[0] % range);
-}
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = randInt(0,i);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-/* Storage */
-function isPremiumPurchased(){
-  return localStorage.getItem(LS.premiumPurchased) === "1";
-}
-function setPremiumPurchased(v){
-  localStorage.setItem(LS.premiumPurchased, v ? "1" : "0");
-  if(!v) localStorage.setItem(LS.premiumLoggedIn, "0");
-  refreshPremiumStatus();
-}
-function isPremiumLoggedIn(){
-  return localStorage.getItem(LS.premiumLoggedIn) === "1";
-}
-function setPremiumLoggedIn(v){
-  localStorage.setItem(LS.premiumLoggedIn, v ? "1" : "0");
-  refreshPremiumStatus();
-}
-function refreshPremiumStatus(){
-  const st = el("premiumStatus");
-  const purchased = isPremiumPurchased();
-  const logged = isPremiumLoggedIn();
-  if(!st) return;
-
-  if(!purchased) st.textContent = "Premium non acquistato su questo dispositivo.";
-  else if(!logged) st.textContent = "Premium acquistato, ma non hai fatto login.";
-  else st.textContent = "Premium attivo e login ok.";
-}
-function refreshPurchaseHint(){
-  const p = el("purchaseHint");
-  if(!p) return;
-  p.textContent = isPremiumPurchased()
-    ? "Premium risulta acquistato. Premi Premium per fare login."
-    : "Premium non risulta acquistato. Per test, usa Simula acquisto Premium.";
-}
-
-/* Basic limit */
-function canBasicSearch(){
-  if(BASIC_TEST_MODE_UNLIMITED) return true;
-  const last = localStorage.getItem(LS.lastBasicSearchDate) || "";
-  return last !== todayISO();
-}
-function markBasicSearched(){
-  if(BASIC_TEST_MODE_UNLIMITED) return;
-  localStorage.setItem(LS.lastBasicSearchDate, todayISO());
-}
-function refreshBasicLimitInfo(){
-  const info = el("basicLimitInfo");
-  if(!info) return;
-  if(BASIC_TEST_MODE_UNLIMITED){
-    info.textContent = "Test attivo. Ricerche Basic senza limiti.";
-    return;
-  }
-  info.textContent = canBasicSearch()
-    ? "Puoi fare 1 ricerca oggi."
-    : "Hai già fatto la ricerca oggi. Riprova domani.";
-}
-
-/* Shown sets */
-function loadShownSet(kind){
-  const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return new Set();
-    const arr = JSON.parse(raw);
-    if(!Array.isArray(arr)) return new Set();
-    return new Set(arr);
-  }catch{
-    return new Set();
-  }
-}
-function saveShownSet(kind, set){
-  const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
-  const arr = Array.from(set).slice(0, 2600);
-  localStorage.setItem(key, JSON.stringify(arr));
-}
-function resetShown(kind){
-  const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
-  localStorage.removeItem(key);
-}
-
-/* Providers pick */
-function buildProviderPick(containerId){
-  const box = el(containerId);
-  box.innerHTML = "";
-  PROVIDERS.forEach(p => {
-    const lab = document.createElement("label");
-    lab.className = "chip";
-    lab.innerHTML = `<input type="checkbox" value="${p.id}"> ${p.name}`;
-    box.appendChild(lab);
-  });
-}
-function readPickedProviders(containerId){
-  const box = el(containerId);
-  const ids = [];
-  box.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-    if(cb.checked) ids.push(cb.value);
-  });
-  return ids.join("|");
-}
-
-/* Premium sliders */
-function buildPremiumSliders(){
-  const root = el("premiumSliders");
-  root.innerHTML = "";
-  PREMIUM_GENRES.forEach(g => {
-    const row = document.createElement("div");
-    row.className = "sliderRow";
-    row.innerHTML = `
-      <div class="hdr">
-        <strong>${g.label}</strong>
-        <span id="val_${g.key}">0</span>
-      </div>
-      <input id="s_${g.key}" type="range" min="0" max="5" step="1" value="0" />
-    `;
-    root.appendChild(row);
-    const inp = row.querySelector("input");
-    inp.addEventListener("input", () => el("val_"+g.key).textContent = inp.value);
-  });
-}
-function readPremiumWeights(){
-  const weights = {};
-  PREMIUM_GENRES.forEach(g => weights[g.key] = Number(el("s_"+g.key).value || 0));
-  return weights;
-}
-function chooseGenreKeysFromWeights(weights){
-  const arr = Object.keys(weights).map(k => ({ k, v: weights[k] })).filter(x => x.v > 0);
-  if(arr.length === 0) return [];
-
-  arr.sort((a,b) => b.v - a.v);
-
-  const hard = arr.filter(x => x.v >= 4).map(x => x.k);
-  const mid = arr.filter(x => x.v === 3).map(x => x.k);
-  const soft = arr.filter(x => x.v <= 2).map(x => x.k);
-
-  const chosen = [];
-  hard.forEach(k => chosen.push(k));
-
-  if(chosen.length < 3){
-    shuffle(mid);
-    mid.forEach(k => { if(chosen.length < 3) chosen.push(k); });
-  }
-  if(chosen.length < 2){
-    shuffle(soft);
-    soft.forEach(k => { if(chosen.length < 2) chosen.push(k); });
-  }
-
-  if(chosen.length > 4) chosen.length = 4;
-  return chosen;
-}
-function mapGenreIdsForKind(kind, keys){
-  const map = kind === "movie" ? GENRE_MAP_MOVIE : GENRE_MAP_TV;
-  return keys.map(k => map[k]).filter(Boolean);
-}
-function getPremiumKind(){
-  const v = document.querySelector('input[name="premiumType"]:checked');
-  return v ? v.value : "movie";
-}
-
-/* TMDB */
-async function tmdbFetch(url){
-  const res = await fetch(url, { method:"GET", cache:"no-store", headers:{ "Accept":"application/json" } });
-  if(!res.ok) throw new Error("TMDB HTTP " + res.status);
-  return res.json();
-}
-async function fetchDiscover(kind, params, page){
-  params.set("page", String(page));
-  const endpoint = kind === "movie" ? "discover/movie" : "discover/tv";
-  const url = `https://api.themoviedb.org/3/${endpoint}?` + params.toString();
-  return tmdbFetch(url);
-}
-function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie, loosen }){
-  const p = new URLSearchParams();
-  p.set("api_key", TMDB_API_KEY);
-  p.set("language", TMDB_LANG);
-  p.set("region", TMDB_REGION);
-  p.set("watch_region", TMDB_REGION);
-  p.set("include_adult", "false");
-  p.set("include_video", "false");
-
-  if(loosen){
-    p.set("vote_count.gte", "25");
-    p.set("vote_average.gte", "5.6");
-  }else{
-    p.set("vote_count.gte", "90");
-    p.set("vote_average.gte", "6.0");
-  }
-
-  if(kind === "movie") p.set("primary_release_date.gte", "1980-01-01");
-  else p.set("first_air_date.gte", "1980-01-01");
-
-  if(genreCsv) p.set("with_genres", genreCsv);
-  if(providerCsv) p.set("with_watch_providers", providerCsv);
-
-  if(isBasicMovie && BASIC_BLOCK_VM18){
-    p.set("certification_country", BASIC_CERT_COUNTRY);
-    p.set("certification.lte", BASIC_CERT_LTE);
-  }
-
-  const sortPool = loosen
-    ? ["popularity.desc","vote_average.desc","primary_release_date.desc","revenue.desc"]
-    : ["popularity.desc","vote_average.desc","revenue.desc","primary_release_date.desc"];
-
-  p.set("sort_by", sortPool[randInt(0, sortPool.length-1)]);
-  return p;
-}
-async function getProvidersForItem(kind, id){
-  const endpoint = kind === "movie" ? `movie/${id}/watch/providers` : `tv/${id}/watch/providers`;
-  const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${encodeURIComponent(TMDB_API_KEY)}`;
-  const data = await tmdbFetch(url);
-  const it = data && data.results ? data.results[TMDB_REGION] : null;
-  if(!it) return null;
-  return {
-    link: it.link || "",
-    flatrate: Array.isArray(it.flatrate) ? it.flatrate : [],
-    rent: Array.isArray(it.rent) ? it.rent : [],
-    buy: Array.isArray(it.buy) ? it.buy : []
-  };
-}
-function mergeProviders(p){
-  if(!p) return [];
-  const map = new Map();
-  const add = (arr) => (arr || []).forEach(x => {
-    if(!x || !x.provider_id) return;
-    if(!map.has(x.provider_id)) map.set(x.provider_id, x);
-  });
-  add(p.flatrate);
-  add(p.rent);
-  add(p.buy);
-  return Array.from(map.values());
-}
-function hasAnyProviderInIT(p){
-  return mergeProviders(p).length > 0;
-}
-async function fetchDetails(kind, id, language){
-  const endpoint = kind === "movie" ? `movie/${id}` : `tv/${id}`;
-  const url = `https://api.themoviedb.org/3/${endpoint}?api_key=${encodeURIComponent(TMDB_API_KEY)}&language=${encodeURIComponent(language)}`;
-  return tmdbFetch(url);
-}
-async function ensureOverview(kind, item){
-  const current = (item && item.overview) ? String(item.overview).trim() : "";
-  if(current && current.length >= 30) return item;
-
-  try{
-    const it = await fetchDetails(kind, item.id, TMDB_LANG);
-    const itOv = it && it.overview ? String(it.overview).trim() : "";
-    if(itOv && itOv.length >= 30){ item.overview = itOv; return item; }
-  }catch{}
-
-  try{
-    const en = await fetchDetails(kind, item.id, "en-US");
-    const enOv = en && en.overview ? String(en.overview).trim() : "";
-    if(enOv && enOv.length >= 30){ item.overview = enOv; return item; }
-  }catch{}
-
-  item.overview = item.overview || "";
-  return item;
-}
-
-/* Pertinenza + novità */
-function yearFromDateStr(s){
-  if(!s) return 0;
-  const y = Number(String(s).slice(0,4));
-  return Number.isFinite(y) ? y : 0;
-}
-function recencyScore(kind, item){
-  const d = kind === "movie" ? item.release_date : item.first_air_date;
-  const y = yearFromDateStr(d);
-  if(!y) return 0;
-  const nowY = new Date().getFullYear();
-  const age = Math.max(0, nowY - y);
-  const score = Math.max(0, 30 - age);
-  return score;
-}
-function scoreCandidate(kind, item, targetGenreIds){
-  const pop = typeof item.popularity === "number" ? item.popularity : 0;
-  const voteAvg = typeof item.vote_average === "number" ? item.vote_average : 0;
-  const voteCnt = typeof item.vote_count === "number" ? item.vote_count : 0;
-
-  const g = Array.isArray(item.genre_ids) ? item.genre_ids : [];
-  let match = 0;
-  targetGenreIds.forEach(id => { if(g.includes(id)) match++; });
-
-  const rec = recencyScore(kind, item);
-
-  const s =
-    (match * 340) +
-    (rec * 32) +
-    (voteAvg * 55) +
-    (Math.min(voteCnt, 6000) * 0.016) +
-    (pop * 0.65);
-
-  return { score:s, match, rec };
-}
-
-/* Ricerca: prende tanti candidati, li ordina, poi filtra per provider IT, poi restituisce ordinati */
-async function getRankedItems({
-  kind,
-  targetGenreIds,
-  providerCsv,
-  count,
-  isBasicMovie
-}){
-  const shown = loadShownSet(kind);
-
-  const genreCsv = targetGenreIds.join(",");
-  const paramsA = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie, loosen:false });
-  const paramsB = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie, loosen:true });
-
-  const candidates = new Map();
-
-  async function pull(params, rounds){
-    let first;
-    try{
-      first = await fetchDiscover(kind, new URLSearchParams(params.toString()), 1);
-    }catch{
-      return;
+    let toastTimer = null;
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
     }
-    const totalPages = Math.max(1, Math.min(500, Number(first.total_pages || 1)));
 
-    const pages = [1];
-    for(let i=0;i<rounds;i++){
-      pages.push(randInt(1, totalPages));
+    function showView(name){
+      Object.values(views).forEach(v => v.classList.add("hidden"));
+      views[name].classList.remove("hidden");
+      const label = ({home:"Home",basic:"Basic",premiumLogin:"Premium login",premium:"Premium"})[name] || "Home";
+      modePill.textContent = "Modalità: " + label;
+      window.scrollTo({top:0, behavior:"smooth"});
     }
-    shuffle(pages);
 
-    for(const p of pages){
-      let data;
-      try{
-        data = (p === 1) ? first : await fetchDiscover(kind, new URLSearchParams(params.toString()), p);
-      }catch{
-        continue;
+    function dayKey(){
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function shortenBasicPlot(text){
+      const maxChars = 200;
+      const clean = String(text || "").replace(/\s+/g," ").trim();
+      if(clean.length <= maxChars) return clean;
+      return clean.slice(0, maxChars - 1).trimEnd() + "…";
+    }
+
+    const demoCatalog = [
+      {id:"m1", type:"movie", title:"Fuga di Mezzanotte", year:2023, vote:7.7, runtime:118, genres:["Azione","Thriller"], platforms:["Netflix","Prime Video"], plotLong:"Un uomo finisce in un giro pericoloso e deve scegliere in fretta chi fidarsi. Insegue indizi tra città e periferie, mentre ogni errore costa caro. La tensione cresce e le scelte diventano sempre più difficili."},
+      {id:"m2", type:"movie", title:"Risate a Catena", year:2021, vote:7.1, runtime:104, genres:["Comico"], platforms:["Netflix"], plotLong:"Una serie di equivoci trascina un gruppo di amici in situazioni sempre più assurde. Il ritmo resta alto e ogni decisione peggiora il caos. Alla fine devono sistemare tutto senza perdere la faccia."},
+      {id:"m3", type:"movie", title:"Ombre sul Porto", year:2019, vote:7.4, runtime:112, genres:["Thriller"], platforms:["Prime Video"], plotLong:"Un’indagine porta a galla segreti che nessuno vuole nominare. La città cambia volto di notte e i testimoni spariscono. Il protagonista segue una pista che lo mette contro persone potenti."},
+      {id:"m4", type:"movie", title:"Linea Animata", year:2022, vote:7.6, runtime:96, genres:["Animazione","Comico"], platforms:["Disney+"], plotLong:"Un personaggio animato scopre di poter cambiare le regole del suo mondo. Prova a migliorare le cose, ma ogni modifica crea effetti imprevisti. Impara a gestire responsabilità e limiti senza perdere leggerezza."},
+      {id:"m5", type:"movie", title:"Collisione", year:2024, vote:7.9, runtime:121, genres:["Azione"], platforms:["Prime Video","Apple TV"], plotLong:"Un evento improvviso rompe la routine e costringe a reagire. Il protagonista affronta ostacoli concreti, corse contro il tempo e un avversario difficile da leggere. L’azione spinge la storia fino a un punto di svolta."},
+      {id:"t1", type:"tv", title:"Città Doppia", year:2023, vote:8.0, runtime:52, genres:["Thriller","Dramma"], platforms:["Netflix"], plotLong:"Una serie segue due vite che si incrociano senza saperlo. Ogni episodio aggiunge un tassello e cambia il significato delle scelte precedenti. Le relazioni diventano il centro del conflitto."},
+      {id:"t2", type:"tv", title:"Cuori in Salita", year:2022, vote:7.5, runtime:45, genres:["Romantico","Comico"], platforms:["Prime Video"], plotLong:"Due persone molto diverse cercano di far funzionare una relazione in mezzo a impegni e ostacoli reali. Il tono resta leggero ma tocca temi concreti. La serie costruisce crescita e complicità episodio dopo episodio."},
+      {id:"t3", type:"tv", title:"Reparto 7", year:2021, vote:7.8, runtime:50, genres:["Azione","Thriller"], platforms:["Disney+"], plotLong:"Una squadra affronta missioni ad alto rischio e conseguenze personali. Ogni scelta tecnica ha un prezzo umano. Il ritmo resta alto e la trama costruisce tensione progressiva."},
+    ];
+
+    function scoreItem(item, type, weights){
+      if(item.type !== type) return -9999;
+      let s = 0;
+      for(const g of item.genres){ s += (weights[g] || 0); }
+      s += (item.year >= 2018 ? 0.35 : 0);
+      s += (item.year >= 2022 ? 0.35 : 0);
+      s += (item.vote / 10) * 0.6;
+      return s;
+    }
+
+    function pickTop(items, type, weights, n){
+      const scored = items
+        .map(it => ({it, s: scoreItem(it, type, weights)}))
+        .sort((a,b) => b.s - a.s);
+
+      const picked = [];
+      const used = new Set();
+      for(const x of scored){
+        if(picked.length >= n) break;
+        if(x.s < -1000) continue;
+        if(used.has(x.it.id)) continue;
+        used.add(x.it.id);
+        picked.push(x.it);
       }
-      const results = Array.isArray(data.results) ? data.results : [];
-      for(const raw of results){
-        const id = raw && raw.id ? String(raw.id) : "";
-        if(!id) continue;
-        if(shown.has(id)) continue;
-        if(candidates.has(id)) continue;
-        if(!raw.poster_path) continue;
+      return picked;
+    }
 
-        const sc = scoreCandidate(kind, raw, targetGenreIds);
-        candidates.set(id, { item: raw, score: sc.score, match: sc.match, rec: sc.rec });
+    function renderResult(container, item, isPremium){
+      const el = document.createElement("div");
+      el.className = "result";
+
+      const poster = document.createElement("div");
+      poster.className = "poster";
+      poster.textContent = "Poster";
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+
+      const h = document.createElement("h3");
+      h.textContent = `${item.title} (${item.year})`;
+
+      const sub = document.createElement("div");
+      sub.className = "sub";
+      const typeLabel = item.type === "tv" ? "Serie TV" : "Film";
+      sub.textContent = `${typeLabel} · Voto ${item.vote.toFixed(1)} · Durata ${item.runtime} min`;
+
+      const plot = document.createElement("div");
+      plot.className = "plot";
+      plot.textContent = isPremium ? item.plotLong : shortenBasicPlot(item.plotLong);
+
+      const tags = document.createElement("div");
+      tags.className = "tags";
+
+      const gTag = document.createElement("div");
+      gTag.className = "tag";
+      gTag.textContent = item.genres.join(", ");
+
+      const pTag = document.createElement("div");
+      pTag.className = "tag";
+      pTag.textContent = "Piattaforme: " + item.platforms.join(", ");
+
+      tags.appendChild(gTag);
+      tags.appendChild(pTag);
+
+      meta.appendChild(h);
+      meta.appendChild(sub);
+      meta.appendChild(plot);
+      meta.appendChild(tags);
+
+      el.appendChild(poster);
+      el.appendChild(meta);
+
+      container.appendChild(el);
+    }
+
+    const state = {
+      basicSearchDoneOn: "",
+      basicGenres: new Set(),
+      premiumWeights: {"Azione":0,"Comico":0,"Thriller":0,"Animazione":0,"Romantico":0,"Dramma":0},
+      premiumSession: false
+    };
+
+    function updateBasicLimitInfo(){
+      const today = dayKey();
+      const info = $("#basicLimitInfo");
+      if(state.basicSearchDoneOn === today){
+        info.textContent = "Hai già fatto la ricerca di oggi. Riprova domani.";
+      }else{
+        info.textContent = "Ricerca disponibile oggi.";
       }
-      if(candidates.size >= 120) return;
-    }
-  }
-
-  await pull(paramsA, 9);
-  if(candidates.size < 60) await pull(paramsB, 10);
-
-  const list = Array.from(candidates.values());
-  list.sort((a,b) => b.score - a.score);
-
-  const picked = [];
-  for(const c of list){
-    if(picked.length >= count) break;
-
-    let providers = null;
-    try{
-      providers = await getProvidersForItem(kind, c.item.id);
-    }catch{
-      providers = null;
-    }
-    if(!hasAnyProviderInIT(providers)) continue;
-
-    let item = c.item;
-    try{
-      item = await ensureOverview(kind, item);
-    }catch{}
-
-    const id = String(item.id);
-    shown.add(id);
-    picked.push({ item, providers, score: c.score, match: c.match, rec: c.rec });
-  }
-
-  saveShownSet(kind, shown);
-  return picked;
-}
-
-/* Render */
-function formatYear(kind, item){
-  const d = kind === "movie" ? item.release_date : item.first_air_date;
-  const y = yearFromDateStr(d);
-  return y ? String(y) : "";
-}
-function formatRating(item){
-  const v = typeof item.vote_average === "number" ? item.vote_average.toFixed(1) : "-";
-  const c = typeof item.vote_count === "number" ? item.vote_count : "-";
-  return `Voto ${v}, voti ${c}`;
-}
-function renderProvidersBlock(p){
-  if(!p) return `<div class="note">Non trovato in Italia.</div>`;
-
-  const merged = mergeProviders(p);
-  if(!merged.length) return `<div class="note">Non trovato in Italia.</div>`;
-
-  const items = merged.slice(0, 12).map(x => {
-    const logo = x.logo_path ? (LOGO_W45 + x.logo_path) : "";
-    const img = logo ? `<img src="${logo}" alt="">` : `<img alt="">`;
-    const nm = x.provider_name ? x.provider_name : "";
-    return `<div class="provItem">${img}<span>${escapeHtml(nm)}</span></div>`;
-  }).join("");
-
-  const link = p.link ? `<div class="note">Link: <a class="link" href="${p.link}" target="_blank" rel="noopener">Apri</a></div>` : "";
-
-  return `
-    <div class="providers">
-      <div class="provGroup">
-        <p class="t">Disponibile su</p>
-        <div class="provList">${items}</div>
-      </div>
-    </div>
-    ${link}
-  `;
-}
-function savePicked(kind, item, providers){
-  const payload = {
-    ts: Date.now(),
-    kind,
-    id: item && item.id ? item.id : null,
-    title: kind === "movie" ? (item.title || "") : (item.name || ""),
-    year: formatYear(kind, item),
-    providerLink: providers && providers.link ? providers.link : ""
-  };
-  localStorage.setItem(LS.picked, JSON.stringify(payload));
-}
-function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
-  const root = el(containerId);
-  if(!entries || !entries.length){
-    root.innerHTML = `<div class="card"><h3 style="margin:0 0 6px">Nessun risultato</h3><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">Allarga i filtri o resetta i risultati mostrati.</p></div>`;
-    return;
-  }
-
-  const html = entries.map((e, idx) => {
-    const item = e.item;
-    const providers = e.providers;
-
-    const name = kind === "movie" ? item.title : item.name;
-    const year = formatYear(kind, item);
-    const rating = formatRating(item);
-    const pop = typeof item.popularity === "number" ? item.popularity.toFixed(0) : "-";
-
-    const posterUrl = POSTER_W342 + item.poster_path;
-    const btnId = `watch_${containerId}_${idx}`;
-    const openId = `open_${containerId}_${idx}`;
-
-    const openBtn = providers && providers.link
-      ? `<button class="openBtn" id="${openId}" type="button">Apri piattaforme</button>`
-      : "";
-
-    return `
-      <div class="resultCard">
-        <div class="poster"><img src="${posterUrl}" alt=""></div>
-        <div>
-          <h4>${escapeHtml(name || "Titolo")}</h4>
-          <div class="meta">
-            <div>${year ? "Anno " + escapeHtml(year) : "Anno -"}</div>
-            <div>${escapeHtml(rating)}</div>
-            <div>Pop ${escapeHtml(pop)}</div>
-            <div>${escapeHtml(titleSuffix)}</div>
-          </div>
-          <p class="plot">${escapeHtml(clipText(item.overview, plotMaxLen))}</p>
-          ${renderProvidersBlock(providers)}
-          <div class="actionRow">
-            <button class="watchBtn" id="${btnId}" type="button">Guarda</button>
-            ${openBtn}
-          </div>
-          ${DEV_NOTES_ENABLED ? `
-            <div class="devNote">
-DEV INFO
-kind: ${escapeHtml(kind)}
-tmdb_id: ${escapeHtml(String(item.id))}
-score: ${escapeHtml(String(Math.round(e.score || 0)))}
-match_genres: ${escapeHtml(String(e.match || 0))}
-recency: ${escapeHtml(String(Math.round(e.rec || 0)))}
-            </div>
-          ` : ``}
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  root.innerHTML = html;
-
-  entries.forEach((e, idx) => {
-    const btnId = `watch_${containerId}_${idx}`;
-    const openId = `open_${containerId}_${idx}`;
-
-    const watchBtn = document.getElementById(btnId);
-    if(watchBtn){
-      watchBtn.addEventListener("click", () => {
-        savePicked(kind, e.item, e.providers);
-        startCinemaExit();
-      });
     }
 
-    const openBtn = document.getElementById(openId);
-    if(openBtn && e.providers && e.providers.link){
-      openBtn.addEventListener("click", () => {
-        try{ window.open(e.providers.link, "_blank", "noopener"); }catch{}
-      });
+    function toggleChip(btn, setRef){
+      const g = btn.getAttribute("data-genre");
+      const pressed = btn.getAttribute("aria-pressed") === "true";
+      btn.setAttribute("aria-pressed", String(!pressed));
+      if(pressed) setRef.delete(g); else setRef.add(g);
     }
-  });
-}
 
-/* BASIC */
-function readBasicSelectedGenreIds(){
-  const ids = [];
-  document.querySelectorAll("#basicGenres input[type='checkbox']").forEach(cb => {
-    if(cb.checked){
-      const key = cb.value;
-      const id = GENRE_MAP_MOVIE[key];
-      if(id) ids.push(id);
+    function buildPremiumSliders(){
+      const box = $("#premiumSliders");
+      box.innerHTML = "";
+      const genres = ["Azione","Comico","Thriller","Animazione","Romantico","Dramma"];
+      for(const g of genres){
+        const row = document.createElement("div");
+        row.className = "field";
+
+        const label = document.createElement("label");
+        label.textContent = g;
+
+        const srow = document.createElement("div");
+        srow.className = "sliderRow";
+
+        const range = document.createElement("input");
+        range.type = "range";
+        range.min = "0";
+        range.max = "5";
+        range.step = "1";
+        range.value = String(state.premiumWeights[g] || 0);
+
+        const val = document.createElement("div");
+        val.className = "valBox";
+        val.textContent = String(range.value);
+
+        range.addEventListener("input", () => {
+          const v = clamp(parseInt(range.value,10) || 0, 0, 5);
+          range.value = String(v);
+          val.textContent = String(v);
+          state.premiumWeights[g] = v;
+        });
+
+        srow.appendChild(range);
+        srow.appendChild(val);
+
+        row.appendChild(label);
+        row.appendChild(srow);
+
+        box.appendChild(row);
+      }
     }
-  });
-  return ids;
-}
-async function runBasic(){
-  if(!canBasicSearch()){
-    toast("Hai già fatto la ricerca oggi.");
-    refreshBasicLimitInfo();
-    return;
-  }
 
-  const genreIds = readBasicSelectedGenreIds();
-  if(!genreIds.length){
-    toast("Seleziona almeno 1 genere.");
-    return;
-  }
+    function androidAvailable(){
+      return typeof window.Android !== "undefined"
+        && typeof window.Android.requestPremium === "function"
+        && typeof window.Android.isPremium === "function";
+    }
 
-  const providerCsv = readPickedProviders("basicProvidersPick");
+    function requestPremium(){
+      if(androidAvailable()){
+        window.Android.requestPremium();
+      }else{
+        showToast("Premium disponibile solo in app Android");
+      }
+    }
 
-  el("btnBasicSearch").disabled = true;
-  el("basicResults").innerHTML = `<div class="card"><h3 style="margin:0 0 6px">Ricerca in corso</h3><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">Sto cercando film disponibili in Italia.</p></div>`;
+    function refreshPremiumStatus(){
+      const line = $("#premiumStatusLine");
+      if(!androidAvailable()){
+        line.textContent = "";
+        return;
+      }
+      const ok = window.Android.isPremium();
+      line.textContent = ok ? "Premium attivo" : "Premium non attivo";
+    }
 
-  try{
-    const entries = await getRankedItems({
-      kind: "movie",
-      targetGenreIds: genreIds,
-      providerCsv,
-      count: 3,
-      isBasicMovie: true
+    function openPremium(){
+      state.premiumSession = true;
+      $("#premiumSessionPill").textContent = "Sessione: attiva";
+      showView("premium");
+    }
+
+    function openPremiumLogin(){
+      showView("premiumLogin");
+    }
+
+    function goHome(){
+      showView("home");
+      refreshPremiumStatus();
+    }
+
+    function exitApp(){
+      if(typeof window.Android !== "undefined" && typeof window.Android.exitApp === "function"){
+        window.Android.exitApp();
+      }else{
+        showToast("Chiusura non disponibile qui");
+      }
+    }
+
+    window.App = {
+      openPremium,
+      openPremiumLogin,
+      goHome,
+      showToast
+    };
+
+    $("#btnExitTop").addEventListener("click", exitApp);
+
+    $("#btnEnterBasic").addEventListener("click", () => {
+      updateBasicLimitInfo();
+      showView("basic");
     });
-    renderResults("basicResults", "movie", entries, "Basic", PLOT_MAX_BASIC);
-    markBasicSearched();
-    refreshBasicLimitInfo();
-    toast("Fatto.");
-  }catch(err){
-    el("basicResults").innerHTML = `<div class="card"><h3 style="margin:0 0 6px">Errore</h3><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">Controlla rete e riprova.</p><p class="note">${escapeHtml(String(err || ""))}</p></div>`;
-    toast("Errore TMDB.");
-  }finally{
-    el("btnBasicSearch").disabled = false;
-  }
-}
 
-/* PREMIUM */
-function refreshPremiumGateInfo(){
-  const info = el("premiumGateInfo");
-  const ok = isPremiumPurchased() && isPremiumLoggedIn();
-  info.textContent = ok
-    ? "Ok. Premi Cerca per ottenere risultati ordinati per pertinenza e più nuovi."
-    : "Premium non attivo. Torna indietro e fai login.";
-}
-async function runPremium(){
-  if(!(isPremiumPurchased() && isPremiumLoggedIn())){
-    toast("Premium non attivo.");
-    refreshPremiumGateInfo();
-    return;
-  }
-
-  const kind = getPremiumKind();
-  const weights = readPremiumWeights();
-  const keys = chooseGenreKeysFromWeights(weights);
-
-  if(!keys.length){
-    toast("Alza almeno 1 slider.");
-    return;
-  }
-
-  const targetGenreIds = mapGenreIdsForKind(kind, keys);
-  if(!targetGenreIds.length){
-    toast("Generi non validi.");
-    return;
-  }
-
-  const providerCsv = readPickedProviders("premiumProvidersPick");
-
-  el("btnPremiumSearch").disabled = true;
-  el("premiumResults").innerHTML = `<div class="card"><h3 style="margin:0 0 6px">Ricerca in corso</h3><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">Sto cercando titoli disponibili in Italia.</p></div>`;
-
-  try{
-    const entries = await getRankedItems({
-      kind,
-      targetGenreIds,
-      providerCsv,
-      count: 5,
-      isBasicMovie: false
+    $("#btnEnterPremium").addEventListener("click", () => {
+      requestPremium();
     });
-    renderResults("premiumResults", kind, entries, "Premium", PLOT_MAX_PREMIUM);
-    toast("Fatto.");
-  }catch(err){
-    el("premiumResults").innerHTML = `<div class="card"><h3 style="margin:0 0 6px">Errore</h3><p style="margin:0;color:var(--muted);font-size:13px;line-height:1.35">Controlla rete e riprova.</p><p class="note">${escapeHtml(String(err || ""))}</p></div>`;
-    toast("Errore TMDB.");
-  }finally{
-    el("btnPremiumSearch").disabled = false;
-  }
-}
 
-/* LOGIN FLOW */
-function goPremiumFromSplash(){
-  if(!isPremiumPurchased()){
-    toast("Premium non risulta acquistato.");
-    refreshPurchaseHint();
-    return;
-  }
-  if(isPremiumLoggedIn()){
-    showScreen("screenPremium");
-    refreshPremiumGateInfo();
-    return;
-  }
-  el("loginEmail").value = "";
-  el("loginPass").value = "";
-  el("loginInfo").textContent = "";
-  showScreen("screenLogin");
-}
-function doLogin(){
-  const email = String(el("loginEmail").value || "").trim();
-  const pass = String(el("loginPass").value || "");
+    $("#btnBasicBack").addEventListener("click", goHome);
 
-  if(email === TEST_LOGIN_EMAIL && pass === TEST_LOGIN_PASS){
-    setPremiumLoggedIn(true);
-    el("loginInfo").textContent = "Login ok.";
-    toast("Accesso completo attivo.");
-    showScreen("screenPremium");
-    refreshPremiumGateInfo();
-    return;
-  }
-
-  setPremiumLoggedIn(false);
-  el("loginInfo").textContent = "Credenziali errate.";
-  toast("Credenziali errate.");
-}
-
-/* EXIT CINEMA OLD PROJECTOR, 3s, poi tasto Esci */
-let audioCtx = null;
-function audioEnsure(){
-  if(audioCtx) return audioCtx;
-  const Ctx = window.AudioContext || window.webkitAudioContext;
-  if(!Ctx) return null;
-  audioCtx = new Ctx();
-  return audioCtx;
-}
-function audioClick(atMs, gainValue, freq){
-  const ctx = audioEnsure();
-  if(!ctx) return;
-  const t0 = ctx.currentTime + (atMs / 1000);
-
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  o.type = "square";
-  o.frequency.setValueAtTime(freq, t0);
-
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0001, gainValue), t0 + 0.012);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
-
-  o.connect(g);
-  g.connect(ctx.destination);
-
-  o.start(t0);
-  o.stop(t0 + 0.09);
-}
-function audioProjectorOld(){
-  const ctx = audioEnsure();
-  if(!ctx) return;
-  try{ if(ctx.state === "suspended") ctx.resume(); }catch{}
-
-  audioClick(0,   0.06, 115);
-  audioClick(120, 0.05, 140);
-  audioClick(260, 0.05, 105);
-  audioClick(410, 0.05, 165);
-
-  audioClick(700, 0.03, 120);
-  audioClick(900, 0.03, 130);
-  audioClick(1150,0.03, 110);
-  audioClick(1420,0.03, 150);
-}
-function vibrateSoft(){
-  try{
-    if(navigator.vibrate){
-      navigator.vibrate([40,30,60,35,80]);
-    }
-  }catch{}
-}
-function typeText(elm, text, speedMs){
-  elm.textContent = "";
-  let i = 0;
-  const t = setInterval(() => {
-    i++;
-    elm.textContent = text.slice(0, i);
-    if(i >= text.length) clearInterval(t);
-  }, speedMs);
-}
-function tryClose(){
-  try{ history.back(); }catch{}
-  try{ window.close(); }catch{}
-}
-function startCinemaExit(){
-  const overlay = el("cinemaOverlay");
-  const title = el("cinemaTitle");
-
-  overlay.classList.add("show");
-  overlay.classList.remove("showButtons");
-  overlay.classList.remove("ready");
-  overlay.setAttribute("aria-hidden","false");
-
-  typeText(title, "Mettiti comodo inizia lo spettacolo", 20);
-
-  audioProjectorOld();
-  vibrateSoft();
-
-  setTimeout(() => overlay.classList.add("ready"), 420);
-
-  setTimeout(() => {
-    overlay.classList.add("showButtons");
-  }, EXIT_DURATION_MS);
-
-  setTimeout(() => {
-    tryClose();
-  }, EXIT_DURATION_MS + 200);
-}
-function cancelCinemaExit(){
-  const overlay = el("cinemaOverlay");
-  overlay.classList.remove("show");
-  overlay.classList.remove("showButtons");
-  overlay.classList.remove("ready");
-  overlay.setAttribute("aria-hidden","true");
-  try{ if(navigator.vibrate) navigator.vibrate(0); }catch{}
-  toast("Ok. Resta in app.");
-}
-function forceCinemaExit(){
-  tryClose();
-}
-
-/* INIT */
-function init(){
-  setDevMode();
-
-  buildProviderPick("basicProvidersPick");
-  buildProviderPick("premiumProvidersPick");
-  buildPremiumSliders();
-
-  refreshBasicLimitInfo();
-  refreshPremiumStatus();
-  refreshPurchaseHint();
-  refreshPremiumGateInfo();
-
-  el("btnEnterBasic").addEventListener("click", () => showScreen("screenBasic"));
-  el("btnEnterPremium").addEventListener("click", goPremiumFromSplash);
-
-  el("btnSimulatePurchase").addEventListener("click", () => {
-    setPremiumPurchased(true);
-    refreshPurchaseHint();
-    toast("Premium acquistato simulato.");
-  });
-
-  el("btnBackFromLogin").addEventListener("click", () => showScreen("screenSplash"));
-  el("btnDoLogin").addEventListener("click", doLogin);
-
-  el("btnGoBasic").addEventListener("click", () => showScreen("screenBasic"));
-  el("btnGoPremium").addEventListener("click", () => {
-    if(!(isPremiumPurchased() && isPremiumLoggedIn())){
-      toast("Premium non attivo. Torna alla splash e fai login.");
-      return;
-    }
-    showScreen("screenPremium");
-    refreshPremiumGateInfo();
-  });
-
-  el("btnLogout").addEventListener("click", () => {
-    setPremiumLoggedIn(false);
-    toast("Logout fatto.");
-    refreshPremiumGateInfo();
-  });
-
-  el("btnBackFromBasic").addEventListener("click", () => showScreen("screenStart"));
-  el("btnBackFromPremium").addEventListener("click", () => showScreen("screenStart"));
-
-  el("btnBasicSearch").addEventListener("click", runBasic);
-  el("btnPremiumSearch").addEventListener("click", runPremium);
-
-  el("btnBasicResetShown").addEventListener("click", () => {
-    resetShown("movie");
-    el("basicResults").innerHTML = "";
-    toast("Reset fatto.");
-  });
-
-  el("btnPremiumResetShown").addEventListener("click", () => {
-    const kind = getPremiumKind();
-    resetShown(kind);
-    el("premiumResults").innerHTML = "";
-    toast("Reset fatto.");
-  });
-
-  document.querySelectorAll('input[name="premiumType"]').forEach(r => {
-    r.addEventListener("change", () => {
-      el("premiumResults").innerHTML = "";
-      toast(getPremiumKind() === "movie" ? "Modalità Film" : "Modalità Serie TV");
+    $("#basicGenres").addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if(!btn) return;
+      toggleChip(btn, state.basicGenres);
     });
-  });
 
-  el("btnExitFromHome").addEventListener("click", startCinemaExit);
-  el("btnExitFromBasic").addEventListener("click", startCinemaExit);
-  el("btnExitFromPremium").addEventListener("click", startCinemaExit);
-  el("btnExitFromPremium2").addEventListener("click", startCinemaExit);
+    $("#btnBasicSearch").addEventListener("click", () => {
+      const today = dayKey();
+      updateBasicLimitInfo();
+      if(state.basicSearchDoneOn === today){
+        showToast("Limite giornaliero raggiunto");
+        return;
+      }
+      if(state.basicGenres.size === 0){
+        showToast("Seleziona almeno un genere");
+        return;
+      }
 
-  el("btnCancelExit").addEventListener("click", cancelCinemaExit);
-  el("btnForceExit").addEventListener("click", forceCinemaExit);
+      const weights = {};
+      for(const g of state.basicGenres) weights[g] = 5;
 
-  devSet("devSplashNote",
-`DEV INFO
-Icona creata in SVG.
-Splash: proiettore che proietta su TV davanti a divano.
-Premium: se acquistato, chiede login.
-Credenziali test: ${TEST_LOGIN_EMAIL} / ${TEST_LOGIN_PASS}`);
+      const picked = pickTop(demoCatalog, "movie", weights, 3);
+      const box = $("#basicResults");
+      box.innerHTML = "";
+      if(picked.length === 0){
+        box.textContent = "Nessun risultato.";
+        return;
+      }
+      picked.forEach(it => renderResult(box, it, false));
 
-  devSet("devLoginNote",
-`DEV INFO
-Login sblocca Premium.
-In app ufficiale, qui ci sarà login vero.`);
+      state.basicSearchDoneOn = today;
+      updateBasicLimitInfo();
+      showToast("Risultati aggiornati");
+    });
 
-  devSet("devHomeNote",
-`DEV INFO
-Premium richiede: acquistato + login.
-Tasto Simula acquisto è solo per test.`);
+    $("#btnPremiumBackHome").addEventListener("click", goHome);
 
-  devSet("devBasicNote",
-`DEV INFO
-Ordinamento: pertinenza + novità.
-Basic esclude VM18 con certificazione.`);
+    $("#btnPremiumLogin").addEventListener("click", () => {
+      if(androidAvailable() && !window.Android.isPremium()){
+        showToast("Premium non attivo");
+        goHome();
+        return;
+      }
+      const email = $("#premiumEmail").value.trim();
+      const pass = $("#premiumPass").value;
+      if(email.length < 6 || pass.length < 6){
+        showToast("Credenziali non valide");
+        return;
+      }
+      openPremium();
+      showToast("Login ok");
+    });
 
-  devSet("devPremiumNote",
-`DEV INFO
-Ordinamento: pertinenza + novità.
-Punteggio: match generi, recency, voto, voti, popolarità.
-Risultati già ordinati dal più pertinente.`);
+    $("#btnPremiumLogout").addEventListener("click", () => {
+      state.premiumSession = false;
+      $("#premiumSessionPill").textContent = "Sessione: non attiva";
+      $("#premiumResults").innerHTML = "";
+      showToast("Logout");
+      goHome();
+    });
 
-  devSet("devExitNote",
-`DEV INFO
-Uscita stile vecchio cinematografo.
-Durata: ${EXIT_DURATION_MS}ms.
-Poi appare tasto Esci.`);
+    buildPremiumSliders();
 
-  showScreen("screenSplash");
-}
+    $("#btnPremiumSearch").addEventListener("click", () => {
+      if(androidAvailable() && !window.Android.isPremium()){
+        showToast("Premium non attivo");
+        goHome();
+        return;
+      }
+      if(!state.premiumSession){
+        showToast("Fai login");
+        showView("premiumLogin");
+        return;
+      }
 
-init();
-</script>
+      const type = $("#premiumType").value;
+
+      let sum = 0;
+      for(const v of Object.values(state.premiumWeights)) sum += v;
+      if(sum === 0){
+        showToast("Alza almeno uno slider");
+        return;
+      }
+
+      const picked = pickTop(demoCatalog, type, state.premiumWeights, 5);
+      const box = $("#premiumResults");
+      box.innerHTML = "";
+      if(picked.length === 0){
+        box.textContent = "Nessun risultato.";
+        return;
+      }
+      picked.forEach(it => renderResult(box, it, true));
+      showToast("Risultati aggiornati");
+    });
+
+    showView("home");
+    refreshPremiumStatus();
+    updateBasicLimitInfo();
+  </script>
 </body>
 </html>
