@@ -244,51 +244,177 @@
       cursor:pointer;
     }
 
-    body.closing{
-      overflow:hidden;
-      animation: appClose .34s ease forwards;
-    }
-    @keyframes appClose{
-      from{opacity:1;transform:none}
-      to{opacity:0;transform: translateY(10px)}
-    }
-
-    .exitOverlay{
+    /* =======================
+       CINEMA EXIT EFFECT
+    ======================= */
+    .cinemaOverlay{
       position:fixed;inset:0;
       background:#000;
       display:none;
-      z-index:120;
+      z-index:9999;
+      overflow:hidden;
+      touch-action:none;
+    }
+    .cinemaOverlay.show{display:block}
+
+    .filmGrain{
+      position:absolute;inset:-30%;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.04), transparent 45%),
+        radial-gradient(circle at 70% 60%, rgba(255,255,255,.03), transparent 50%),
+        radial-gradient(circle at 35% 80%, rgba(255,255,255,.025), transparent 55%);
+      opacity:.35;
+      mix-blend-mode: screen;
+      animation: grainMove 900ms steps(2) infinite;
+      transform: rotate(7deg);
+      pointer-events:none;
+      filter: contrast(120%);
+    }
+    @keyframes grainMove{
+      0%{transform:translate(0,0) rotate(7deg)}
+      25%{transform:translate(-2%,1%) rotate(7deg)}
+      50%{transform:translate(1%,-2%) rotate(7deg)}
+      75%{transform:translate(2%,2%) rotate(7deg)}
+      100%{transform:translate(0,0) rotate(7deg)}
+    }
+
+    .scanlines{
+      position:absolute;inset:0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.03),
+        rgba(255,255,255,.03) 1px,
+        rgba(0,0,0,0) 3px,
+        rgba(0,0,0,0) 6px
+      );
+      opacity:.08;
+      pointer-events:none;
+    }
+
+    .vignette{
+      position:absolute;inset:0;
+      background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 35%, rgba(0,0,0,.55) 78%, rgba(0,0,0,.9) 100%);
+      pointer-events:none;
+      opacity:1;
+    }
+
+    .projectorFlicker{
+      position:absolute;inset:0;
+      background: rgba(255,255,255,.03);
+      opacity:0;
+      animation: flicker 160ms infinite;
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+    @keyframes flicker{
+      0%{opacity:0}
+      10%{opacity:.22}
+      20%{opacity:.02}
+      30%{opacity:.18}
+      40%{opacity:.04}
+      50%{opacity:.26}
+      60%{opacity:.03}
+      70%{opacity:.16}
+      80%{opacity:.05}
+      90%{opacity:.20}
+      100%{opacity:.00}
+    }
+
+    .cinemaCenter{
+      position:absolute;inset:0;
+      display:flex;
       align-items:center;
       justify-content:center;
-      padding:18px;
+      padding:22px;
       text-align:center;
     }
-    .exitOverlay.show{display:flex}
-    .exitBox{
-      max-width:520px;
-      width:100%;
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:18px;
-      padding:16px 14px;
-      background: rgba(255,255,255,.05);
-      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+
+    .cinemaCard{
+      width:min(560px, 92vw);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:20px;
+      padding:18px 16px 16px;
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 18px 60px rgba(0,0,0,.7);
+      backdrop-filter: blur(8px);
+      transform: translateZ(0);
     }
-    .exitMsg{
-      margin:0;
-      font-size:16px;
+
+    .cinemaTitle{
+      margin:0 0 8px;
+      font-size:18px;
       color:#fff;
-      line-height:1.35;
+      letter-spacing:.2px;
+      line-height:1.25;
+      text-shadow: 0 10px 22px rgba(0,0,0,.45);
     }
-    .exitBox .btnRow{justify-content:center}
-    .shake{
-      animation: shake .12s infinite linear;
+
+    .dots{
+      display:flex;
+      gap:8px;
+      justify-content:center;
+      margin-top:10px;
+      opacity:.9;
     }
-    @keyframes shake{
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,.55);
+      animation: dotPulse 900ms infinite;
+    }
+    .dot:nth-child(2){animation-delay:150ms}
+    .dot:nth-child(3){animation-delay:300ms}
+    @keyframes dotPulse{
+      0%{transform:translateY(0);opacity:.45}
+      30%{transform:translateY(-3px);opacity:1}
+      60%{transform:translateY(0);opacity:.55}
+      100%{transform:translateY(0);opacity:.45}
+    }
+
+    .cinemaBtns{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+      opacity:.0;
+      transform: translateY(6px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .cinemaOverlay.showButtons .cinemaBtns{
+      opacity:1;
+      transform:none;
+    }
+
+    .cinemaBtnExit{
+      background: rgba(255,70,70,.20);
+      color:#ffd6d6;
+      border:1px solid rgba(255,70,70,.28);
+      box-shadow:none;
+      padding:10px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .cinemaBtnCancel{
+      background: rgba(255,255,255,.08);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+      padding:10px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+    }
+
+    .shakeHard{
+      animation: shakeHard 120ms infinite linear;
+    }
+    @keyframes shakeHard{
       0%{transform:translate(0,0)}
-      25%{transform:translate(1px,-1px)}
-      50%{transform:translate(-1px,1px)}
-      75%{transform:translate(1px,1px)}
-      100%{transform:translate(-1px,-1px)}
+      25%{transform:translate(2px,-2px)}
+      50%{transform:translate(-2px,2px)}
+      75%{transform:translate(2px,2px)}
+      100%{transform:translate(-2px,-2px)}
     }
 
     /* DEV NOTES */
@@ -305,7 +431,6 @@
       white-space:pre-wrap;
     }
     body.dev .devNote{display:block}
-    body.dev .devInline{color:var(--devBlue)}
   </style>
 </head>
 
@@ -332,7 +457,6 @@
           <div class="pill">Trama breve in Basic</div>
           <div class="pill">Trama più lunga in Premium</div>
         </div>
-
         <div class="devNote" id="devStartNote"></div>
       </div>
 
@@ -491,28 +615,31 @@
 
   <div id="toast" class="toast"></div>
 
-  <div id="exitOverlay" class="exitOverlay" aria-hidden="true">
-    <div id="exitBox" class="exitBox">
-      <p class="exitMsg">Mettiti comodo inizia lo spettacolo</p>
-      <div class="btnRow" style="margin-top:12px">
-        <button class="danger" id="btnForceExit" type="button">Esci</button>
-        <button class="secondary" id="btnCancelExit" type="button">Annulla</button>
+  <!-- CINEMA EXIT OVERLAY -->
+  <div id="cinemaOverlay" class="cinemaOverlay" aria-hidden="true">
+    <div class="filmGrain" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="projectorFlicker" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+
+    <div class="cinemaCenter">
+      <div id="cinemaCard" class="cinemaCard">
+        <p class="cinemaTitle">Mettiti comodo inizia lo spettacolo</p>
+        <div class="dots" aria-hidden="true">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+        <div class="cinemaBtns" id="cinemaBtns">
+          <button class="cinemaBtnExit" id="btnForceExit" type="button">Esci</button>
+          <button class="cinemaBtnCancel" id="btnCancelExit" type="button">Annulla</button>
+        </div>
+        <div class="devNote" id="devCinemaExitNote"></div>
       </div>
-      <div class="devNote" id="devExitOverlayNote"></div>
     </div>
   </div>
 
 <script>
-/* =======================
-   DEV CONTROL
-   Metti DEV_NOTES_ENABLED = false per l'app ufficiale.
-   Le note blu spariscono automaticamente.
-======================= */
 const DEV_NOTES_ENABLED = true;
 
-/* =======================
-   TMDB
-======================= */
 const TMDB_API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
 const TMDB_LANG = "it-IT";
 const TMDB_REGION = "IT";
@@ -520,25 +647,12 @@ const TMDB_REGION = "IT";
 const POSTER_W342 = "https://image.tmdb.org/t/p/w342";
 const LOGO_W45 = "https://image.tmdb.org/t/p/w45";
 
-/* =======================
-   BASIC TEST MODE
-   true = nessun limite giornaliero per test
-   false = 1 ricerca al giorno
-======================= */
 const BASIC_TEST_MODE_UNLIMITED = true;
 
-/* =======================
-   BASIC VM18 BLOCK (best effort)
-   In discover/movie usiamo certification.lte per l'Italia.
-   Se TMDB non ha la certificazione per un titolo, il filtro può non essere perfetto.
-======================= */
 const BASIC_BLOCK_VM18 = true;
 const BASIC_CERT_COUNTRY = "IT";
 const BASIC_CERT_LTE = "14";
 
-/* =======================
-   LOCAL STORAGE KEYS
-======================= */
 const LS = {
   premium: "mf_premium_purchased",
   lastBasicSearchDate: "mf_basic_last_search_date",
@@ -547,9 +661,6 @@ const LS = {
   picked: "mf_picked_to_watch"
 };
 
-/* =======================
-   GENRES
-======================= */
 const GENRE_MAP_MOVIE = {
   azione: 28,
   comico: 35,
@@ -575,10 +686,6 @@ const GENRE_MAP_TV = {
   crime: 80
 };
 
-/* =======================
-   PROVIDERS LIST
-   Sono solo un elenco per filtrare. La disponibilità reale la leggiamo sempre via watch/providers in IT.
-======================= */
 const PROVIDERS = [
   { id: 8,   name: "Netflix" },
   { id: 119, name: "Prime Video" },
@@ -595,9 +702,6 @@ const PLOT_MAX_PREMIUM = 650;
 
 const el = (id) => document.getElementById(id);
 
-/* =======================
-   DEV NOTES RENDER
-======================= */
 function setDevMode(){
   if(DEV_NOTES_ENABLED){
     document.body.classList.add("dev");
@@ -615,9 +719,6 @@ function devSet(id, text){
   n.textContent = text;
 }
 
-/* =======================
-   UI HELPERS
-======================= */
 function toast(msg){
   const t = el("toast");
   t.textContent = msg;
@@ -675,9 +776,6 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 
-/* =======================
-   PREMIUM GATE
-======================= */
 function isPremiumPurchased(){
   return localStorage.getItem(LS.premium) === "1";
 }
@@ -698,9 +796,6 @@ function refreshPremiumGateInfo(){
     : "Premium bloccato. Premi Sblocca Premium nella home, oppure usa Basic.";
 }
 
-/* =======================
-   BASIC LIMIT
-======================= */
 function canBasicSearch(){
   if(BASIC_TEST_MODE_UNLIMITED) return true;
   const last = localStorage.getItem(LS.lastBasicSearchDate) || "";
@@ -721,9 +816,6 @@ function refreshBasicLimitInfo(){
     : "Hai già fatto la ricerca oggi. Riprova domani.";
 }
 
-/* =======================
-   SHOWN SETS
-======================= */
 function loadShownSet(kind){
   const key = kind === "movie" ? LS.shownMovies : LS.shownTv;
   try{
@@ -746,9 +838,6 @@ function resetShown(kind){
   localStorage.removeItem(key);
 }
 
-/* =======================
-   PROVIDER PICK UI
-======================= */
 function buildProviderPick(containerId){
   const box = el(containerId);
   box.innerHTML = "";
@@ -768,9 +857,6 @@ function readPickedProviders(containerId){
   return ids.join("|");
 }
 
-/* =======================
-   PREMIUM SLIDERS
-======================= */
 const PREMIUM_GENRES = [
   { key:"azione", label:"Azione" },
   { key:"comico", label:"Comico" },
@@ -823,12 +909,6 @@ function pickTopGenres(weights, maxCount){
   return arr.slice(0, maxCount).map(x => x.k);
 }
 
-/* =======================
-   DISCOVER PARAMS
-   Nota importante:
-   with_watch_providers filtra su watch_region=IT.
-   Poi verifichiamo comunque ogni titolo con watch/providers IT.
-======================= */
 function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
   const params = new URLSearchParams();
   params.set("api_key", TMDB_API_KEY);
@@ -941,13 +1021,7 @@ async function ensureOverview(kind, item){
   return item;
 }
 
-async function getRandomItems({
-  kind,
-  genreCsv,
-  providerCsv,
-  count,
-  isBasicMovie
-}){
+async function getRandomItems({ kind, genreCsv, providerCsv, count, isBasicMovie }){
   const shown = loadShownSet(kind);
   const params = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie });
 
@@ -996,9 +1070,6 @@ async function getRandomItems({
   return collected;
 }
 
-/* =======================
-   RENDER
-======================= */
 function formatYear(kind, item){
   const d = kind === "movie" ? item.release_date : item.first_air_date;
   if(!d) return "";
@@ -1087,7 +1158,6 @@ function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
 DEV INFO
 kind: ${kind}
 tmdb_id: ${escapeHtml(String(item.id))}
-sort: random page
 providers_it: ${mergeProviders(providers).length}
 note: in app ufficiale queste note spariscono
       </div>
@@ -1128,7 +1198,7 @@ note: in app ufficiale queste note spariscono
     if(watchBtn){
       watchBtn.addEventListener("click", () => {
         savePicked(kind, item, providers);
-        startShowExitSequence();
+        startCinemaExit();
       });
     }
 
@@ -1141,9 +1211,6 @@ note: in app ufficiale queste note spariscono
   });
 }
 
-/* =======================
-   BASIC
-======================= */
 function readBasicSelectedGenres(){
   const ids = [];
   document.querySelectorAll("#basicGenres input[type='checkbox']").forEach(cb => {
@@ -1194,9 +1261,6 @@ async function runBasic(){
   }
 }
 
-/* =======================
-   PREMIUM
-======================= */
 function getPremiumKind(){
   const v = document.querySelector('input[name="premiumType"]:checked');
   return v ? v.value : "movie";
@@ -1250,53 +1314,66 @@ async function runPremium(){
 }
 
 /* =======================
-   EXIT EFFECT
+   CINEMA EXIT
+   Effetto:
+   1 overlay nero
+   2 grana, scanlines, flicker
+   3 vibrazione
+   4 tremolio forte per 1s
+   5 prova chiusura. se fallisce mostra bottoni
 ======================= */
-function exitApp(){
-  if(document.body.classList.contains("closing")) return;
-  document.body.classList.add("closing");
-
-  setTimeout(() => {
-    try { history.back(); } catch {}
-    setTimeout(() => { try { window.close(); } catch {} }, 120);
-  }, 340);
+function tryClose(){
+  try{ history.back(); }catch{}
+  try{ window.close(); }catch{}
 }
 
-function startShowExitSequence(){
-  const overlay = el("exitOverlay");
-  const box = el("exitBox");
-
-  overlay.classList.add("show");
-  box.classList.add("shake");
-
+function vibratePattern(){
   try{
     if(navigator.vibrate){
-      navigator.vibrate([80,40,80,40,120,60,120,60,160]);
+      navigator.vibrate([60,30,60,30,90,40,120,60,160]);
     }
   }catch{}
+}
+
+function startCinemaExit(){
+  const overlay = el("cinemaOverlay");
+  const card = el("cinemaCard");
+
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
+  overlay.classList.remove("showButtons");
+
+  card.classList.add("shakeHard");
+  vibratePattern();
 
   setTimeout(() => {
-    box.classList.remove("shake");
-    exitApp();
+    card.classList.remove("shakeHard");
+  }, 1000);
+
+  setTimeout(() => {
+    tryClose();
+
+    setTimeout(() => {
+      overlay.classList.add("showButtons");
+    }, 350);
   }, 1000);
 }
 
-function cancelExit(){
-  const overlay = el("exitOverlay");
-  const box = el("exitBox");
-  box.classList.remove("shake");
+function cancelCinemaExit(){
+  const overlay = el("cinemaOverlay");
+  const card = el("cinemaCard");
   overlay.classList.remove("show");
+  overlay.classList.remove("showButtons");
+  overlay.setAttribute("aria-hidden","true");
+  card.classList.remove("shakeHard");
   try{ if(navigator.vibrate) navigator.vibrate(0); }catch{}
   toast("Ok. Resta in app.");
 }
 
-function forceExit(){
-  exitApp();
+function forceCinemaExit(){
+  tryClose();
 }
 
-/* =======================
-   INIT
-======================= */
 function init(){
   setDevMode();
 
@@ -1311,61 +1388,31 @@ function init(){
   devSet("devStartNote",
 `DEV INFO
 DEV_NOTES_ENABLED: ${DEV_NOTES_ENABLED}
-Per nascondere tutto il blu: metti DEV_NOTES_ENABLED = false
-La disponibilità Italia usa: watch/providers con regione ${TMDB_REGION}`);
+Per togliere le note blu: DEV_NOTES_ENABLED = false`);
 
   devSet("devBasicHomeNote",
 `DEV INFO BASIC
-Basic è solo film.
 Esclusione VM18: certification_country=${BASIC_CERT_COUNTRY}, certification.lte=${BASIC_CERT_LTE}
 Limite giornaliero: ${BASIC_TEST_MODE_UNLIMITED ? "disattivo per test" : "attivo 1 al giorno"}`);
 
   devSet("devPremiumHomeNote",
 `DEV INFO PREMIUM
-Premium usa film o serie.
-Filtro piattaforme: with_watch_providers se selezionate.
+Filtro piattaforme facoltativo.
 Conferma Italia: controllo watch/providers IT su ogni titolo.`);
 
   devSet("devExitNote",
-`DEV INFO USCITA
-Su Guarda o Esci:
-1 overlay nero
-2 vibrazione se supportata
-3 tremolio 1 secondo
-4 prova history.back e window.close
-5 se non chiude, hai i pulsanti nell'overlay`);
+`DEV INFO USCITA CINEMA
+Overlay nero, grana, flicker, scanlines.
+Vibrazione e tremolio 1s.
+Poi prova history.back e window.close.
+Se non chiude, compaiono i bottoni.`);
 
-  devSet("devBasicScreenNote",
-`DEV INFO SCHERMATA BASIC
-Ricerca: discover/movie con generi selezionati.
-Poi scarta titoli senza provider IT.`);
-
-  devSet("devProvidersNote",
-`DEV INFO PIATTAFORME
-Selezione piattaforme è facoltativa.
-Se scegli 1 o più, la ricerca filtra già i risultati.
-In ogni caso mostriamo la lista unificata di provider IT, senza distinguere noleggio o abbonamento.`);
-
-  devSet("devBasicSearchNote",
-`DEV INFO OUTPUT BASIC
-Trama breve: max ${PLOT_MAX_BASIC} caratteri.
-Risultati: 3.`);
-
-  devSet("devPremiumScreenNote",
-`DEV INFO SCHERMATA PREMIUM
-Ricerca: discover/${isPremiumPurchased() ? "movie o tv" : "bloccato"}.
-Generi: prende i 3 slider più alti.`);
-
-  devSet("devPremiumSearchNote",
-`DEV INFO OUTPUT PREMIUM
-Trama lunga: max ${PLOT_MAX_PREMIUM} caratteri.
-Risultati: 5.`);
-
-  devSet("devExitOverlayNote",
-`DEV INFO OVERLAY
-Se la app non si chiude, usa:
-Esci = chiusura forzata
-Annulla = torna alla app`);
+  devSet("devBasicScreenNote","DEV INFO BASIC. Discover movie + check providers IT.");
+  devSet("devProvidersNote","DEV INFO. La app mostra provider IT unificati, senza distinguere noleggio o abbonamento.");
+  devSet("devBasicSearchNote",`DEV INFO. Trama breve max ${PLOT_MAX_BASIC}.`);
+  devSet("devPremiumScreenNote","DEV INFO PREMIUM. Discover movie o tv. Top 3 slider.");
+  devSet("devPremiumSearchNote",`DEV INFO. Trama lunga max ${PLOT_MAX_PREMIUM}.`);
+  devSet("devCinemaExitNote","DEV INFO. Se non si chiude, usa Esci o Annulla.");
 
   el("btnGoBasic").addEventListener("click", () => {
     showScreen("screenBasic");
@@ -1420,15 +1467,15 @@ Annulla = torna alla app`);
     });
   });
 
-  el("btnExitFromStart").addEventListener("click", startShowExitSequence);
-  el("btnExitFromBasic").addEventListener("click", startShowExitSequence);
-  el("btnExitFromPremium").addEventListener("click", startShowExitSequence);
+  el("btnExitFromStart").addEventListener("click", startCinemaExit);
+  el("btnExitFromBasic").addEventListener("click", startCinemaExit);
+  el("btnExitFromPremium").addEventListener("click", startCinemaExit);
 
-  el("btnCancelExit").addEventListener("click", cancelExit);
-  el("btnForceExit").addEventListener("click", forceExit);
+  el("btnCancelExit").addEventListener("click", cancelCinemaExit);
+  el("btnForceExit").addEventListener("click", forceCinemaExit);
 }
 
 init();
 </script>
 </body>
-</html> 
+</html>
