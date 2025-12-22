@@ -8,7 +8,6 @@
     :root{
       --bg:#0b0720;
       --card:#151033;
-      --card2:#0f0a28;
       --text:#f3f1ff;
       --muted:#b9b2e6;
       --violet:#7c3aed;
@@ -181,6 +180,7 @@
     .resultCard h4{margin:0 0 6px;font-size:15px}
     .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-bottom:8px}
     .plot{margin:0;color:var(--text);opacity:.92;font-size:13px;line-height:1.35}
+
     .providers{margin-top:10px;display:grid;gap:10px}
     .provGroup{
       border:1px solid var(--border);
@@ -200,6 +200,7 @@
     .note{color:var(--muted);font-size:12px;margin-top:10px}
     .tiny{font-size:12px;color:var(--muted)}
     .hr{height:1px;background:var(--border);margin:14px 0}
+
     .toast{
       position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
       background: rgba(0,0,0,.75);
@@ -208,7 +209,7 @@
       padding:10px 12px;border-radius:14px;
       max-width:92vw;
       display:none;
-      z-index:50;
+      z-index:80;
       font-size:13px;
       backdrop-filter: blur(10px);
     }
@@ -244,6 +245,44 @@
       from{opacity:1;transform:none}
       to{opacity:0;transform: translateY(10px)}
     }
+
+    .exitOverlay{
+      position:fixed;inset:0;
+      background:#000;
+      display:none;
+      z-index:120;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      text-align:center;
+    }
+    .exitOverlay.show{display:flex}
+    .exitBox{
+      max-width:520px;
+      width:100%;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:16px 14px;
+      background: rgba(255,255,255,.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    }
+    .exitMsg{
+      margin:0;
+      font-size:16px;
+      color:#fff;
+      line-height:1.35;
+    }
+    .exitBox .btnRow{justify-content:center}
+    .shake{
+      animation: shake .12s infinite linear;
+    }
+    @keyframes shake{
+      0%{transform:translate(0,0)}
+      25%{transform:translate(1px,-1px)}
+      50%{transform:translate(-1px,1px)}
+      75%{transform:translate(1px,1px)}
+      100%{transform:translate(-1px,-1px)}
+    }
   </style>
 </head>
 
@@ -254,7 +293,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>Movie Finder</h1>
-          <p>Film e serie, con piattaforme disponibili in Italia</p>
+          <p>Solo titoli disponibili in Italia</p>
         </div>
       </div>
     </div>
@@ -265,17 +304,17 @@
       <div class="hero">
         <h2>Trova cosa guardare in pochi secondi</h2>
         <div class="row">
-          <div class="pill">Basic, 1 ricerca al giorno</div>
-          <div class="pill">Premium, ricerche illimitate</div>
-          <div class="pill">Locandina, trama, statistiche</div>
-          <div class="pill">Piattaforme, abbonamento, noleggio, acquisto</div>
+          <div class="pill">Solo disponibili in Italia</div>
+          <div class="pill">Basic, test senza limiti</div>
+          <div class="pill">Trama breve in Basic</div>
+          <div class="pill">Trama più lunga in Premium</div>
         </div>
       </div>
 
       <div class="grid2">
         <div class="card">
           <h3>Basic</h3>
-          <p>Film. 4 generi. 1 ricerca al giorno. 3 risultati.</p>
+          <p>Film. 4 generi. Trama breve. Esclude VM18.</p>
           <div class="btnRow">
             <button id="btnGoBasic">Entra in Basic</button>
             <button class="secondary" id="btnInfoBasic">Dettagli</button>
@@ -284,7 +323,7 @@
 
         <div class="card">
           <h3>Premium</h3>
-          <p>Film e serie. Slider intensità. Filtri piattaforme. Ricerche illimitate. 5 risultati.</p>
+          <p>Film e serie. Slider intensità. Trama più lunga.</p>
           <div class="btnRow">
             <button id="btnGoPremium">Entra in Premium</button>
             <button class="secondary" id="btnBuyPremium">Sblocca Premium</button>
@@ -307,7 +346,7 @@
     <div id="screenBasic" class="screen">
       <div class="sectionTitle">
         <h2>Basic</h2>
-        <div class="small">1 ricerca al giorno, 3 risultati</div>
+        <div class="small">Test senza limiti, solo film disponibili in Italia</div>
       </div>
 
       <div class="modeBar">
@@ -315,15 +354,7 @@
           <input type="radio" name="basicType" checked />
           <div>
             <div style="font-weight:800">Film</div>
-            <div class="tiny">Disponibile</div>
-          </div>
-        </div>
-
-        <div class="toggle" style="opacity:.55">
-          <input type="radio" name="basicType" disabled />
-          <div>
-            <div style="font-weight:800">Serie TV</div>
-            <div class="tiny">Non disponibile in Basic</div>
+            <div class="tiny">Esclude VM18</div>
           </div>
         </div>
 
@@ -346,16 +377,13 @@
       </div>
 
       <div class="sectionTitle">
-        <h2>Filtri piattaforme</h2>
-        <div class="small">Italia</div>
+        <h2>Piattaforme</h2>
+        <div class="small">Filtra facoltativo</div>
       </div>
 
       <div class="card">
         <div class="chips" id="basicProvidersPick"></div>
-        <div class="btnRow">
-          <label class="chip"><input id="basicOnlyOnline" type="checkbox" /> Mostra solo disponibili online</label>
-        </div>
-        <p class="note">Se non selezioni piattaforme, la ricerca non filtra. Mostra solo dove sono disponibili i risultati.</p>
+        <p class="note">Se non selezioni piattaforme, la app cerca comunque solo titoli disponibili in Italia.</p>
       </div>
 
       <div class="btnRow" style="margin-top:12px">
@@ -371,7 +399,7 @@
     <div id="screenPremium" class="screen">
       <div class="sectionTitle">
         <h2>Premium</h2>
-        <div class="small">Ricerche illimitate, 5 risultati</div>
+        <div class="small">Ricerche illimitate, 5 risultati, solo disponibili in Italia</div>
       </div>
 
       <div class="modeBar">
@@ -379,7 +407,7 @@
           <input id="premiumPickMovie" type="radio" name="premiumType" value="movie" checked />
           <div>
             <div style="font-weight:800">Film</div>
-            <div class="tiny">TMDB</div>
+            <div class="tiny">Disponibili in Italia</div>
           </div>
         </label>
 
@@ -387,7 +415,7 @@
           <input id="premiumPickTv" type="radio" name="premiumType" value="tv" />
           <div>
             <div style="font-weight:800">Serie TV</div>
-            <div class="tiny">TMDB</div>
+            <div class="tiny">Disponibili in Italia</div>
           </div>
         </label>
 
@@ -405,19 +433,13 @@
       <div class="sliders" id="premiumSliders"></div>
 
       <div class="sectionTitle">
-        <h2>Filtri piattaforme</h2>
-        <div class="small">Italia</div>
+        <h2>Piattaforme</h2>
+        <div class="small">Filtra facoltativo</div>
       </div>
 
       <div class="card">
         <div class="chips" id="premiumProvidersPick"></div>
-        <div class="btnRow">
-          <label class="chip"><input id="premiumOnlyOnline" type="checkbox" checked /> Mostra solo disponibili online</label>
-          <label class="chip"><input id="monFlatrate" type="checkbox" checked /> Abbonamento</label>
-          <label class="chip"><input id="monRent" type="checkbox" /> Noleggio</label>
-          <label class="chip"><input id="monBuy" type="checkbox" /> Acquisto</label>
-        </div>
-        <p class="note">Se selezioni piattaforme, la ricerca filtra già i risultati. Se non selezioni nulla, mostra solo le piattaforme trovate su ogni titolo.</p>
+        <p class="note">La app non distingue noleggio o abbonamento. Mostra solo dove è disponibile.</p>
       </div>
 
       <div class="btnRow" style="margin-top:12px">
@@ -434,6 +456,16 @@
 
   <div id="toast" class="toast"></div>
 
+  <div id="exitOverlay" class="exitOverlay" aria-hidden="true">
+    <div id="exitBox" class="exitBox">
+      <p class="exitMsg">Mettiti comodo inizia lo spettacolo</p>
+      <div class="btnRow" style="margin-top:12px">
+        <button class="danger" id="btnForceExit" type="button">Esci</button>
+        <button class="secondary" id="btnCancelExit" type="button">Annulla</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 const TMDB_API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
 const TMDB_LANG = "it-IT";
@@ -441,6 +473,8 @@ const TMDB_REGION = "IT";
 
 const POSTER_W342 = "https://image.tmdb.org/t/p/w342";
 const LOGO_W45 = "https://image.tmdb.org/t/p/w45";
+
+const BASIC_TEST_MODE_UNLIMITED = true;
 
 const LS = {
   premium: "mf_premium_purchased",
@@ -470,7 +504,6 @@ const GENRE_MAP_TV = {
   animazione: 16,
   romantico: 10749,
   dramma: 18,
-  horror: 9648,
   fantascienza: 10765,
   avventura: 10759,
   crime: 80
@@ -481,12 +514,10 @@ const PROVIDERS = [
   { id: 119, name: "Prime Video" },
   { id: 337, name: "Disney+" },
   { id: 350, name: "Apple TV" },
-  { id: 384, name: "HBO Max" },
   { id: 39,  name: "NOW" },
   { id: 2,   name: "Apple iTunes" },
   { id: 35,  name: "Rakuten TV" },
-  { id: 283, name: "Crunchyroll" },
-  { id: 386, name: "Peacock" }
+  { id: 283, name: "Crunchyroll" }
 ];
 
 const PLOT_MAX_BASIC = 220;
@@ -570,16 +601,22 @@ function refreshPremiumGateInfo(){
 }
 
 function canBasicSearch(){
+  if(BASIC_TEST_MODE_UNLIMITED) return true;
   const last = localStorage.getItem(LS.lastBasicSearchDate) || "";
   return last !== todayISO();
 }
 
 function markBasicSearched(){
+  if(BASIC_TEST_MODE_UNLIMITED) return;
   localStorage.setItem(LS.lastBasicSearchDate, todayISO());
 }
 
 function refreshBasicLimitInfo(){
   const info = el("basicLimitInfo");
+  if(BASIC_TEST_MODE_UNLIMITED){
+    info.textContent = "Test attivo. Ricerche Basic senza limiti.";
+    return;
+  }
   if(canBasicSearch()){
     info.textContent = "Puoi fare 1 ricerca oggi.";
   }else{
@@ -638,7 +675,6 @@ const PREMIUM_GENRES = [
   { key:"animazione", label:"Animazione" },
   { key:"romantico", label:"Romantico" },
   { key:"dramma", label:"Dramma" },
-  { key:"horror", label:"Horror" },
   { key:"fantascienza", label:"Fantascienza" },
   { key:"avventura", label:"Avventura" },
   { key:"crime", label:"Crime" }
@@ -684,7 +720,7 @@ function pickTopGenres(weights, maxCount){
   return arr.slice(0, maxCount).map(x => x.k);
 }
 
-function buildDiscoverParams({ kind, genreCsv, providerCsv, monetizationCsv }){
+function buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie }){
   const params = new URLSearchParams();
   params.set("api_key", TMDB_API_KEY);
   params.set("language", TMDB_LANG);
@@ -694,7 +730,7 @@ function buildDiscoverParams({ kind, genreCsv, providerCsv, monetizationCsv }){
   params.set("include_adult", "false");
   params.set("include_video", "false");
 
-  params.set("vote_count.gte", "150");
+  params.set("vote_count.gte", "120");
   params.set("vote_average.gte", "6.0");
 
   if(kind === "movie"){
@@ -704,8 +740,15 @@ function buildDiscoverParams({ kind, genreCsv, providerCsv, monetizationCsv }){
   }
 
   if(genreCsv) params.set("with_genres", genreCsv);
-  if(providerCsv) params.set("with_watch_providers", providerCsv);
-  if(monetizationCsv) params.set("with_watch_monetization_types", monetizationCsv);
+
+  if(providerCsv){
+    params.set("with_watch_providers", providerCsv);
+  }
+
+  if(isBasicMovie){
+    params.set("certification_country", "IT");
+    params.set("certification.lte", "14");
+  }
 
   const sortPool = ["popularity.desc","vote_average.desc","revenue.desc"];
   params.set("sort_by", sortPool[randInt(0, sortPool.length-1)]);
@@ -735,9 +778,26 @@ async function getProvidersForItem(kind, id){
   };
 }
 
-function hasAnyProvider(p){
-  if(!p) return false;
-  return (p.flatrate && p.flatrate.length) || (p.rent && p.rent.length) || (p.buy && p.buy.length);
+function mergeProviders(p){
+  if(!p) return [];
+  const map = new Map();
+  const add = (arr) => {
+    (arr || []).forEach(x => {
+      if(!x || !x.provider_id) return;
+      if(!map.has(x.provider_id)){
+        map.set(x.provider_id, x);
+      }
+    });
+  };
+  add(p.flatrate);
+  add(p.rent);
+  add(p.buy);
+  return Array.from(map.values());
+}
+
+function hasAnyProviderInIT(p){
+  const merged = mergeProviders(p);
+  return merged.length > 0;
 }
 
 async function fetchDetails(kind, id, language){
@@ -776,14 +836,13 @@ async function getRandomItems({
   kind,
   genreCsv,
   providerCsv,
-  onlyOnline,
-  monetizationCsv,
-  count
+  count,
+  isBasicMovie
 }){
   const shown = loadShownSet(kind);
-  const params = buildDiscoverParams({ kind, genreCsv, providerCsv, monetizationCsv });
+  const params = buildDiscoverParams({ kind, genreCsv, providerCsv, isBasicMovie });
 
-  const maxTries = 7;
+  const maxTries = 9;
   const pageMax = 20;
   const collected = [];
 
@@ -809,7 +868,9 @@ async function getRandomItems({
         providers = null;
       }
 
-      if(onlyOnline && !hasAnyProvider(providers)) continue;
+      if(!hasAnyProviderInIT(providers)){
+        continue;
+      }
 
       let item = raw;
       try{
@@ -838,44 +899,11 @@ function formatRating(item){
   return `Voto ${v}, voti ${c}`;
 }
 
-function shortPlot(text, maxLen){
+function clipText(text, maxLen){
   if(!text) return "Trama non disponibile.";
   const t = String(text).trim();
   if(t.length <= maxLen) return t;
   return t.slice(0, maxLen) + "...";
-}
-
-function renderProvidersBlock(p){
-  if(!p) return `<div class="note">Piattaforme non disponibili per IT.</div>`;
-
-  const makeGroup = (title, list) => {
-    if(!list || !list.length) return "";
-    const items = list.slice(0, 10).map(x => {
-      const logo = x.logo_path ? (LOGO_W45 + x.logo_path) : "";
-      const img = logo ? `<img src="${logo}" alt="">` : `<img alt="">`;
-      const nm = x.provider_name ? x.provider_name : "";
-      return `<div class="provItem">${img}<span>${nm}</span></div>`;
-    }).join("");
-    return `
-      <div class="provGroup">
-        <p class="t">${title}</p>
-        <div class="provList">${items}</div>
-      </div>
-    `;
-  };
-
-  const blocks = [
-    makeGroup("Abbonamento", p.flatrate),
-    makeGroup("Noleggio", p.rent),
-    makeGroup("Acquisto", p.buy)
-  ].filter(Boolean).join("");
-
-  const link = p.link ? `<div class="note">Link: <a class="link" href="${p.link}" target="_blank" rel="noopener">Apri</a></div>` : "";
-
-  if(!blocks){
-    return `<div class="note">Nessuna piattaforma trovata per IT.</div>${link}`;
-  }
-  return `<div class="providers">${blocks}</div>${link}`;
 }
 
 function escapeHtml(s){
@@ -885,6 +913,34 @@ function escapeHtml(s){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+}
+
+function renderProvidersBlock(p){
+  if(!p) return `<div class="note">Non trovato in Italia.</div>`;
+
+  const merged = mergeProviders(p);
+  if(!merged.length){
+    return `<div class="note">Non trovato in Italia.</div>`;
+  }
+
+  const items = merged.slice(0, 12).map(x => {
+    const logo = x.logo_path ? (LOGO_W45 + x.logo_path) : "";
+    const img = logo ? `<img src="${logo}" alt="">` : `<img alt="">`;
+    const nm = x.provider_name ? x.provider_name : "";
+    return `<div class="provItem">${img}<span>${escapeHtml(nm)}</span></div>`;
+  }).join("");
+
+  const link = p.link ? `<div class="note">Link: <a class="link" href="${p.link}" target="_blank" rel="noopener">Apri</a></div>` : "";
+
+  return `
+    <div class="providers">
+      <div class="provGroup">
+        <p class="t">Disponibile su</p>
+        <div class="provList">${items}</div>
+      </div>
+    </div>
+    ${link}
+  `;
 }
 
 function savePicked(kind, item, providers){
@@ -934,7 +990,7 @@ function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
             <div>Pop ${escapeHtml(pop)}</div>
             <div>${escapeHtml(titleSuffix)}</div>
           </div>
-          <p class="plot">${escapeHtml(shortPlot(item.overview, plotMaxLen))}</p>
+          <p class="plot">${escapeHtml(clipText(item.overview, plotMaxLen))}</p>
           ${renderProvidersBlock(providers)}
           <div class="actionRow">
             <button class="watchBtn" id="${btnId}" type="button">Guarda</button>
@@ -957,8 +1013,7 @@ function renderResults(containerId, kind, entries, titleSuffix, plotMaxLen){
     if(watchBtn){
       watchBtn.addEventListener("click", () => {
         savePicked(kind, item, providers);
-        toast("Scelto. Chiudo.");
-        exitApp();
+        startShowExitSequence();
       });
     }
 
@@ -997,19 +1052,17 @@ async function runBasic(){
   }
 
   const providerCsv = readPickedProviders("basicProvidersPick");
-  const onlyOnline = el("basicOnlyOnline").checked;
 
   el("btnBasicSearch").disabled = true;
-  el("basicResults").innerHTML = `<div class="card"><h3>Ricerca in corso</h3><p>Sto cercando risultati coerenti, con piattaforme in IT.</p></div>`;
+  el("basicResults").innerHTML = `<div class="card"><h3>Ricerca in corso</h3><p>Sto cercando film disponibili in Italia.</p></div>`;
 
   try{
     const entries = await getRandomItems({
       kind: "movie",
       genreCsv,
       providerCsv,
-      onlyOnline,
-      monetizationCsv: "",
-      count: 3
+      count: 3,
+      isBasicMovie: true
     });
     renderResults("basicResults", "movie", entries, "Basic", PLOT_MAX_BASIC);
     markBasicSearched();
@@ -1037,14 +1090,6 @@ function buildGenreCsvForPremium(kind, weights){
   return ids.join(",");
 }
 
-function buildMonetizationCsv(){
-  const m = [];
-  if(el("monFlatrate").checked) m.push("flatrate");
-  if(el("monRent").checked) m.push("rent");
-  if(el("monBuy").checked) m.push("buy");
-  return m.join("|");
-}
-
 async function runPremium(){
   if(!isPremiumPurchased()){
     toast("Premium bloccato.");
@@ -1062,20 +1107,17 @@ async function runPremium(){
   }
 
   const providerCsv = readPickedProviders("premiumProvidersPick");
-  const onlyOnline = el("premiumOnlyOnline").checked;
-  const monetizationCsv = buildMonetizationCsv();
 
   el("btnPremiumSearch").disabled = true;
-  el("premiumResults").innerHTML = `<div class="card"><h3>Ricerca in corso</h3><p>Sto cercando risultati coerenti con gli slider e le piattaforme.</p></div>`;
+  el("premiumResults").innerHTML = `<div class="card"><h3>Ricerca in corso</h3><p>Sto cercando titoli disponibili in Italia.</p></div>`;
 
   try{
     const entries = await getRandomItems({
       kind,
       genreCsv,
       providerCsv,
-      onlyOnline,
-      monetizationCsv,
-      count: 5
+      count: 5,
+      isBasicMovie: false
     });
     renderResults("premiumResults", kind, entries, "Premium", PLOT_MAX_PREMIUM);
     toast("Fatto.");
@@ -1095,6 +1137,38 @@ function exitApp(){
     try { history.back(); } catch {}
     setTimeout(() => { try { window.close(); } catch {} }, 120);
   }, 340);
+}
+
+function startShowExitSequence(){
+  const overlay = el("exitOverlay");
+  const box = el("exitBox");
+
+  overlay.classList.add("show");
+  box.classList.add("shake");
+
+  try{
+    if(navigator.vibrate){
+      navigator.vibrate([80,40,80,40,120,60,120,60,160]);
+    }
+  }catch{}
+
+  setTimeout(() => {
+    box.classList.remove("shake");
+    exitApp();
+  }, 1000);
+}
+
+function cancelExit(){
+  const overlay = el("exitOverlay");
+  const box = el("exitBox");
+  box.classList.remove("shake");
+  overlay.classList.remove("show");
+  try{ if(navigator.vibrate) navigator.vibrate(0); }catch{}
+  toast("Ok. Resta in app.");
+}
+
+function forceExit(){
+  exitApp();
 }
 
 function init(){
@@ -1123,7 +1197,7 @@ function init(){
   });
 
   el("btnInfoBasic").addEventListener("click", () => {
-    toast("Basic: Film, 4 generi, 1 ricerca al giorno, 3 risultati.");
+    toast("Basic: film disponibili in Italia, trame brevi, escluso VM18.");
   });
 
   el("btnBackFromBasic").addEventListener("click", () => showScreen("screenStart"));
@@ -1159,13 +1233,12 @@ function init(){
     });
   });
 
-  el("premiumOnlyOnline").addEventListener("change", () => {
-    toast(el("premiumOnlyOnline").checked ? "Solo online" : "Anche offline");
-  });
+  el("btnExitFromStart").addEventListener("click", startShowExitSequence);
+  el("btnExitFromBasic").addEventListener("click", startShowExitSequence);
+  el("btnExitFromPremium").addEventListener("click", startShowExitSequence);
 
-  el("btnExitFromStart").addEventListener("click", exitApp);
-  el("btnExitFromBasic").addEventListener("click", exitApp);
-  el("btnExitFromPremium").addEventListener("click", exitApp);
+  el("btnCancelExit").addEventListener("click", cancelExit);
+  el("btnForceExit").addEventListener("click", forceExit);
 }
 
 init();
