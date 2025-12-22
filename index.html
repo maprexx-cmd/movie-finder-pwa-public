@@ -7,7 +7,6 @@
   <style>
     :root{
       --bg:#050607;
-      --panel:#0c0f10;
       --text:#e9eef2;
       --muted:#9aa6b2;
       --line:#1d2427;
@@ -15,7 +14,7 @@
       --acidY:#e6ff00;
       --acidG:#00ff7a;
 
-      --danger:#ff3b30;
+      --serviceBlue:#3aa0ff;
 
       --r:18px;
       --shadow: 0 10px 30px rgba(0,0,0,.45);
@@ -62,9 +61,7 @@
       border-color: rgba(0,255,122,.35);
       background: linear-gradient(180deg, rgba(0,255,122,.18) 0%, rgba(0,255,122,.06) 100%);
     }
-    .btn.ghost{
-      box-shadow:none;background:transparent;border-color: var(--line);
-    }
+    .btn.ghost{box-shadow:none;background:transparent;border-color: var(--line)}
     .btn.small{padding:8px 10px;border-radius:12px;font-size:12px}
     .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 
@@ -74,9 +71,7 @@
       gap:16px;
       padding:18px;
     }
-    @media (max-width:900px){
-      .grid{grid-template-columns: 1fr}
-    }
+    @media (max-width:900px){ .grid{grid-template-columns: 1fr} }
 
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.03) 0%, rgba(255,255,255,.015) 100%);
@@ -89,6 +84,17 @@
     .muted{color:var(--muted)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .sep{height:1px;background:var(--line);margin:12px 0}
+
+    .service{
+      color: var(--serviceBlue);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .serviceBadge{
+      color: var(--serviceBlue);
+      border-color: rgba(58,160,255,.35);
+      background: rgba(58,160,255,.06);
+    }
 
     .pill{
       padding:8px 10px;border-radius:999px;border:1px solid var(--line);
@@ -167,7 +173,6 @@
     }
     .splash h2{margin:0 0 6px 0}
     .splash p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
-
     @keyframes fadeIn{
       from{opacity:0;transform: translateY(10px)}
       to{opacity:1;transform: translateY(0)}
@@ -199,17 +204,63 @@
     }
     input[type="range"]{width:100%}
 
-    .flicker{
-      min-height: calc(100vh - 62px);
-      display:grid;place-items:center;text-align:center;padding:18px;
-      background: radial-gradient(800px 340px at 50% 30%, rgba(255,255,255,.05) 0%, rgba(0,0,0,.0) 70%);
+    .copyHint{display:none;margin-left:10px;color:var(--muted);font-size:12px}
+    .copyHint.on{display:inline}
+
+    .cinema{
+      position:fixed;inset:0;
+      background:#000;
+      opacity:0;
+      pointer-events:none;
+      z-index:200;
+      transition: opacity 900ms ease;
+      display:flex;align-items:center;justify-content:center;
+      padding:18px;text-align:center;
     }
-    .flicker .text{
-      font-size:20px;letter-spacing:.3px;line-height:1.35;
-      padding:18px;border-radius:18px;border:1px solid rgba(255,255,255,.08);
+    .cinema.on{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .cinema .box{
+      width:min(640px, 100%);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      padding:18px 16px;
       background: rgba(0,0,0,.35);
+      box-shadow: 0 20px 60px rgba(0,0,0,.65);
+      position:relative;
+      overflow:hidden;
+    }
+    .cinema .filmtext{
+      font-size:20px;letter-spacing:.3px;line-height:1.35;
       text-shadow: 0 0 10px rgba(255,255,255,.10);
       animation: proj 1.2s infinite;
+    }
+    .cinema .sub{
+      margin-top:10px;
+      font-size:12px;
+      line-height:1.35;
+    }
+    .cinema .actions{
+      margin-top:14px;
+      display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+    }
+    .grain{
+      position:absolute;inset:-40px;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,.06) 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 80%, rgba(255,255,255,.05) 0 1px, transparent 2px),
+        radial-gradient(circle at 30% 60%, rgba(255,255,255,.04) 0 1px, transparent 2px);
+      background-size: 120px 120px;
+      opacity:.25;
+      mix-blend-mode: overlay;
+      animation: grainMove 600ms steps(2) infinite;
+      pointer-events:none;
+    }
+    @keyframes grainMove{
+      0%{transform: translate3d(0,0,0)}
+      50%{transform: translate3d(-12px, 8px,0)}
+      100%{transform: translate3d(10px,-10px,0)}
     }
     @keyframes proj{
       0%{opacity:1;transform: translateX(0)}
@@ -220,10 +271,6 @@
       70%{opacity:.93;transform: translateX(-.4px)}
       100%{opacity:1;transform: translateX(0)}
     }
-
-    .hint{font-size:12px;color:var(--muted);line-height:1.35;margin-top:10px}
-    .copyHint{display:none;margin-left:10px;color:var(--muted);font-size:12px}
-    .copyHint.on{display:inline}
   </style>
 </head>
 
@@ -240,46 +287,44 @@
     <div class="row">
       <button class="btn small ghost" id="btnHome">Home</button>
       <button class="btn small primary" id="btnCopy">Copia index.html</button>
-      <span class="copyHint" id="copyHint">Copiato</span>
+      <span class="copyHint service" id="copyHint">Copiato</span>
     </div>
   </div>
 
   <main class="wrap">
 
-    <!-- SPLASH -->
     <section class="section on" id="secSplash">
       <div class="splash">
         <div class="box">
           <div class="bigLogo" aria-hidden="true"></div>
           <h2>Movie Finder</h2>
-          <p>Trova cosa guardare in pochi tocchi. Poster, trama, statistiche, piattaforme.</p>
-          <div class="hint">Mettiti comodo. Tra poco scegli Basic o Premium.</div>
+          <p>Trova cosa guardare in pochi tocchi. Poster, trama, piattaforme.</p>
+          <div class="service">Tra poco scegli Basic o Premium.</div>
         </div>
       </div>
     </section>
 
-    <!-- PROFILI -->
     <section class="section" id="secProfiles">
       <div class="grid">
         <div class="card">
           <h2>Scegli il profilo</h2>
-          <p class="muted">Seleziona Basic o Premium. Puoi cambiare quando vuoi.</p>
+          <p class="muted">Basic per semplicità. Premium per slider e Serie TV.</p>
           <div class="sep"></div>
 
           <div class="card" style="background:rgba(0,0,0,.22)">
             <div class="row" style="justify-content:space-between">
               <div>
                 <div style="font-weight:650">Basic</div>
-                <div class="muted" style="font-size:13px;margin-top:2px">3 film consigliati al giorno. Zero distrazioni.</div>
+                <div class="muted" style="font-size:13px;margin-top:2px">3 film consigliati al giorno. Film presenti su piattaforme.</div>
               </div>
               <button class="btn green" id="btnBasic">Entra in Basic</button>
             </div>
             <div class="sep"></div>
             <div class="muted" style="font-size:13px;line-height:1.4">
-              Menu con Film e Serie TV, ma Serie TV bloccate.<br/>
+              Film e Serie TV nel menu, ma Serie TV bloccate.<br/>
               Una sola ricerca al giorno. 3 risultati.<br/>
               Generi: Azione, Comico, Thriller, Animazione.<br/>
-              Poster, trama breve, statistiche base, piattaforme.
+              Solo titoli con piattaforme in IT.
             </div>
           </div>
 
@@ -289,24 +334,23 @@
             <div class="row" style="justify-content:space-between">
               <div>
                 <div style="font-weight:650">Premium</div>
-                <div class="muted" style="font-size:13px;margin-top:2px">Suggerimenti avanzati. Film e serie su misura.</div>
+                <div class="muted" style="font-size:13px;margin-top:2px">5 risultati coerenti. Solo titoli con piattaforme in IT.</div>
               </div>
               <button class="btn primary" id="btnPremium">Entra in Premium</button>
             </div>
             <div class="sep"></div>
             <div class="muted" style="font-size:13px;line-height:1.4">
-              Sblocca Film e Serie TV.<br/>
+              Film e Serie TV sbloccate.<br/>
               Ricerche illimitate. 5 risultati.<br/>
-              Slider intensità 0 a 5 per i generi.<br/>
-              Poster, trama estesa, statistiche complete.<br/>
+              Slider intensità 0 a 5.<br/>
               Piattaforme complete: gratis, noleggio, acquisto.<br/>
-              Social, ultimi visti, top 5 settimana.
+              Solo titoli con piattaforme in IT.
             </div>
           </div>
 
           <div class="sep"></div>
-          <div class="muted" style="font-size:12px;line-height:1.35">
-            Nota tecnica. Questa è una demo web. In app Android userai Google Play Billing per il pagamento.
+          <div class="service">
+            Nota. Il pagamento Play Store qui è simulato. In app Android userai Google Play Billing.
           </div>
         </div>
 
@@ -314,21 +358,17 @@
           <h2>Controlli rapidi</h2>
           <div class="row">
             <span class="badge">Regione: IT</span>
-            <span class="badge">TMDB watch/providers</span>
-            <span class="badge">flatrate, rent, buy</span>
-          </div>
-          <div class="sep"></div>
-          <div class="muted" style="font-size:13px;line-height:1.4">
-            In Basic: una ricerca al giorno.<br/>
-            In Premium: illimitato, slider, Serie TV, social.
+            <span class="badge">watch/providers TMDB</span>
+            <span class="badge">Gratis, noleggio, acquisto</span>
           </div>
           <div class="sep"></div>
           <button class="btn ghost" id="btnResetLocal">Reset demo</button>
+          <div class="sep"></div>
+          <div class="service" id="netHint"></div>
         </div>
       </div>
     </section>
 
-    <!-- BASIC -->
     <section class="section" id="secBasic">
       <div class="grid">
         <div class="card">
@@ -337,15 +377,15 @@
               <h2 style="margin-bottom:4px">Basic</h2>
               <div class="muted" style="font-size:13px">Una scelta al giorno. 3 risultati. Film soltanto.</div>
             </div>
-            <span class="badge" id="basicLimitBadge">Controllo limite</span>
+            <span class="badge serviceBadge" id="basicLimitBadge">Controllo limite</span>
           </div>
 
           <div class="sep"></div>
 
           <div class="row">
-            <button class="btn small" id="basicTabFilm">Film</button>
-            <button class="btn small" id="basicTabTv" disabled>Serie TV</button>
-            <span class="badge">Serie TV bloccate</span>
+            <button class="btn small" disabled>Film</button>
+            <button class="btn small" disabled>Serie TV</button>
+            <span class="badge serviceBadge">Serie TV bloccate</span>
           </div>
 
           <div class="sep"></div>
@@ -365,7 +405,7 @@
             <button class="btn ghost" id="btnBasicClear">Azzera selezione</button>
           </div>
 
-          <div class="hint" id="basicHint"></div>
+          <div class="service" id="basicHint"></div>
         </div>
 
         <div class="card">
@@ -374,18 +414,13 @@
             <span class="badge">3 titoli</span>
           </div>
           <div class="sep"></div>
-
           <div class="results" id="basicResults"></div>
-
           <div class="sep"></div>
-          <div class="muted" style="font-size:12px;line-height:1.35">
-            Ordine suggerito: 1 più disponibile, 2 miglior voto, 3 scelta alternativa.
-          </div>
+          <div class="service" id="basicServiceNote"></div>
         </div>
       </div>
     </section>
 
-    <!-- PREMIUM -->
     <section class="section" id="secPremium">
       <div class="grid">
         <div class="card">
@@ -394,7 +429,7 @@
               <h2 style="margin-bottom:4px">Premium</h2>
               <div class="muted" style="font-size:13px">Ricerche illimitate. 5 risultati. Film e Serie TV.</div>
             </div>
-            <span class="badge" id="premiumStatus">Stato pagamento</span>
+            <span class="badge serviceBadge" id="premiumStatus">Stato pagamento</span>
           </div>
 
           <div class="sep"></div>
@@ -409,54 +444,39 @@
 
           <div id="premFilmTvBox">
             <h2 style="font-size:14px;margin:0 0 6px 0">Generi con intensità</h2>
-            <div class="muted" style="font-size:12px;line-height:1.35">
+            <div class="service">
               Metti 0 se non vuoi quel genere. Metti 5 se lo vuoi molto.
             </div>
 
             <div class="sep"></div>
 
             <div class="sliderRow">
-              <div>
-                <div style="font-weight:650">Azione</div>
-                <div class="muted" style="font-size:12px">Ritmo, adrenalina</div>
-              </div>
-              <div class="row" style="justify-content:flex-end"><span class="badge" id="valAction">3</span></div>
+              <div><div style="font-weight:650">Azione</div><div class="muted" style="font-size:12px">Ritmo</div></div>
+              <div class="row" style="justify-content:flex-end"><span class="badge serviceBadge" id="valAction">3</span></div>
               <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="3" id="slAction" /></div>
             </div>
 
             <div class="sliderRow">
-              <div>
-                <div style="font-weight:650">Comico</div>
-                <div class="muted" style="font-size:12px">Leggero</div>
-              </div>
-              <div class="row" style="justify-content:flex-end"><span class="badge" id="valComedy">2</span></div>
+              <div><div style="font-weight:650">Comico</div><div class="muted" style="font-size:12px">Leggero</div></div>
+              <div class="row" style="justify-content:flex-end"><span class="badge serviceBadge" id="valComedy">2</span></div>
               <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="2" id="slComedy" /></div>
             </div>
 
             <div class="sliderRow">
-              <div>
-                <div style="font-weight:650">Thriller</div>
-                <div class="muted" style="font-size:12px">Tensione</div>
-              </div>
-              <div class="row" style="justify-content:flex-end"><span class="badge" id="valThriller">3</span></div>
+              <div><div style="font-weight:650">Thriller</div><div class="muted" style="font-size:12px">Tensione</div></div>
+              <div class="row" style="justify-content:flex-end"><span class="badge serviceBadge" id="valThriller">3</span></div>
               <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="3" id="slThriller" /></div>
             </div>
 
             <div class="sliderRow">
-              <div>
-                <div style="font-weight:650">Romantico</div>
-                <div class="muted" style="font-size:12px">Emozioni</div>
-              </div>
-              <div class="row" style="justify-content:flex-end"><span class="badge" id="valRomance">1</span></div>
+              <div><div style="font-weight:650">Romantico</div><div class="muted" style="font-size:12px">Emozioni</div></div>
+              <div class="row" style="justify-content:flex-end"><span class="badge serviceBadge" id="valRomance">1</span></div>
               <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="1" id="slRomance" /></div>
             </div>
 
             <div class="sliderRow">
-              <div>
-                <div style="font-weight:650">Dramma</div>
-                <div class="muted" style="font-size:12px">Storie intense</div>
-              </div>
-              <div class="row" style="justify-content:flex-end"><span class="badge" id="valDrama">2</span></div>
+              <div><div style="font-weight:650">Dramma</div><div class="muted" style="font-size:12px">Intenso</div></div>
+              <div class="row" style="justify-content:flex-end"><span class="badge serviceBadge" id="valDrama">2</span></div>
               <div style="grid-column:1 / -1"><input type="range" min="0" max="5" value="2" id="slDrama" /></div>
             </div>
 
@@ -467,25 +487,19 @@
               <button class="btn ghost" id="btnPremSurprise">Sorprendimi</button>
             </div>
 
-            <div class="hint" id="premExplain"></div>
+            <div class="service" id="premExplain"></div>
           </div>
 
           <div id="premSocialBox" style="display:none">
             <h2 style="font-size:14px;margin:0 0 8px 0">Social</h2>
-            <div class="muted" style="font-size:13px;line-height:1.4">
+            <div class="service">
               Condividi cosa stai guardando. Il link invita a scaricare la app.
             </div>
             <div class="sep"></div>
-
             <div class="row">
               <button class="btn green" id="btnShareNow">Sto guardando questo</button>
               <button class="btn" id="btnShareRec">Consigliato</button>
               <button class="btn ghost" id="btnCopyLink">Copia link app</button>
-            </div>
-
-            <div class="sep"></div>
-            <div class="muted" style="font-size:12px;line-height:1.35">
-              In produzione userai un deep link reale verso lo store.
             </div>
           </div>
 
@@ -498,7 +512,6 @@
           </div>
 
           <div class="sep"></div>
-
           <div class="results" id="premHistory"></div>
           <div class="sep"></div>
           <div class="results" id="premTopWeek"></div>
@@ -510,36 +523,21 @@
             <span class="badge">5 titoli</span>
           </div>
           <div class="sep"></div>
-
           <div class="results" id="premResults"></div>
-
           <div class="sep"></div>
-          <div class="muted" style="font-size:12px;line-height:1.35">
-            Piattaforme complete con logo. Gratis, noleggio, acquisto.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FINALE CINEMA -->
-    <section class="section" id="secFinal">
-      <div class="flicker">
-        <div>
-          <div class="text">Mettiti comodo, lo spettacolo sta per iniziare</div>
-          <div class="hint">Se il browser non può chiudere la scheda, chiudila tu.</div>
+          <div class="service" id="premServiceNote"></div>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- MODAL PAY -->
   <div class="modalBack" id="payModal">
     <div class="modal">
       <div class="row" style="justify-content:space-between;align-items:flex-start">
         <div>
           <h3>Attiva Premium</h3>
-          <p>In app userai il pagamento Play Store. Qui lo simulo per la demo.</p>
+          <p class="service">In app userai Play Store. Qui lo simulo per la demo.</p>
         </div>
         <button class="btn small ghost" id="btnPayClose">Chiudi</button>
       </div>
@@ -551,13 +549,12 @@
     </div>
   </div>
 
-  <!-- MODAL BASIC LIMIT -->
   <div class="modalBack" id="limitModal">
     <div class="modal">
       <div class="row" style="justify-content:space-between;align-items:flex-start">
         <div>
           <h3>Hai già usato la scelta di oggi</h3>
-          <p>In Basic puoi fare una sola ricerca al giorno.</p>
+          <p class="service">In Basic puoi fare una sola ricerca al giorno.</p>
         </div>
         <button class="btn small ghost" id="btnLimitClose">Chiudi</button>
       </div>
@@ -569,12 +566,21 @@
     </div>
   </div>
 
+  <div class="cinema" id="cinema">
+    <div class="box">
+      <div class="grain" aria-hidden="true"></div>
+      <div class="filmtext">Mettiti comodo, lo spettacolo sta per iniziare</div>
+      <div class="sub service" id="cinemaSub">Sto chiudendo la app...</div>
+      <div class="actions" id="cinemaActions" style="display:none">
+        <button class="btn primary" id="btnCloseTab">Chiudi</button>
+        <button class="btn ghost" id="btnBack">Torna indietro</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     "use strict";
 
-    /* ===========================
-       CONFIG TMDB
-       =========================== */
     const TMDB_API_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
     const TMDB_BASE = "https://api.themoviedb.org/3";
     const IMG = "https://image.tmdb.org/t/p/w342";
@@ -582,20 +588,32 @@
     const REGION = "IT";
     const APP_DEEPLINK = "https://example.com/movie-finder";
 
-    const G = {
-      action: 28,
-      comedy: 35,
-      thriller: 53,
-      animation: 16,
-      romance: 10749,
-      drama: 18
-    };
+    const G = { action:28, comedy:35, thriller:53, animation:16, romance:10749, drama:18 };
 
     const S = {
       profile: localStorage.getItem("mf_profile") || "none",
       premium: localStorage.getItem("mf_premium") === "true",
       premType: "movie"
     };
+
+    function byId(id){ return document.getElementById(id); }
+
+    const secSplash = byId("secSplash");
+    const secProfiles = byId("secProfiles");
+    const secBasic = byId("secBasic");
+    const secPremium = byId("secPremium");
+
+    function show(sectionId){
+      [secSplash, secProfiles, secBasic, secPremium].forEach(x => x.classList.remove("on"));
+      byId(sectionId).classList.add("on");
+      window.scrollTo({top:0, behavior:"instant"});
+    }
+
+    function setService(elId, msg){
+      const el = byId(elId);
+      if(!el) return;
+      el.textContent = msg || "";
+    }
 
     function todayKey(){
       const d = new Date();
@@ -605,38 +623,13 @@
       return yyyy + "-" + mm + "-" + dd;
     }
 
-    function setProfile(p){
-      S.profile = p;
-      localStorage.setItem("mf_profile", p);
-    }
+    function setProfile(p){ S.profile = p; localStorage.setItem("mf_profile", p); }
+    function setPremium(on){ S.premium = !!on; localStorage.setItem("mf_premium", String(!!on)); updatePremiumStatus(); }
 
-    function setPremium(on){
-      S.premium = !!on;
-      localStorage.setItem("mf_premium", String(!!on));
-      updatePremiumStatus();
-    }
-
-    function byId(id){ return document.getElementById(id); }
-
-    const secSplash = byId("secSplash");
-    const secProfiles = byId("secProfiles");
-    const secBasic = byId("secBasic");
-    const secPremium = byId("secPremium");
-    const secFinal = byId("secFinal");
-
-    function show(sectionId){
-      [secSplash, secProfiles, secBasic, secPremium, secFinal].forEach(x => x.classList.remove("on"));
-      byId(sectionId).classList.add("on");
-      window.scrollTo({top:0, behavior:"instant"});
-    }
-
-    /* ===========================
-       COPY BUTTON
-       =========================== */
     byId("btnCopy").addEventListener("click", async () => {
       const hint = byId("copyHint");
       try{
-        const html = "<!doctype html>\\n" + document.documentElement.outerHTML;
+        const html = "<!doctype html>\n" + document.documentElement.outerHTML;
         await navigator.clipboard.writeText(html);
         hint.classList.add("on");
         setTimeout(() => hint.classList.remove("on"), 1200);
@@ -655,30 +648,22 @@
       location.reload();
     });
 
-    /* ===========================
-       PROFILI
-       =========================== */
     byId("btnBasic").addEventListener("click", () => {
       setProfile("basic");
       show("secBasic");
       refreshBasicLimitUI();
       byId("basicResults").innerHTML = "";
-      byId("basicHint").textContent = "";
+      setService("basicHint", "");
+      setService("basicServiceNote", "");
     });
 
     byId("btnPremium").addEventListener("click", () => {
       setProfile("premium");
-      if(!S.premium){
-        openPayModal();
-        return;
-      }
+      if(!S.premium){ openPayModal(); return; }
       show("secPremium");
       loadPremiumPanels();
     });
 
-    /* ===========================
-       MODAL PAY
-       =========================== */
     const payModal = byId("payModal");
     byId("btnPayClose").addEventListener("click", closePayModal);
     byId("btnPayLater").addEventListener("click", closePayModal);
@@ -690,14 +675,20 @@
     });
     function openPayModal(){ payModal.classList.add("on"); }
     function closePayModal(){ payModal.classList.remove("on"); }
-    function updatePremiumStatus(){
-      byId("premiumStatus").textContent = S.premium ? "Premium attivo" : "Non attivo";
-    }
+    function updatePremiumStatus(){ byId("premiumStatus").textContent = S.premium ? "Premium attivo" : "Non attivo"; }
     updatePremiumStatus();
 
-    /* ===========================
-       BASIC: GENERI E LIMITE
-       =========================== */
+    const netHint = byId("netHint");
+    function setNetHint(msg){ if(netHint) netHint.textContent = msg || ""; }
+
+    function basicCanSearch(){ return (localStorage.getItem("mf_basic_last_date") || "") !== todayKey(); }
+    function refreshBasicLimitUI(){ byId("basicLimitBadge").textContent = basicCanSearch() ? "Ricerca disponibile oggi" : "Già usata oggi"; }
+
+    const limitModal = byId("limitModal");
+    byId("btnLimitClose").addEventListener("click", () => limitModal.classList.remove("on"));
+    byId("btnComeBack").addEventListener("click", () => limitModal.classList.remove("on"));
+    byId("btnUpgrade").addEventListener("click", () => { limitModal.classList.remove("on"); setProfile("premium"); openPayModal(); });
+
     const basicGenresBox = byId("basicGenres");
     let basicSelected = new Set([G.action]);
 
@@ -717,70 +708,53 @@
     byId("btnBasicClear").addEventListener("click", () => {
       basicSelected.clear();
       [...basicGenresBox.querySelectorAll(".pill")].forEach(p => p.classList.remove("on","yellow"));
-      byId("basicHint").textContent = "Seleziona almeno un genere.";
-    });
-
-    function basicCanSearch(){
-      return (localStorage.getItem("mf_basic_last_date") || "") !== todayKey();
-    }
-
-    function refreshBasicLimitUI(){
-      const badge = byId("basicLimitBadge");
-      badge.textContent = basicCanSearch() ? "Ricerca disponibile oggi" : "Già usata oggi";
-    }
-
-    const limitModal = byId("limitModal");
-    byId("btnLimitClose").addEventListener("click", () => limitModal.classList.remove("on"));
-    byId("btnComeBack").addEventListener("click", () => limitModal.classList.remove("on"));
-    byId("btnUpgrade").addEventListener("click", () => {
-      limitModal.classList.remove("on");
-      setProfile("premium");
-      openPayModal();
+      setService("basicHint", "Seleziona almeno un genere.");
     });
 
     byId("btnBasicSearch").addEventListener("click", async () => {
       refreshBasicLimitUI();
 
-      if(!basicCanSearch()){
-        limitModal.classList.add("on");
-        return;
-      }
-      if(basicSelected.size === 0){
-        byId("basicHint").textContent = "Seleziona almeno un genere.";
-        return;
-      }
+      if(!basicCanSearch()){ limitModal.classList.add("on"); return; }
+      if(basicSelected.size === 0){ setService("basicHint", "Seleziona almeno un genere."); return; }
 
-      byId("basicHint").textContent = "Sto cercando 3 titoli...";
       byId("basicResults").innerHTML = "";
+      setService("basicServiceNote", "");
+      setService("basicHint", "Sto cercando 3 titoli presenti su piattaforme...");
 
       try{
         const ids = [...basicSelected].join(",");
-        const list = await discoverTitles("movie", {
+        const pool = await discoverPool("movie", {
           with_genres: ids,
-          sort_by: "popularity.desc",
-          include_adult: "false"
+          include_adult: "false",
+          sort_by: "popularity.desc"
+        }, 4);
+
+        const weights = {};
+        [...basicSelected].forEach(g => weights[g] = 3);
+
+        const scored = scoreItems(pool, weights);
+
+        const final = await buildFinalWithProviders({
+          type: "movie",
+          scoredItems: scored,
+          take: 3,
+          maxProviderChecks: 55
         });
 
-        const picked = pickUnique(list, 12, 3);
+        if(final.length < 3){
+          setService("basicServiceNote", "Ho trovato pochi titoli disponibili. Prova a selezionare più generi.");
+        }
 
-        const enriched = await Promise.all(picked.map(async (m) => {
-          const providers = await getProviders("movie", m.id);
-          return { ...m, providers };
-        }));
-
-        renderResults(byId("basicResults"), enriched, { mode:"basic", type:"movie" });
+        renderResults(byId("basicResults"), final, { mode:"basic", type:"movie" });
 
         localStorage.setItem("mf_basic_last_date", todayKey());
         refreshBasicLimitUI();
-        byId("basicHint").textContent = "Fatto. 3 scelte per oggi.";
+        setService("basicHint", "Fatto. 3 scelte per oggi.");
       }catch(e){
-        byId("basicHint").textContent = "Errore di rete o TMDB.";
+        setService("basicHint", "Errore di rete o TMDB.");
       }
     });
 
-    /* ===========================
-       PREMIUM: TAB E SLIDER
-       =========================== */
     const premFilmTvBox = byId("premFilmTvBox");
     const premSocialBox = byId("premSocialBox");
 
@@ -788,7 +762,7 @@
       S.premType = "movie";
       premFilmTvBox.style.display = "block";
       premSocialBox.style.display = "none";
-      byId("premExplain").textContent = "Film. Regola gli slider e cerca.";
+      setService("premExplain", "Film. Regola gli slider e cerca.");
       loadPremiumHistory();
     });
 
@@ -796,7 +770,7 @@
       S.premType = "tv";
       premFilmTvBox.style.display = "block";
       premSocialBox.style.display = "none";
-      byId("premExplain").textContent = "Serie TV. Regola gli slider e cerca.";
+      setService("premExplain", "Serie TV. Regola gli slider e cerca.");
       loadPremiumHistory();
     });
 
@@ -812,57 +786,56 @@
       { sl:"slRomance", out:"valRomance" },
       { sl:"slDrama", out:"valDrama" }
     ];
-
     sliders.forEach(s => {
-      byId(s.sl).addEventListener("input", (ev) => {
-        byId(s.out).textContent = ev.target.value;
-      });
+      byId(s.sl).addEventListener("input", (ev) => byId(s.out).textContent = ev.target.value);
     });
 
     byId("btnPremSurprise").addEventListener("click", () => {
-      byId("slAction").value = "0";
-      byId("slComedy").value = "0";
-      byId("slThriller").value = "0";
-      byId("slRomance").value = "0";
-      byId("slDrama").value = "0";
+      ["slAction","slComedy","slThriller","slRomance","slDrama"].forEach(id => byId(id).value = "0");
       sliders.forEach(s => byId(s.out).textContent = byId(s.sl).value);
-      byId("premExplain").textContent = "Sorprendimi. Scelgo senza preferenze.";
+      setService("premExplain", "Sorprendimi. Scelgo senza preferenze.");
       premiumSearch(true);
     });
 
     byId("btnPremSearch").addEventListener("click", () => premiumSearch(false));
 
     async function premiumSearch(isSurprise){
-      if(!S.premium){
-        openPayModal();
-        return;
-      }
+      if(!S.premium){ openPayModal(); return; }
 
       byId("premResults").innerHTML = "";
-      byId("premExplain").textContent = "Sto cercando 5 titoli...";
+      setService("premServiceNote", "");
+      setService("premExplain", "Sto cercando 5 titoli presenti su piattaforme...");
 
       try{
-        const weights = getPremiumWeights();
-        const withGenres = buildGenreListForPremium(weights, isSurprise);
-        const explain = explainWeights(weights, isSurprise);
+        const w = getPremiumWeights();
+        const explain = explainWeights(w, isSurprise);
 
-        const list = await discoverTitles(S.premType, {
+        const withGenres = isSurprise ? "" : topGenresCsv(w, 5);
+
+        const pool = await discoverPool(S.premType, {
           with_genres: withGenres,
-          sort_by: "popularity.desc",
-          include_adult: "true"
+          include_adult: "true",
+          sort_by: "popularity.desc"
+        }, 5);
+
+        const weightsByGenreId = premiumWeightsToGenreIdMap(w);
+        const scored = scoreItems(pool, weightsByGenreId);
+
+        const final = await buildFinalWithProviders({
+          type: S.premType,
+          scoredItems: scored,
+          take: 5,
+          maxProviderChecks: 85
         });
 
-        const picked = pickUnique(list, 18, 5);
+        if(final.length < 5){
+          setService("premServiceNote", "Ho trovato pochi titoli disponibili. Alza qualche slider o usa più generi.");
+        }
 
-        const enriched = await Promise.all(picked.map(async (m) => {
-          const providers = await getProviders(S.premType, m.id);
-          return { ...m, providers };
-        }));
-
-        renderResults(byId("premResults"), enriched, { mode:"premium", type:S.premType });
-        byId("premExplain").textContent = explain;
+        renderResults(byId("premResults"), final, { mode:"premium", type:S.premType });
+        setService("premExplain", explain);
       }catch(e){
-        byId("premExplain").textContent = "Errore di rete o TMDB.";
+        setService("premExplain", "Errore di rete o TMDB.");
       }
     }
 
@@ -876,21 +849,25 @@
       };
     }
 
-    function buildGenreListForPremium(w, isSurprise){
-      if(isSurprise) return "";
-      const map = [
-        ["action", G.action],
-        ["comedy", G.comedy],
-        ["thriller", G.thriller],
-        ["romance", G.romance],
-        ["drama", G.drama]
-      ];
-      const chosen = map
-        .filter(([k]) => w[k] > 0)
-        .sort((a,b) => w[b[0]] - w[a[0]])
-        .slice(0, 3)
-        .map(([,id]) => id);
-      return chosen.join(",");
+    function premiumWeightsToGenreIdMap(w){
+      const map = {};
+      if(w.action) map[G.action] = w.action;
+      if(w.comedy) map[G.comedy] = w.comedy;
+      if(w.thriller) map[G.thriller] = w.thriller;
+      if(w.romance) map[G.romance] = w.romance;
+      if(w.drama) map[G.drama] = w.drama;
+      return map;
+    }
+
+    function topGenresCsv(w, maxCount){
+      const list = [
+        {id:G.action, v:w.action},
+        {id:G.comedy, v:w.comedy},
+        {id:G.thriller, v:w.thriller},
+        {id:G.romance, v:w.romance},
+        {id:G.drama, v:w.drama}
+      ].filter(x => x.v > 0).sort((a,b) => b.v - a.v).slice(0, maxCount);
+      return list.map(x => x.id).join(",");
     }
 
     function explainWeights(w, isSurprise){
@@ -902,40 +879,20 @@
       return "Questi titoli sono stati scelti perché hai dato più peso a " + nice + ".";
     }
 
-    /* ===========================
-       SOCIAL
-       =========================== */
     byId("btnCopyLink").addEventListener("click", async () => {
-      try{
-        await navigator.clipboard.writeText(APP_DEEPLINK);
-        alert("Link copiato.");
-      }catch(e){
-        alert("Copia manualmente: " + APP_DEEPLINK);
-      }
+      try{ await navigator.clipboard.writeText(APP_DEEPLINK); alert("Link copiato."); }
+      catch(e){ alert("Copia manualmente: " + APP_DEEPLINK); }
     });
-
     byId("btnShareNow").addEventListener("click", () => shareText("Sto guardando questo su Movie Finder", APP_DEEPLINK));
     byId("btnShareRec").addEventListener("click", () => shareText("Consigliato su Movie Finder", APP_DEEPLINK));
-
     async function shareText(title, url){
       try{
-        if(navigator.share){
-          await navigator.share({ title, text: title, url });
-        }else{
-          await navigator.clipboard.writeText(url);
-          alert("Condivisione non disponibile. Ho copiato il link.");
-        }
+        if(navigator.share){ await navigator.share({ title, text: title, url }); }
+        else{ await navigator.clipboard.writeText(url); alert("Condivisione non disponibile. Ho copiato il link."); }
       }catch(e){}
     }
 
-    /* ===========================
-       HISTORY E TOP WEEK
-       =========================== */
-    function getHistory(){
-      try{ return JSON.parse(localStorage.getItem("mf_history") || "[]"); }
-      catch(e){ return []; }
-    }
-
+    function getHistory(){ try{ return JSON.parse(localStorage.getItem("mf_history") || "[]"); } catch(e){ return []; } }
     function pushHistory(item){
       const h = getHistory();
       const key = item.media_type + ":" + item.id;
@@ -943,33 +900,42 @@
       filtered.unshift(item);
       localStorage.setItem("mf_history", JSON.stringify(filtered.slice(0, 8)));
     }
-
-    async function loadTopWeek(){
-      try{
-        const list = await tmdb("/trending/all/week");
-        const picked = (list.results || []).filter(x => x.media_type === "movie" || x.media_type === "tv").slice(0, 5);
-        const enriched = await Promise.all(picked.map(async (m) => {
-          const providers = await getProviders(m.media_type, m.id);
-          return { ...m, providers };
-        }));
-        renderResults(byId("premTopWeek"), enriched, { mode:"premium", type:"all", compact:true });
-      }catch(e){
-        byId("premTopWeek").innerHTML = '<div class="muted" style="font-size:13px">Top settimana non disponibile.</div>';
-      }
-    }
-
     function loadPremiumHistory(){
       const h = getHistory();
       if(h.length === 0){
-        byId("premHistory").innerHTML = '<div class="muted" style="font-size:13px">Nessun titolo visto di recente.</div>';
+        byId("premHistory").innerHTML = '<div class="service">Nessun titolo visto di recente.</div>';
         return;
       }
       renderResults(byId("premHistory"), h.slice(0, 5), { mode:"premium", type:"all", compact:true });
     }
 
+    async function loadTopWeek(){
+      try{
+        const list = await tmdb("/trending/all/week");
+        const picked = (list.results || []).filter(x => x.media_type === "movie" || x.media_type === "tv").slice(0, 10);
+
+        const out = [];
+        for(const m of picked){
+          const providers = await getProviders(m.media_type, m.id);
+          if(availabilityScore(providers) <= 0) continue;
+          out.push({ ...m, providers, _score: 0 });
+          if(out.length >= 5) break;
+        }
+
+        if(out.length === 0){
+          byId("premTopWeek").innerHTML = '<div class="service">Top settimana non disponibile.</div>';
+          return;
+        }
+
+        renderResults(byId("premTopWeek"), out, { mode:"premium", type:"all", compact:true });
+      }catch(e){
+        byId("premTopWeek").innerHTML = '<div class="service">Top settimana non disponibile.</div>';
+      }
+    }
+
     async function loadPremiumPanels(){
       updatePremiumStatus();
-      byId("premExplain").textContent = "Film. Regola gli slider e cerca.";
+      setService("premExplain", "Film. Regola gli slider e cerca.");
       premFilmTvBox.style.display = "block";
       premSocialBox.style.display = "none";
       S.premType = "movie";
@@ -977,9 +943,6 @@
       await loadTopWeek();
     }
 
-    /* ===========================
-       TMDB HELPERS
-       =========================== */
     async function tmdb(path, params){
       const url = new URL(TMDB_BASE + path);
       url.searchParams.set("api_key", TMDB_API_KEY);
@@ -995,15 +958,34 @@
       return await res.json();
     }
 
-    async function discoverTitles(type, opts){
+    async function discoverPage(type, opts, page){
       const path = type === "tv" ? "/discover/tv" : "/discover/movie";
       const base = {
         watch_region: REGION,
         with_watch_monetization_types: "flatrate|rent|buy",
-        "vote_count.gte": 120
+        "vote_count.gte": 200,
+        page: String(page)
       };
       const data = await tmdb(path, { ...base, ...opts });
       return data.results || [];
+    }
+
+    async function discoverPool(type, opts, pages){
+      const all = [];
+      for(let p=1; p<=pages; p++){
+        const r = await discoverPage(type, opts, p);
+        all.push(...r);
+      }
+      const seen = new Set();
+      const clean = [];
+      for(const m of all){
+        if(!m || !m.id) continue;
+        if(!m.poster_path) continue;
+        if(seen.has(m.id)) continue;
+        seen.add(m.id);
+        clean.push(m);
+      }
+      return clean;
     }
 
     async function getProviders(type, id){
@@ -1013,14 +995,67 @@
       return { flatrate: it.flatrate || [], rent: it.rent || [], buy: it.buy || [] };
     }
 
-    function pickUnique(list, pool, take){
-      const clean = (list || []).filter(x => x && x.id && (x.poster_path || x.backdrop_path));
-      const slice = clean.slice(0, pool);
-      for(let i=slice.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [slice[i], slice[j]] = [slice[j], slice[i]];
+    function availabilityScore(p){
+      if(!p) return 0;
+      const fl = (p.flatrate || []).length;
+      const rent = (p.rent || []).length;
+      const buy = (p.buy || []).length;
+      return fl*3 + rent*2 + buy*1;
+    }
+
+    function scoreItems(items, weightsByGenreId){
+      const w = weightsByGenreId || {};
+      return (items || []).map(m => {
+        const genres = m.genre_ids || [];
+        let gscore = 0;
+        for(const gid of genres){
+          if(w[gid]) gscore += w[gid];
+        }
+
+        const voteAvg = typeof m.vote_average === "number" ? m.vote_average : 0;
+        const voteCnt = typeof m.vote_count === "number" ? m.vote_count : 0;
+        const pop = typeof m.popularity === "number" ? m.popularity : 0;
+
+        const score =
+          (gscore * 6) +
+          (voteAvg * 2.2) +
+          Math.log10(voteCnt + 1) * 4 +
+          (pop * 0.03);
+
+        return { ...m, _score: score };
+      }).sort((a,b) => b._score - a._score);
+    }
+
+    async function buildFinalWithProviders(cfg){
+      const type = cfg.type;
+      const scoredItems = cfg.scoredItems || [];
+      const take = cfg.take || 3;
+      const maxChecks = cfg.maxProviderChecks || 60;
+
+      const out = [];
+      const used = new Set();
+
+      let checked = 0;
+
+      for(const m of scoredItems){
+        if(out.length >= take) break;
+        if(!m || !m.id) continue;
+        if(used.has(m.id)) continue;
+
+        used.add(m.id);
+        checked++;
+        if(checked > maxChecks) break;
+
+        const providers = await getProviders(type, m.id);
+        const avail = availabilityScore(providers);
+
+        if(avail <= 0) continue;
+
+        out.push({ ...m, providers, _avail: avail });
       }
-      return slice.slice(0, take);
+
+      out.sort((a,b) => (b._score - a._score) || (b._avail - a._avail));
+      return out.slice(0, take);
     }
 
     function renderResults(container, items, opts){
@@ -1028,7 +1063,7 @@
       const compact = !!opts.compact;
 
       if(!items || items.length === 0){
-        container.innerHTML = '<div class="muted" style="font-size:13px">Nessun risultato.</div>';
+        container.innerHTML = '<div class="service">Nessun risultato disponibile sulle piattaforme.</div>';
         return;
       }
 
@@ -1041,7 +1076,7 @@
         const vote = (typeof m.vote_average === "number") ? m.vote_average.toFixed(1) : "n.d.";
         const overview = (m.overview || "").trim();
         const shortOv = overview ? clamp(overview, compact ? 90 : (mode==="basic" ? 120 : 220)) : "Trama non disponibile.";
-        const poster = m.poster_path ? ("https://image.tmdb.org/t/p/w342" + m.poster_path) : "";
+        const poster = m.poster_path ? (IMG + m.poster_path) : "";
         const mediaType = m.media_type || opts.type;
 
         const box = document.createElement("div");
@@ -1058,7 +1093,8 @@
             <div class="rmeta">
               <span class="badge">Voto ${vote}</span>
               <span class="badge">${mediaType === "tv" ? "Serie TV" : "Film"}</span>
-              ${mode==="premium" ? `<span class="badge">Pop ${Math.round(m.popularity || 0)}</span>` : `<span class="badge">Scelta ${idx+1}</span>`}
+              ${mode==="premium" ? `<span class="badge serviceBadge">Coerenza ${Math.round((m._score || 0))}</span>` : `<span class="badge serviceBadge">Scelta ${idx+1}</span>`}
+              ${mode==="premium" ? `<span class="badge serviceBadge">Disponibilità ${m._avail || 0}</span>` : ``}
             </div>
 
             <div class="rov">${escapeHtml(shortOv)}</div>
@@ -1066,7 +1102,7 @@
             ${renderProvidersLine(m.providers, mode)}
 
             <div class="row" style="margin-top:10px">
-              <button class="btn small ${mode==="basic" ? "green" : "primary"}" data-act="open" data-id="${m.id}" data-type="${mediaType}">Dettagli</button>
+              <button class="btn small ${mode==="basic" ? "green" : "primary"}" data-act="open">Dettagli</button>
               <button class="btn small ghost" data-act="start">Avvia</button>
             </div>
           </div>
@@ -1096,9 +1132,7 @@
           }
 
           if(act === "start"){
-            try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
-            show("secFinal");
-            setTimeout(() => { try{ window.close(); }catch(e){} }, 900);
+            startCinemaClose();
           }
         });
 
@@ -1107,7 +1141,7 @@
     }
 
     function renderProvidersLine(p, mode){
-      if(!p) return '<div class="providers"><span class="muted">Piattaforme non disponibili.</span></div>';
+      if(!p) return '<div class="providers"><span class="service">Piattaforme non disponibili.</span></div>';
 
       const fl = (p.flatrate || []).slice(0, 4);
       const rent = (p.rent || []).slice(0, 4);
@@ -1116,7 +1150,7 @@
       if(mode === "basic"){
         const list = fl.length ? fl : (rent.length ? rent : buy);
         if(list.length === 0){
-          return '<div class="providers"><span class="muted">Non ho trovato piattaforme in IT.</span></div>';
+          return '<div class="providers"><span class="service">Non ho trovato piattaforme in IT.</span></div>';
         }
         const tag = fl.length ? "Gratis" : (rent.length ? "Noleggio" : "Acquisto");
         const shown = list.slice(0, 3).map(x => provChip(x, tag)).join("");
@@ -1129,15 +1163,15 @@
       if(buy.length) parts.push(`<span class="badge">Acquisto</span>` + buy.slice(0,4).map(x => provChip(x,"")).join(""));
 
       if(parts.length === 0){
-        return '<div class="providers"><span class="muted">Non ho trovato piattaforme in IT.</span></div>';
+        return '<div class="providers"><span class="service">Non ho trovato piattaforme in IT.</span></div>';
       }
       return `<div class="providers">${parts.join("")}</div>`;
     }
 
     function provChip(x, tag){
-      const logo = x.logo_path ? ("https://image.tmdb.org/t/p/w45" + x.logo_path) : "";
+      const logo = x.logo_path ? (LOGO + x.logo_path) : "";
       const name = x.provider_name || "Provider";
-      const t = tag ? `<span class="muted">${tag}</span>` : "";
+      const t = tag ? `<span class="service">${tag}</span>` : "";
       return `
         <span class="prov">
           ${logo ? `<img alt="" src="${logo}">` : ""}
@@ -1147,32 +1181,50 @@
       `;
     }
 
-    function clamp(s, n){
-      if(s.length <= n) return s;
-      return s.slice(0, n).trim() + "...";
-    }
-
+    function clamp(s, n){ return s.length <= n ? s : (s.slice(0, n).trim() + "..."); }
     function escapeHtml(str){
       return String(str).replace(/[&<>"']/g, (m) => ({
         "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
       }[m]));
     }
 
-    /* ===========================
-       BOOT
-       Splash dura 2 secondi
-       =========================== */
+    const cinema = byId("cinema");
+    const cinemaSub = byId("cinemaSub");
+    const cinemaActions = byId("cinemaActions");
+    byId("btnCloseTab").addEventListener("click", () => { try{ window.close(); }catch(e){} });
+    byId("btnBack").addEventListener("click", () => { cinema.classList.remove("on"); });
+
+    function startCinemaClose(){
+      try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
+      cinema.classList.add("on");
+      cinemaSub.textContent = "Sto chiudendo la app...";
+      cinemaActions.style.display = "none";
+
+      setTimeout(() => {
+        try{ window.close(); }catch(e){}
+      }, 900);
+
+      setTimeout(() => {
+        cinemaSub.textContent = "Il browser non può chiudere la scheda da solo. Chiudi tu.";
+        cinemaActions.style.display = "flex";
+      }, 1400);
+    }
+
     (function boot(){
       show("secSplash");
 
-      // 2 secondi pieni prima di passare ai profili
-      setTimeout(() => {
+      setTimeout(async () => {
         show("secProfiles");
-
         refreshBasicLimitUI();
         updatePremiumStatus();
 
-        // riprende l’ultimo profilo scelto
+        try{
+          const ping = await tmdb("/configuration", {});
+          if(ping && ping.images) setNetHint("Connessione TMDB ok.");
+        }catch(e){
+          setNetHint("Connessione TMDB non disponibile.");
+        }
+
         const p = localStorage.getItem("mf_profile") || "none";
         if(p === "basic"){
           show("secBasic");
@@ -1187,3 +1239,4 @@
   </script>
 </body>
 </html>
+```0
