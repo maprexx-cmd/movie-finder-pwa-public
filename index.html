@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="utf-8">
@@ -31,7 +31,7 @@
       background: 
         radial-gradient(1200px 600px at 50% -10%, rgba(124,58,237,.35), transparent 60%),
         radial-gradient(900px 500px at 10% 30%,
-                                radial-gradient(900px 500px at 10% 30%, rgba(242,201,76,.10), transparent 55%),
+        radial-gradient(900px 500px at 10% 30%, rgba(242,201,76,.10), transparent 55%),
         linear-gradient(180deg, #070516, var(--bg));
       color: var(--text);
       min-height: 100vh;
@@ -40,13 +40,16 @@
     .wrap {
       max-width: 1040px;
       margin:
-            }
+        radial-gradient(900px 500px at 10% 30%, rgba(242,201,76,.10), transparent 55%),
+        linear-gradient(180deg, #070516, var(--bg));
+      color: var(--text);
+      min-height: 100vh;
+    }
 
     .wrap {
       max-width: 1040px;
-      margin: 0 auto;
-      padding:
-        <script>
+      margin:
+<script>
 const TMDBKEY = 'INSERISCI LA TUA CHIAVE TMDB';
 const TMDB = 'https://api.themoviedb.org/3';
 const IMG = 'https://image.tmdb.org/t/p/w342';
@@ -231,13 +234,7 @@ function buildResultCard(item, type, plotLen, watch) {
   btnJust.className = 'watchBtn';
   btnJust.textContent = 'Dove guardarlo';
   btnJust.addEventListener('click', () => window.open(`https://www.justwatch.com/it/${type === 'tv' ? 'serie-tv' : 'film'}?q=${encodeURIComponent(title)}`, '_blank'));
-  const btnTmdb = document.createElement('button');
-  btnTmdb.className = 'openBtn';
-  btnTmdb.textContent = 'Apri TMDB';
-  btnTmdb.addEventListener('click', () => window.open(`https://www.themoviedb.org/${type === 'tv' ? 'tv' : 'movie'}/${id}`, '_blank'));
-  actions.appendChild(btnJust);
-  actions.appendChild(btnTmdb);
-
+  );
   right.appendChild(h4);
   right.appendChild(meta);
   right.appendChild(plot);
