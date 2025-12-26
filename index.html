@@ -445,13 +445,6 @@
     <div id="screenStart" class="screen active">
       <div class="hero">
         <h2>Trova cosa guardare in pochi secondi</h2>
-        <div class="row">
-          <div class="pill">Solo disponibili in Italia</div>
-          <div class="pill">Basic, test senza limiti</div>
-          <div class="pill">Trama breve in Basic</div>
-          <div class="pill">Trama più lunga in Premium</div>
-          <div class="pill">Ricerca migliorata</div>
-        </div>
       </div>
 
       <div class="grid2">
@@ -597,6 +590,25 @@
       <div class="devNote" id="devPremiumSearchNote"></div>
 
       <div id="premiumResults" class="results"></div>
+
+      <div class="sectionTitle" style="margin-top:18px">
+        <h2>Statistiche</h2>
+        <div class="small">Solo Premium</div>
+      </div>
+      <div class="card" id="premiumStatsBox">
+        <p class="note">Caricamento...</p>
+      </div>
+
+      <div class="sectionTitle" style="margin-top:18px">
+        <h2>Social</h2>
+        <div class="small">Solo Premium</div>
+      </div>
+      <div class="card" id="premiumSocialBox">
+        <p class="note">Condividi la app con un amico.</p>
+        <div class="btnRow">
+          <button class="secondary" id="btnShareApp">Condividi</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -649,6 +661,7 @@
       const el = $(screenId);
       if (el) el.classList.add("active");
       window.scrollTo(0,0);
+      if (screenId === "screenPremium") renderPremiumStats();
     }
 
     function bind(id, fn){
@@ -681,8 +694,44 @@
     const STORE = {
       shown_basic: "mf_shown_basic",
       shown_premium: "mf_shown_premium",
-      premium_enabled: "mf_premium_enabled"
+      premium_enabled: "mf_premium_enabled",
+      stat_basic_search: "mf_stat_basic_search",
+      stat_premium_search: "mf_stat_premium_search",
+      stat_watch_exit: "mf_stat_watch_exit"
     };
+
+    function inc(key){
+      const v = Number(localStorage.getItem(key) || "0");
+      const n = (Number.isFinite(v) ? v : 0) + 1;
+      localStorage.setItem(key, String(n));
+      return n;
+    }
+
+    function getNum(key){
+      const v = Number(localStorage.getItem(key) || "0");
+      return Number.isFinite(v) ? v : 0;
+    }
+
+    function renderPremiumStats(){
+      const box = $("premiumStatsBox");
+      if (!box) return;
+      const b = getNum(STORE.stat_basic_search);
+      const p = getNum(STORE.stat_premium_search);
+      const w = getNum(STORE.stat_watch_exit);
+      box.innerHTML = "";
+      const p1 = document.createElement("p");
+      p1.className = "note";
+      p1.textContent = "Ricerche Basic: " + b;
+      const p2 = document.createElement("p");
+      p2.className = "note";
+      p2.textContent = "Ricerche Premium: " + p;
+      const p3 = document.createElement("p");
+      p3.className = "note";
+      p3.textContent = "Click su Guarda ed esci: " + w;
+      box.appendChild(p1);
+      box.appendChild(p2);
+      box.appendChild(p3);
+    }
 
     function loadShown(key){
       try{
@@ -810,6 +859,7 @@
       btnWatchExit.className = "watchBtn";
       btnWatchExit.textContent = "Guarda ed esci dalla app";
       btnWatchExit.addEventListener("click", ()=>{
+        inc(STORE.stat_watch_exit);
         showExit();
         setTimeout(()=>{ tryClose(); }, 750);
       });
@@ -1009,6 +1059,7 @@
         const cards = await discover("movie", ids, providers, 3, STORE.shown_basic, 140);
         if (!cards.length){ toast("Nessun risultato nuovo."); return; }
         cards.forEach(c=>box.appendChild(c));
+        inc(STORE.stat_basic_search);
         toast("Fatto.");
       }catch(e){ toast("Errore ricerca."); }
     }
@@ -1027,6 +1078,8 @@
         const cards = await discover(type, ids, providers, 5, STORE.shown_premium, 260);
         if (!cards.length){ toast("Nessun risultato nuovo."); return; }
         cards.forEach(c=>box.appendChild(c));
+        inc(STORE.stat_premium_search);
+        renderPremiumStats();
         toast("Fatto.");
       }catch(e){ toast("Errore ricerca."); }
     }
@@ -1060,6 +1113,20 @@
       setTimeout(()=>toast("Usa Indietro o chiudi la scheda."), 250);
     }
 
+    function doShare(){
+      const text = "Movie Finder, trova cosa guardare in pochi secondi.";
+      const url = location.href;
+      if (navigator.share){
+        navigator.share({title:"Movie Finder", text, url}).catch(()=>{});
+      } else {
+        try{
+          navigator.clipboard.writeText(text + " " + url).then(()=>toast("Copiato negli appunti."));
+        }catch(e){
+          toast("Condivisione non disponibile.");
+        }
+      }
+    }
+
     function init(){
       bind("btnGoBasic", ()=>show("screenBasic"));
       bind("btnGoPremium", ()=>{
@@ -1088,9 +1155,12 @@
       bind("btnBasicResetShown", ()=>{ resetShown(STORE.shown_basic); toast("Reset basic fatto."); });
       bind("btnPremiumResetShown", ()=>{ resetShown(STORE.shown_premium); toast("Reset premium fatto."); });
 
+      bind("btnShareApp", doShare);
+
       renderPremiumSliders();
       renderPremiumStatus();
       loadProviderPicks();
+      renderPremiumStats();
     }
 
     init();
