@@ -1,5 +1,5 @@
 {
-  "background_color": "#0e0b1a",
+  "background_color": "#1c1630",
   "dir": "ltr",
   "display": "standalone",
   "name": "Movie Finder",
@@ -7,7 +7,7 @@
   "scope": "/",
   "short_name": "Movie Finder",
   "start_url": "/",
-  "theme_color": "#1c1630",
+  "theme_color": "#0e0b1a",
   "id": "movie-finder-maprexx",
-  "description": "Trova film in base ai tuoi gusti. Scopri dove guardarli in streaming in modo semplice e veloce"
+  "description": "Trova film in base ai tuoi gusti. Scopri dove guardarli in streaming in modo semplice e veloce."
 }
