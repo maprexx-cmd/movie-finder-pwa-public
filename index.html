@@ -227,26 +227,13 @@
     }
     .toast.show{display:block;animation:fade .15s ease forwards}
 
-    .actionRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .watchBtn{
-      background: var(--yellow);
-      color:#0E0B1A;
-      font-weight:900;
-      padding:10px 12px;
-      border-radius:14px;
-      border:0;
-      cursor:pointer;
-      box-shadow: 0 12px 26px rgba(242,201,76,.22);
+    .endActions{
+      display:none;
+      margin-top:12px;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    .openBtn{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow:none;
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-    }
+    .endActions.show{display:flex}
 
     .cinemaOverlay{
       position:fixed;inset:0;
@@ -447,7 +434,7 @@
         <h2>Trova cosa guardare in pochi secondi</h2>
         <div class="row">
           <div class="pill">Solo disponibili in Italia</div>
-          <div class="pill">Basic, test senza limiti</div>
+          <div class="pill">Basic con limite giornaliero</div>
           <div class="pill">Trama breve in Basic</div>
           <div class="pill">Trama più lunga in Premium</div>
           <div class="pill">Ricerca migliorata</div>
@@ -457,7 +444,7 @@
       <div class="grid2">
         <div class="card">
           <h3>Basic</h3>
-          <p>Film. 4 generi. Trama breve. Esclude VM18.</p>
+          <p>Film. 4 generi. Trama breve. Esclude VM18. 1 ricerca al giorno.</p>
           <div class="btnRow">
             <button id="btnGoBasic">Entra in Basic</button>
             <button class="secondary" id="btnInfoBasic">Dettagli</button>
@@ -466,7 +453,7 @@
 
         <div class="card">
           <h3>Premium</h3>
-          <p>Film e serie. Slider intensità. Trama più lunga.</p>
+          <p>Film e serie. Slider intensità. Trama più lunga. Ricerche illimitate.</p>
           <div class="btnRow">
             <button id="btnGoPremium">Entra in Premium</button>
             <button class="secondary" id="btnBuyPremium">Sblocca Premium</button>
@@ -491,7 +478,7 @@
     <div id="screenBasic" class="screen">
       <div class="sectionTitle">
         <h2>Basic</h2>
-        <div class="small">Test senza limiti, solo film disponibili in Italia</div>
+        <div class="small">Solo film disponibili in Italia</div>
       </div>
 
       <div class="modeBar">
@@ -509,7 +496,7 @@
         <button class="danger" id="btnExitFromBasic">Esci</button>
       </div>
 
-      <div class="sectionTitle">
+      <div class="sectionTitle" id="basicGenresTitle">
         <h2>Seleziona generi</h2>
         <div class="small">Scegli 1 o più</div>
       </div>
@@ -534,13 +521,17 @@
 
       <div class="btnRow" style="margin-top:12px">
         <button id="btnBasicSearch">Cerca</button>
-        <button class="secondary" id="btnBasicResetShown">Reset risultati mostrati</button>
       </div>
 
       <div class="note" id="basicLimitInfo"></div>
       <div class="devNote" id="devBasicSearchNote"></div>
 
       <div id="basicResults" class="results"></div>
+
+      <div class="endActions btnRow" id="basicEndActions">
+        <button class="secondary" id="btnBasicAgain">Altra scelta</button>
+        <button class="danger" id="btnBasicExit">Esci</button>
+      </div>
     </div>
 
     <div id="screenPremium" class="screen">
@@ -572,7 +563,7 @@
         <button class="danger" id="btnExitFromPremium">Esci</button>
       </div>
 
-      <div class="sectionTitle">
+      <div class="sectionTitle" id="premiumGenresTitle">
         <h2>Intensità generi</h2>
         <div class="small">0, 5</div>
       </div>
@@ -591,12 +582,16 @@
 
       <div class="btnRow" style="margin-top:12px">
         <button id="btnPremiumSearch">Cerca</button>
-        <button class="secondary" id="btnPremiumResetShown">Reset risultati mostrati</button>
       </div>
 
       <div class="devNote" id="devPremiumSearchNote"></div>
 
       <div id="premiumResults" class="results"></div>
+
+      <div class="endActions btnRow" id="premiumEndActions">
+        <button class="secondary" id="btnPremiumAgain">Altra scelta</button>
+        <button class="danger" id="btnPremiumExit">Esci</button>
+      </div>
     </div>
   </div>
 
@@ -644,18 +639,14 @@
       toast._t = setTimeout(()=>t.classList.remove("show"), 2200);
     }
 
-    function basePath(){
-      const p = location.pathname;
-      if (p.endsWith("/")) return p;
-      const i = p.lastIndexOf("/");
-      return i === -1 ? "/" : p.slice(0, i + 1);
-    }
-
     function show(screenId){
       document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
       const el = $(screenId);
       if (el) el.classList.add("active");
       window.scrollTo(0,0);
+      if (screenId === "screenBasic") syncBasicLimitUI();
+      if (screenId === "screenBasic") hideEndActions("basic");
+      if (screenId === "screenPremium") hideEndActions("premium");
     }
 
     function bind(id, fn){
@@ -688,8 +679,51 @@
     const STORE = {
       shown_basic: "mf_shown_basic",
       shown_premium: "mf_shown_premium",
-      premium_enabled: "mf_premium_enabled"
+      premium_enabled: "mf_premium_enabled",
+      basic_last_day: "mf_basic_last_search_day"
     };
+
+    function todayKey(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return y + "-" + m + "-" + day;
+    }
+
+    function basicLimitReachedToday(){
+      return localStorage.getItem(STORE.basic_last_day) === todayKey();
+    }
+
+    function markBasicUsedToday(){
+      localStorage.setItem(STORE.basic_last_day, todayKey());
+    }
+
+    function syncBasicLimitUI(){
+      const info = $("basicLimitInfo");
+      const btn = $("btnBasicSearch");
+      const again = $("btnBasicAgain");
+
+      const reached = basicLimitReachedToday();
+      if (info){
+        info.textContent = reached
+          ? "Hai già usato la ricerca di oggi nel piano Basic."
+          : "Hai 1 ricerca disponibile oggi nel piano Basic.";
+      }
+      if (btn) btn.disabled = reached;
+      if (again) again.disabled = reached;
+    }
+
+    function hideEndActions(which){
+      const el = $(which === "basic" ? "basicEndActions" : "premiumEndActions");
+      if (el) el.classList.remove("show");
+    }
+
+    function showEndActions(which){
+      const el = $(which === "basic" ? "basicEndActions" : "premiumEndActions");
+      if (el) el.classList.add("show");
+      if (which === "basic") syncBasicLimitUI();
+    }
 
     function loadShown(key){
       try{
@@ -702,10 +736,6 @@
 
     function saveShown(key, set){
       try{ localStorage.setItem(key, JSON.stringify(Array.from(set))); }catch(e){}
-    }
-
-    function resetShown(key){
-      try{ localStorage.removeItem(key); }catch(e){}
     }
 
     function prettyDate(s){
@@ -774,7 +804,6 @@
       const title = type === "tv" ? (item.name || "Titolo") : (item.title || "Titolo");
       const date = type === "tv" ? item.first_air_date : item.release_date;
       const poster = item.poster_path ? (IMG + item.poster_path) : "";
-      const id = item.id;
 
       const overview = (item.overview || "").trim();
       const plotText = overview ? overview.slice(0, plotLen).trim() + (overview.length > plotLen ? "..." : "") : "Trama non disponibile.";
@@ -811,26 +840,9 @@
       plot.className = "plot";
       plot.textContent = plotText;
 
-      const actions = document.createElement("div");
-      actions.className = "actionRow";
-
-      const btnJust = document.createElement("button");
-      btnJust.className = "watchBtn";
-      btnJust.textContent = "Dove guardarlo";
-      btnJust.addEventListener("click", ()=>window.open("https://www.justwatch.com/it/" + (type==="tv"?"serie-tv":"film") + "?q=" + encodeURIComponent(title), "_blank"));
-
-      const btnTmdb = document.createElement("button");
-      btnTmdb.className = "openBtn";
-      btnTmdb.textContent = "Apri TMDB";
-      btnTmdb.addEventListener("click", ()=>window.open("https://www.themoviedb.org/" + (type==="tv"?"tv/":"movie/") + id, "_blank"));
-
-      actions.appendChild(btnJust);
-      actions.appendChild(btnTmdb);
-
       right.appendChild(h4);
       right.appendChild(meta);
       right.appendChild(plot);
-      right.appendChild(actions);
 
       const prov = renderProviders(watch);
       if (prov) right.appendChild(prov);
@@ -1007,6 +1019,12 @@
     }
 
     async function doBasicSearch(){
+      if (basicLimitReachedToday()){
+        syncBasicLimitUI();
+        toast("Hai già usato la ricerca di oggi nel piano Basic.");
+        return;
+      }
+
       const genres = selectedGenresBasic();
       if (!genres.length){ toast("Seleziona almeno un genere."); return; }
 
@@ -1014,12 +1032,16 @@
       const providers = selectedProviderIds("basicProvidersPick");
       const box = $("basicResults");
       box.innerHTML = "";
+      hideEndActions("basic");
 
       toast("Ricerca in corso...");
       try{
         const cards = await discover("movie", ids, providers, 3, STORE.shown_basic, 140);
         if (!cards.length){ toast("Nessun risultato nuovo."); return; }
         cards.forEach(c=>box.appendChild(c));
+        markBasicUsedToday();
+        syncBasicLimitUI();
+        showEndActions("basic");
         toast("Fatto.");
       }catch(e){ toast("Errore ricerca."); }
     }
@@ -1032,12 +1054,14 @@
       const providers = selectedProviderIds("premiumProvidersPick");
       const box = $("premiumResults");
       box.innerHTML = "";
+      hideEndActions("premium");
 
       toast("Ricerca in corso...");
       try{
         const cards = await discover(type, ids, providers, 5, STORE.shown_premium, 260);
         if (!cards.length){ toast("Nessun risultato nuovo."); return; }
         cards.forEach(c=>box.appendChild(c));
+        showEndActions("premium");
         toast("Fatto.");
       }catch(e){ toast("Errore ricerca."); }
     }
@@ -1071,6 +1095,27 @@
       setTimeout(()=>toast("Usa Indietro o chiudi la scheda."), 250);
     }
 
+    function goAgainBasic(){
+      if (basicLimitReachedToday()){
+        syncBasicLimitUI();
+        toast("Hai già usato la ricerca di oggi nel piano Basic.");
+        return;
+      }
+      const box = $("basicResults");
+      if (box) box.innerHTML = "";
+      hideEndActions("basic");
+      const target = $("basicGenresTitle") || $("basicGenres");
+      if (target) target.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function goAgainPremium(){
+      const box = $("premiumResults");
+      if (box) box.innerHTML = "";
+      hideEndActions("premium");
+      const target = $("premiumGenresTitle") || $("premiumSliders");
+      if (target) target.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
     function init(){
       bind("btnGoBasic", ()=>show("screenBasic"));
       bind("btnGoPremium", ()=>{
@@ -1078,7 +1123,7 @@
         show("screenPremium");
       });
 
-      bind("btnInfoBasic", ()=>toast("Basic: film, 4 generi, 3 risultati."));
+      bind("btnInfoBasic", ()=>toast("Basic: film, 4 generi, 3 risultati, 1 ricerca al giorno."));
       bind("btnBuyPremium", ()=>{ setPremiumEnabled(true); toast("Premium attivo in test."); });
 
       bind("btnBackFromBasic", ()=>show("screenStart"));
@@ -1096,12 +1141,16 @@
       bind("btnBasicSearch", doBasicSearch);
       bind("btnPremiumSearch", doPremiumSearch);
 
-      bind("btnBasicResetShown", ()=>{ resetShown(STORE.shown_basic); toast("Reset basic fatto."); });
-      bind("btnPremiumResetShown", ()=>{ resetShown(STORE.shown_premium); toast("Reset premium fatto."); });
+      bind("btnBasicAgain", goAgainBasic);
+      bind("btnPremiumAgain", goAgainPremium);
+
+      bind("btnBasicExit", showExit);
+      bind("btnPremiumExit", showExit);
 
       renderPremiumSliders();
       renderPremiumStatus();
       loadProviderPicks();
+      syncBasicLimitUI();
     }
 
     init();
