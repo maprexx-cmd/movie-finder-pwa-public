@@ -67,7 +67,14 @@
       background: linear-gradient(180deg, rgba(124,58,237,.22), rgba(242,201,76,.06));
       box-shadow: var(--shadow);
     }
-    .hero h2{margin:0;font-size:18px}
+    .hero h2{margin:0 0 8px;font-size:18px}
+    .hero .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .pill{
+      font-size:12px;color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px;border-radius:999px;
+      background: rgba(255,255,255,.04);
+    }
 
     .grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
     @media(min-width:860px){ .grid2{grid-template-columns:1fr 1fr} }
@@ -185,7 +192,6 @@
     .resultCard h4{margin:0 0 6px;font-size:15px}
     .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-bottom:8px}
     .plot{margin:0;color:var(--text);opacity:.92;font-size:13px;line-height:1.35}
-
     .providers{margin-top:10px;display:grid;gap:10px}
     .provGroup{
       border:1px solid var(--border);
@@ -230,6 +236,15 @@
       border:0;
       cursor:pointer;
       box-shadow: 0 12px 26px rgba(242,201,76,.22);
+    }
+    .openBtn{
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border:1px solid var(--border);
+      box-shadow:none;
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
     }
 
     .cinemaOverlay{
@@ -366,7 +381,6 @@
       60%{transform:translateY(0);opacity:.55}
       100%{transform:translateY(0);opacity:.45}
     }
-
     .cinemaBtns{
       display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
       margin-top:14px;
@@ -395,18 +409,6 @@
       cursor:pointer;
       font-weight:800;
     }
-
-    .loginField{
-      width:100%;
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      color: #fff;
-      outline:none;
-    }
-    .loginField::placeholder{color: rgba(255,255,255,.55);}
 
     .devNote{
       display:none;
@@ -440,13 +442,13 @@
   <div class="wrap">
     <div id="screenStart" class="screen active">
       <div class="hero">
-        <h2>Movie Finder</h2>
+        <h2>Trova cosa guardare in pochi secondi</h2>
       </div>
 
       <div class="grid2">
         <div class="card">
           <h3>Basic</h3>
-          <p>Film. 4 generi. Trama breve. Esclude VM18.</p>
+          <p>Film nuovi, voto alto. Priorità Italia/USA. Esclude VM18.</p>
           <div class="btnRow">
             <button id="btnGoBasic">Entra in Basic</button>
             <button class="secondary" id="btnInfoBasic">Dettagli</button>
@@ -480,7 +482,7 @@
     <div id="screenBasic" class="screen">
       <div class="sectionTitle">
         <h2>Basic</h2>
-        <div class="small">Test senza limiti, solo film disponibili in Italia</div>
+        <div class="small">Film nuovi (2021+), voto ≥6.5, Italia/USA/UK, disponibili in Italia</div>
       </div>
 
       <div class="modeBar">
@@ -609,7 +611,6 @@
   </div>
 
   <div class="toast" id="toast"></div>
-
   <div class="cinemaOverlay" id="cinema">
     <div class="flash"></div>
     <div class="curtain left"></div>
@@ -636,35 +637,11 @@
     </div>
   </div>
 
-  <div class="cinemaOverlay" id="loginOverlay">
-    <div class="cinemaCenter">
-      <div class="cinemaCard">
-        <p class="cinemaTitle">Accesso Premium</p>
-        <p class="subtitle" style="opacity:1;transform:none">Inserisci email e password</p>
-
-        <input id="loginEmail" class="loginField" type="email" placeholder="Email">
-        <input id="loginPass" class="loginField" type="password" placeholder="Password">
-
-        <div class="cinemaBtns" style="opacity:1;transform:none;margin-top:14px">
-          <button class="watchBtn" id="btnLoginOk">Entra</button>
-          <button class="cinemaBtnCancel" id="btnLoginCancel">Annulla</button>
-        </div>
-
-        <div class="note" style="margin-top:10px">Solo test. Colleghi il pagamento Play Store dopo.</div>
-      </div>
-    </div>
-  </div>
-
   <script>
   (function(){
     const TMDB_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
     const TMDB = "https://api.themoviedb.org/3";
     const IMG = "https://image.tmdb.org/t/p/w342";
-
-    const TEST_LOGIN = {
-      email: "CAMBIA_EMAIL_TEST",
-      password: "CAMBIA_PASSWORD_TEST"
-    };
 
     const $ = (id) => document.getElementById(id);
 
@@ -874,7 +851,6 @@
 
       const actions = document.createElement("div");
       actions.className = "actionRow";
-
       const btnWatchExit = document.createElement("button");
       btnWatchExit.className = "watchBtn";
       btnWatchExit.textContent = "Guarda ed esci dalla app";
@@ -1028,19 +1004,35 @@
       let page = 1;
 
       const path = type === "tv" ? "/discover/tv" : "/discover/movie";
+      
+      // NUOVI FILTRI: ultimi 5 anni, voto alto, paesi/l lingue prioritari
+      const now = new Date();
+      const year = now.getFullYear();
+      const fiveYearsAgo = (year - 5) + "-01-01";
 
       while (out.length < limit && page <= 8){
-        const data = await api(path, {
+        const params = {
           api_key: TMDB_KEY,
           language: "it-IT",
           watch_region: "IT",
           include_adult: "false",
-          sort_by: "popularity.desc",
+          sort_by: "vote_average.desc", // PRIORITÀ VOTO ALTO
           page,
           with_genres: (genreIds && genreIds.length) ? genreIds.join(",") : "",
           with_watch_providers: providerPipe || "",
-          with_watch_monetization_types: providerPipe ? "flatrate|rent|buy" : ""
-        });
+          with_watch_monetization_types: providerPipe ? "flatrate|rent|buy" : "",
+          // FILTRI NUOVI
+          "vote_average.gte": 6.5,
+          "vote_count.gte": 50,
+          with_original_language: "it|en", // NO FILM INDIANI
+          ...(type === "movie" ? {
+            primary_release_date_gte: fiveYearsAgo // FILM NUOVI
+          } : {
+            first_air_date_gte: fiveYearsAgo // SERIE NUOVE
+          })
+        };
+
+        const data = await api(path, params);
 
         const results = (data && data.results) ? data.results : [];
         for (const item of results){
@@ -1112,7 +1104,7 @@
       if (!el) return;
       el.textContent = premiumEnabled()
         ? "Premium attivo in test su questo dispositivo."
-        : "Premium non attivo. Accedi per entrare.";
+        : "Premium non attivo. In test puoi attivarlo con Sblocca Premium.";
     }
 
     function showExit(){
@@ -1133,35 +1125,11 @@
       setTimeout(()=>toast("Usa Indietro o chiudi la scheda."), 250);
     }
 
-    function showLogin(){
-      const o = $("loginOverlay");
-      o.classList.add("show");
-    }
-
-    function hideLogin(){
-      const o = $("loginOverlay");
-      o.className = "cinemaOverlay";
-    }
-
-    function doLogin(){
-      const e = ($("loginEmail").value || "").trim();
-      const p = ($("loginPass").value || "").trim();
-
-      if (e === TEST_LOGIN.email && p === TEST_LOGIN.password){
-        setPremiumEnabled(true);
-        hideLogin();
-        show("screenPremium");
-        toast("Accesso Premium ok.");
-      } else {
-        toast("Credenziali non valide.");
-      }
-    }
-
     function doShare(){
       const text = "Movie Finder, trova cosa guardare in pochi secondi.";
       const url = location.href;
       if (navigator.share){
-        navigator.share({title:"Movie Finder", text, url}).catch(()=>{});
+        navigator.share({title:"Movie Finder", text, url}).catch(()=>{});  
       } else {
         try{
           navigator.clipboard.writeText(text + " " + url).then(()=>toast("Copiato negli appunti."));
@@ -1173,19 +1141,12 @@
 
     function init(){
       bind("btnGoBasic", ()=>show("screenBasic"));
-
       bind("btnGoPremium", ()=>{
-        if (premiumEnabled()){
-          show("screenPremium");
-        } else {
-          showLogin();
-        }
+        if (!premiumEnabled()){ toast("Premium non attivo."); return; }
+        show("screenPremium");
       });
 
-      bind("btnLoginOk", doLogin);
-      bind("btnLoginCancel", hideLogin);
-
-      bind("btnInfoBasic", ()=>toast("Basic: film, 4 generi, 3 risultati."));
+      bind("btnInfoBasic", ()=>toast("Basic: film nuovi, voto alto, Italia/USA/UK, 3 risultati."));
       bind("btnBuyPremium", ()=>{ setPremiumEnabled(true); toast("Premium attivo in test."); });
 
       bind("btnBackFromBasic", ()=>show("screenStart"));
