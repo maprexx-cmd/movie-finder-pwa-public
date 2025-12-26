@@ -1,490 +1,105 @@
 <!doctype html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Movie Finder</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#1C1630">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <style>
     :root{
-      --bg:#0b0720;
-      --text:#f3f1ff;
-      --muted:#b9b2e6;
+      --bg:#0E0B1A;
+      --text:#FFFFFF;
+      --muted:#BDB7D6;
       --violet:#7c3aed;
       --violet2:#5b21b6;
-      --yellow:#ffd400;
+      --yellow:#F2C94C;
       --border: rgba(255,255,255,.10);
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --radius:18px;
-
-      --devBlue:#4aa3ff;
-      --devBlueBg: rgba(74,163,255,.10);
-      --devBlueBorder: rgba(74,163,255,.22);
     }
 
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 50% -10%, rgba(124,58,237,.35), transparent 60%),
-                  radial-gradient(900px 500px at 10% 30%, rgba(255,212,0,.10), transparent 55%),
-                  linear-gradient(180deg, #070516, var(--bg));
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(124,58,237,.35), transparent 60%),
+        linear-gradient(180deg, #070516, var(--bg));
       color:var(--text);
       min-height:100vh;
     }
 
     .wrap{max-width:1040px;margin:0 auto;padding:18px 14px 80px}
+
     .topbar{
       position:sticky;top:0;z-index:5;
       backdrop-filter: blur(10px);
       background: rgba(7,5,22,.70);
       border-bottom:1px solid var(--border);
     }
-    .topbar .wrap{padding:14px}
+
     .brand{display:flex;align-items:center;gap:12px}
     .logo{
       width:38px;height:38px;border-radius:12px;
-      background: radial-gradient(circle at 30% 30%, var(--yellow), #fff0 55%),
-                  linear-gradient(135deg, var(--violet), var(--violet2));
+      background:
+        radial-gradient(circle at 30% 30%, var(--yellow), #fff0 55%),
+        linear-gradient(135deg, var(--violet), var(--violet2));
       box-shadow: 0 10px 24px rgba(124,58,237,.35);
     }
-    .brand h1{font-size:18px;margin:0}
-    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-
-    .screen{display:none;animation:fade .35s ease forwards}
-    .screen.active{display:block}
-    @keyframes fade{from{opacity:0;transform: translateY(6px)}to{opacity:1;transform:none}}
-
-    .hero{
-      margin-top:18px;
-      padding:18px;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background: linear-gradient(180deg, rgba(124,58,237,.22), rgba(255,212,0,.06));
-      box-shadow: var(--shadow);
-    }
-    .hero h2{margin:0 0 8px;font-size:18px}
-    .hero .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .pill{
-      font-size:12px;color:var(--muted);
-      border:1px solid var(--border);
-      padding:6px 10px;border-radius:999px;
-      background: rgba(255,255,255,.04);
-    }
-
-    .grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
-    @media(min-width:860px){ .grid2{grid-template-columns:1fr 1fr} }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      background: rgba(255,255,255,.04);
       border:1px solid var(--border);
       border-radius:var(--radius);
       box-shadow: var(--shadow);
       padding:14px;
+      margin-top:14px;
     }
-    .card h3{margin:0 0 6px;font-size:16px}
-    .card p{margin:0;color:var(--muted);font-size:13px;line-height:1.35}
 
-    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    h1,h2,h3{margin:0}
+    p{color:var(--muted);font-size:13px}
+
     button{
-      appearance:none;border:0;cursor:pointer;
-      padding:12px 14px;border-radius:14px;
-      color:#0b0720;font-weight:700;
-      background: var(--yellow);
-      box-shadow: 0 12px 26px rgba(255,212,0,.22);
-    }
-    button.secondary{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow:none;
-    }
-    button.danger{
-      background: rgba(255,70,70,.18);
-      color: #ffd6d6;
-      border:1px solid rgba(255,70,70,.25);
-      box-shadow:none;
-    }
-    button:disabled{opacity:.45;cursor:not-allowed}
-
-    .sectionTitle{
-      display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
-      margin:18px 2px 10px;
-    }
-    .sectionTitle h2{margin:0;font-size:16px}
-    .sectionTitle .small{color:var(--muted);font-size:12px}
-
-    .modeBar{
-      display:flex;gap:10px;flex-wrap:wrap;
-      align-items:center;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      background: rgba(255,255,255,.03);
-      padding:10px;
-    }
-    .toggle{
-      display:flex;gap:8px;align-items:center;
-      padding:10px 12px;border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-    }
-    .toggle input{accent-color: var(--yellow);}
-
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{
-      display:flex;gap:8px;align-items:center;
-      border:1px solid var(--border);
-      border-radius:999px;
-      padding:8px 10px;
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      font-size:13px;
-    }
-    .chip input{accent-color: var(--yellow);}
-
-    .sliders{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-    @media(min-width:860px){ .sliders{grid-template-columns:1fr 1fr} }
-    .sliderRow{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:10px 12px;
-      background: rgba(255,255,255,.03);
-    }
-    .sliderRow .hdr{
-      display:flex;justify-content:space-between;align-items:center;
-      gap:10px;margin-bottom:6px;
-    }
-    .sliderRow .hdr span{font-size:13px;color:var(--muted)}
-    .sliderRow .hdr strong{font-size:13px}
-    input[type="range"]{width:100%;accent-color: var(--yellow)}
-
-    .results{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-    }
-    .resultCard{
-      display:grid;
-      grid-template-columns:92px 1fr;
-      gap:12px;
-      padding:12px;
-      border-radius:18px;
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
-    }
-    .poster{
-      width:92px;height:138px;border-radius:14px;
-      background: rgba(255,255,255,.05);
-      border:1px solid var(--border);
-      overflow:hidden;
-      display:flex;align-items:center;justify-content:center;
-      color: var(--muted);font-size:11px;text-align:center;padding:8px;
-    }
-    .poster img{width:100%;height:100%;object-fit:cover;display:block}
-    .resultCard h4{margin:0 0 6px;font-size:15px}
-    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-bottom:8px}
-    .plot{margin:0;color:var(--text);opacity:.92;font-size:13px;line-height:1.35}
-
-    .providers{margin-top:10px;display:grid;gap:10px}
-    .provGroup{
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:10px 10px;
-      background: rgba(0,0,0,.10);
-    }
-    .provGroup .t{font-size:12px;color:var(--muted);margin:0 0 8px}
-    .provList{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .provItem{display:flex;gap:8px;align-items:center}
-    .provItem img{
-      width:22px;height:22px;border-radius:6px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.05);
-    }
-    .provItem span{font-size:12px;color:var(--text)}
-    .note{color:var(--muted);font-size:12px;margin-top:10px}
-    .tiny{font-size:12px;color:var(--muted)}
-    .hr{height:1px;background:var(--border);margin:14px 0}
-
-    .toast{
-      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-      background: rgba(0,0,0,.75);
-      border:1px solid var(--border);
-      color: var(--text);
-      padding:10px 12px;border-radius:14px;
-      max-width:92vw;
-      display:none;
-      z-index:80;
-      font-size:13px;
-      backdrop-filter: blur(10px);
-    }
-    .toast.show{display:block;animation:fade .25s ease forwards}
-
-    a.link{color:var(--yellow);text-decoration:none}
-
-    .actionRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .watchBtn{
-      background: var(--yellow);
-      color:#0b0720;
-      font-weight:900;
-      padding:10px 12px;
-      border-radius:14px;
+      appearance:none;
       border:0;
       cursor:pointer;
-      box-shadow: 0 12px 26px rgba(255,212,0,.22);
-    }
-    .openBtn{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow:none;
-      padding:10px 12px;
+      padding:12px 14px;
       border-radius:14px;
-      cursor:pointer;
+      font-weight:800;
     }
 
-    /* =======================
-       CINEMA EXIT 2.0
-    ======================= */
-    .cinemaOverlay{
-      position:fixed;inset:0;
-      background:#000;
-      display:none;
-      z-index:9999;
-      overflow:hidden;
-      touch-action:none;
-    }
-    .cinemaOverlay.show{display:block}
-
-    .flash{
-      position:absolute;inset:0;
-      background:#fff;
-      opacity:0;
-      pointer-events:none;
-    }
-    .cinemaOverlay.flashOn .flash{
-      animation: flash 240ms ease forwards;
-    }
-    @keyframes flash{
-      0%{opacity:0}
-      20%{opacity:.85}
-      100%{opacity:0}
+    .primary{
+      background:var(--yellow);
+      color:#0E0B1A;
     }
 
-    .curtain{
-      position:absolute;top:0;bottom:0;
-      width:55%;
-      background:
-        radial-gradient(circle at 50% 20%, rgba(255,255,255,.06), transparent 55%),
-        linear-gradient(90deg, rgba(140,0,0,.65), rgba(45,0,0,.80));
-      filter: saturate(115%);
-      box-shadow: 0 0 80px rgba(0,0,0,.7) inset;
-    }
-    .curtain.left{left:-55%}
-    .curtain.right{right:-55%}
-    .cinemaOverlay.curtainsOn .curtain.left{animation: curtainL 720ms cubic-bezier(.16,.9,.14,1) forwards}
-    .cinemaOverlay.curtainsOn .curtain.right{animation: curtainR 720ms cubic-bezier(.16,.9,.14,1) forwards}
-    @keyframes curtainL{to{transform: translateX(55%)}}
-    @keyframes curtainR{to{transform: translateX(-55%)}}
-
-    .filmGrain{
-      position:absolute;inset:-30%;
-      background-image:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.05), transparent 45%),
-        radial-gradient(circle at 70% 60%, rgba(255,255,255,.035), transparent 50%),
-        radial-gradient(circle at 35% 80%, rgba(255,255,255,.03), transparent 55%);
-      opacity:.34;
-      mix-blend-mode: screen;
-      animation: grainMove 900ms steps(2) infinite;
-      transform: rotate(7deg);
-      pointer-events:none;
-      filter: contrast(125%);
-    }
-    @keyframes grainMove{
-      0%{transform:translate(0,0) rotate(7deg)}
-      25%{transform:translate(-2%,1%) rotate(7deg)}
-      50%{transform:translate(1%,-2%) rotate(7deg)}
-      75%{transform:translate(2%,2%) rotate(7deg)}
-      100%{transform:translate(0,0) rotate(7deg)}
+    .secondary{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border:1px solid var(--border);
     }
 
-    .scanlines{
-      position:absolute;inset:0;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.035),
-        rgba(255,255,255,.035) 1px,
-        rgba(0,0,0,0) 3px,
-        rgba(0,0,0,0) 6px
-      );
-      opacity:.085;
-      pointer-events:none;
-    }
-
-    .vignette{
-      position:absolute;inset:0;
-      background: radial-gradient(circle at 50% 45%, rgba(0,0,0,0) 33%, rgba(0,0,0,.58) 78%, rgba(0,0,0,.95) 100%);
-      pointer-events:none;
-      opacity:1;
-    }
-
-    .projectorFlicker{
-      position:absolute;inset:0;
-      background: rgba(255,255,255,.03);
-      opacity:0;
-      animation: flicker 160ms infinite;
-      pointer-events:none;
-      mix-blend-mode: overlay;
-    }
-    @keyframes flicker{
-      0%{opacity:0}
-      10%{opacity:.22}
-      20%{opacity:.02}
-      30%{opacity:.18}
-      40%{opacity:.04}
-      50%{opacity:.26}
-      60%{opacity:.03}
-      70%{opacity:.16}
-      80%{opacity:.05}
-      90%{opacity:.20}
-      100%{opacity:.00}
-    }
-
-    .cinemaCenter{
-      position:absolute;inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:22px;
-      text-align:center;
-    }
-
-    .cinemaCard{
-      width:min(560px, 92vw);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:20px;
-      padding:18px 16px 16px;
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 18px 60px rgba(0,0,0,.7);
-      backdrop-filter: blur(8px);
-      transform: translateZ(0);
-    }
-
-    .cinemaTitle{
-      margin:0;
-      font-size:18px;
-      color:#fff;
-      letter-spacing:.2px;
-      line-height:1.25;
-      text-shadow: 0 10px 22px rgba(0,0,0,.45);
-      min-height: 24px;
-    }
-
-    .subtitle{
-      margin:8px 0 0;
-      color: rgba(255,255,255,.75);
-      font-size:12px;
-      line-height:1.35;
-      opacity:0;
-      transform: translateY(6px);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .cinemaOverlay.ready .subtitle{
-      opacity:1;
-      transform:none;
-    }
-
-    .dots{
-      display:flex;
-      gap:8px;
-      justify-content:center;
-      margin-top:12px;
-      opacity:.9;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,.55);
-      animation: dotPulse 900ms infinite;
-    }
-    .dot:nth-child(2){animation-delay:150ms}
-    .dot:nth-child(3){animation-delay:300ms}
-    @keyframes dotPulse{
-      0%{transform:translateY(0);opacity:.45}
-      30%{transform:translateY(-3px);opacity:1}
-      60%{transform:translateY(0);opacity:.55}
-      100%{transform:translateY(0);opacity:.45}
-    }
-
-    .cinemaBtns{
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-      opacity:0;
-      transform: translateY(6px);
-      transition: opacity .2s ease, transform .2s ease;
-    }
-    .cinemaOverlay.showButtons .cinemaBtns{
-      opacity:1;
-      transform:none;
-    }
-
-    .cinemaBtnExit{
-      background: rgba(255,70,70,.20);
+    .danger{
+      background:rgba(255,70,70,.18);
       color:#ffd6d6;
       border:1px solid rgba(255,70,70,.28);
-      box-shadow:none;
-      padding:10px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:800;
-    }
-    .cinemaBtnCancel{
-      background: rgba(255,255,255,.08);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:none;
-      padding:10px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:800;
     }
 
-    .shakeHard{
-      animation: shakeHard 120ms infinite linear;
-    }
-    @keyframes shakeHard{
-      0%{transform:translate(0,0)}
-      25%{transform:translate(2px,-2px)}
-      50%{transform:translate(-2px,2px)}
-      75%{transform:translate(2px,2px)}
-      100%{transform:translate(-2px,-2px)}
-    }
-
-    /* DEV NOTES */
-    .devNote{
-      display:none;
-      margin-top:10px;
-      padding:10px 10px;
-      border-radius:14px;
-      border:1px solid var(--devBlueBorder);
-      background: var(--devBlueBg);
-      color: var(--devBlue);
-      font-size:12px;
-      line-height:1.35;
-      white-space:pre-wrap;
-    }
-    body.dev .devNote{display:block}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
   </style>
 </head>
 
 <body>
+
   <div class="topbar">
     <div class="wrap">
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
+        <div class="logo"></div>
         <div>
           <h1>Movie Finder</h1>
           <p>Solo titoli disponibili in Italia</p>
@@ -494,158 +109,47 @@
   </div>
 
   <div class="wrap">
-    <div id="screenStart" class="screen active">
-      <div class="hero">
-        <h2>Trova cosa guardare in pochi secondi</h2>
-        <div class="row">
-          <div class="pill">Solo disponibili in Italia</div>
-          <div class="pill">Basic, test senza limiti</div>
-          <div class="pill">Trama breve in Basic</div>
-          <div class="pill">Trama più lunga in Premium</div>
-          <div class="pill">Ricerca migliorata, più varietà</div>
-        </div>
-        <div class="devNote" id="devStartNote"></div>
-      </div>
 
-      <div class="grid2">
-        <div class="card">
-          <h3>Basic</h3>
-          <p>Film. 4 generi. Trama breve. Esclude VM18.</p>
-          <div class="btnRow">
-            <button id="btnGoBasic">Entra in Basic</button>
-            <button class="secondary" id="btnInfoBasic">Dettagli</button>
-          </div>
-          <div class="devNote" id="devBasicHomeNote"></div>
-        </div>
+    <div class="card">
+      <h2>Trova cosa guardare in pochi secondi</h2>
+      <p>Seleziona i tuoi gusti. Scopri dove guardare film e serie disponibili in Italia.</p>
+    </div>
 
-        <div class="card">
-          <h3>Premium</h3>
-          <p>Film e serie. Slider intensità. Trama più lunga.</p>
-          <div class="btnRow">
-            <button id="btnGoPremium">Entra in Premium</button>
-            <button class="secondary" id="btnBuyPremium">Sblocca Premium</button>
-          </div>
-          <div class="note" id="premiumStatus"></div>
-          <div class="devNote" id="devPremiumHomeNote"></div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="card">
-        <h3>Uscita</h3>
-        <p>Premi Esci per chiudere con effetto cinematografico.</p>
-        <div class="btnRow">
-          <button class="danger" id="btnExitFromStart">Esci</button>
-        </div>
-        <div class="devNote" id="devExitNote"></div>
+    <div class="card">
+      <h3>Basic</h3>
+      <p>Film. 4 generi. Trama breve. Esclude VM18.</p>
+      <div class="btnRow">
+        <button class="primary">Entra in Basic</button>
+        <button class="secondary">Dettagli</button>
       </div>
     </div>
 
-    <div id="screenBasic" class="screen">
-      <div class="sectionTitle">
-        <h2>Basic</h2>
-        <div class="small">Test senza limiti, solo film disponibili in Italia</div>
+    <div class="card">
+      <h3>Premium</h3>
+      <p>Film e serie. Slider intensità. Trama più lunga.</p>
+      <div class="btnRow">
+        <button class="primary">Entra in Premium</button>
+        <button class="secondary">Sblocca Premium</button>
       </div>
-
-      <div class="modeBar">
-        <div class="toggle">
-          <input type="radio" name="basicType" checked />
-          <div>
-            <div style="font-weight:800">Film</div>
-            <div class="tiny">Esclude VM18</div>
-          </div>
-        </div>
-
-        <div style="flex:1"></div>
-
-        <button class="secondary" id="btnBackFromBasic">Indietro</button>
-        <button class="danger" id="btnExitFromBasic">Esci</button>
-      </div>
-
-      <div class="devNote" id="devBasicScreenNote"></div>
-
-      <div class="sectionTitle">
-        <h2>Seleziona generi</h2>
-        <div class="small">Scegli 1 o più</div>
-      </div>
-
-      <div class="chips" id="basicGenres">
-        <label class="chip"><input type="checkbox" value="azione" /> Azione</label>
-        <label class="chip"><input type="checkbox" value="comico" /> Comico</label>
-        <label class="chip"><input type="checkbox" value="thriller" /> Thriller</label>
-        <label class="chip"><input type="checkbox" value="animazione" /> Animazione</label>
-      </div>
-
-      <div class="sectionTitle">
-        <h2>Piattaforme</h2>
-        <div class="small">Filtra facoltativo</div>
-      </div>
-
-      <div class="card">
-        <div class="chips" id="basicProvidersPick"></div>
-        <p class="note">Se non selezioni piattaforme, la app cerca comunque solo titoli disponibili in Italia.</p>
-        <div class="devNote" id="devProvidersNote"></div>
-      </div>
-
-      <div class="btnRow" style="margin-top:12px">
-        <button id="btnBasicSearch">Cerca</button>
-        <button class="secondary" id="btnBasicResetShown">Reset risultati mostrati</button>
-      </div>
-
-      <div class="note" id="basicLimitInfo"></div>
-      <div class="devNote" id="devBasicSearchNote"></div>
-
-      <div id="basicResults" class="results"></div>
     </div>
 
-    <div id="screenPremium" class="screen">
-      <div class="sectionTitle">
-        <h2>Premium</h2>
-        <div class="small">Ricerche illimitate, 5 risultati, solo disponibili in Italia</div>
+    <div class="card">
+      <h3>Uscita</h3>
+      <p>Chiudi l’app con effetto cinematografico.</p>
+      <div class="btnRow">
+        <button class="danger">Esci</button>
       </div>
+    </div>
 
-      <div class="modeBar">
-        <label class="toggle">
-          <input id="premiumPickMovie" type="radio" name="premiumType" value="movie" checked />
-          <div>
-            <div style="font-weight:800">Film</div>
-            <div class="tiny">Disponibili in Italia</div>
-          </div>
-        </label>
+  </div>
 
-        <label class="toggle">
-          <input id="premiumPickTv" type="radio" name="premiumType" value="tv" />
-          <div>
-            <div style="font-weight:800">Serie TV</div>
-            <div class="tiny">Disponibili in Italia</div>
-          </div>
-        </label>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js");
+      });
+    }
+  </script>
 
-        <div style="flex:1"></div>
-
-        <button class="secondary" id="btnBackFromPremium">Indietro</button>
-        <button class="danger" id="btnExitFromPremium">Esci</button>
-      </div>
-
-      <div class="devNote" id="devPremiumScreenNote"></div>
-
-      <div class="sectionTitle">
-        <h2>Intensità generi</h2>
-        <div class="small">0, 5</div>
-      </div>
-
-      <div class="sliders" id="premiumSliders"></div>
-
-      <div class="sectionTitle">
-        <h2>Piattaforme</h2>
-        <div class="small">Filtra facoltativo</div>
-      </div>
-
-      <div class="card">
-        <div class="chips" id="premiumProvidersPick"></div>
-        <p class="note">La app non distingue noleggio o abbonamento. Mostra solo dove è disponibile.</p>
-      </div>
-
-      <div class="btnRow" style="margin-top:12px">
-        <button id="btnPremiumSearch">Cerca</button>
+</body>
+</html>
