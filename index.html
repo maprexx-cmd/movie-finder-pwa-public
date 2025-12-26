@@ -67,14 +67,7 @@
       background: linear-gradient(180deg, rgba(124,58,237,.22), rgba(242,201,76,.06));
       box-shadow: var(--shadow);
     }
-    .hero h2{margin:0 0 8px;font-size:18px}
-    .hero .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .pill{
-      font-size:12px;color:var(--muted);
-      border:1px solid var(--border);
-      padding:6px 10px;border-radius:999px;
-      background: rgba(255,255,255,.04);
-    }
+    .hero h2{margin:0;font-size:18px}
 
     .grid2{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
     @media(min-width:860px){ .grid2{grid-template-columns:1fr 1fr} }
@@ -237,15 +230,6 @@
       border:0;
       cursor:pointer;
       box-shadow: 0 12px 26px rgba(242,201,76,.22);
-    }
-    .openBtn{
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      border:1px solid var(--border);
-      box-shadow:none;
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
     }
 
     .cinemaOverlay{
@@ -412,6 +396,18 @@
       font-weight:800;
     }
 
+    .loginField{
+      width:100%;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: #fff;
+      outline:none;
+    }
+    .loginField::placeholder{color: rgba(255,255,255,.55);}
+
     .devNote{
       display:none;
       margin-top:10px;
@@ -444,7 +440,7 @@
   <div class="wrap">
     <div id="screenStart" class="screen active">
       <div class="hero">
-        <h2>Trova cosa guardare in pochi secondi</h2>
+        <h2>Movie Finder</h2>
       </div>
 
       <div class="grid2">
@@ -640,11 +636,35 @@
     </div>
   </div>
 
+  <div class="cinemaOverlay" id="loginOverlay">
+    <div class="cinemaCenter">
+      <div class="cinemaCard">
+        <p class="cinemaTitle">Accesso Premium</p>
+        <p class="subtitle" style="opacity:1;transform:none">Inserisci email e password</p>
+
+        <input id="loginEmail" class="loginField" type="email" placeholder="Email">
+        <input id="loginPass" class="loginField" type="password" placeholder="Password">
+
+        <div class="cinemaBtns" style="opacity:1;transform:none;margin-top:14px">
+          <button class="watchBtn" id="btnLoginOk">Entra</button>
+          <button class="cinemaBtnCancel" id="btnLoginCancel">Annulla</button>
+        </div>
+
+        <div class="note" style="margin-top:10px">Solo test. Colleghi il pagamento Play Store dopo.</div>
+      </div>
+    </div>
+  </div>
+
   <script>
   (function(){
     const TMDB_KEY = "f8ecb75282e8dcea2d4845598cc7d030";
     const TMDB = "https://api.themoviedb.org/3";
     const IMG = "https://image.tmdb.org/t/p/w342";
+
+    const TEST_LOGIN = {
+      email: "CAMBIA_EMAIL_TEST",
+      password: "CAMBIA_PASSWORD_TEST"
+    };
 
     const $ = (id) => document.getElementById(id);
 
@@ -1092,7 +1112,7 @@
       if (!el) return;
       el.textContent = premiumEnabled()
         ? "Premium attivo in test su questo dispositivo."
-        : "Premium non attivo. In test puoi attivarlo con Sblocca Premium.";
+        : "Premium non attivo. Accedi per entrare.";
     }
 
     function showExit(){
@@ -1113,6 +1133,30 @@
       setTimeout(()=>toast("Usa Indietro o chiudi la scheda."), 250);
     }
 
+    function showLogin(){
+      const o = $("loginOverlay");
+      o.classList.add("show");
+    }
+
+    function hideLogin(){
+      const o = $("loginOverlay");
+      o.className = "cinemaOverlay";
+    }
+
+    function doLogin(){
+      const e = ($("loginEmail").value || "").trim();
+      const p = ($("loginPass").value || "").trim();
+
+      if (e === TEST_LOGIN.email && p === TEST_LOGIN.password){
+        setPremiumEnabled(true);
+        hideLogin();
+        show("screenPremium");
+        toast("Accesso Premium ok.");
+      } else {
+        toast("Credenziali non valide.");
+      }
+    }
+
     function doShare(){
       const text = "Movie Finder, trova cosa guardare in pochi secondi.";
       const url = location.href;
@@ -1129,10 +1173,17 @@
 
     function init(){
       bind("btnGoBasic", ()=>show("screenBasic"));
+
       bind("btnGoPremium", ()=>{
-        if (!premiumEnabled()){ toast("Premium non attivo."); return; }
-        show("screenPremium");
+        if (premiumEnabled()){
+          show("screenPremium");
+        } else {
+          showLogin();
+        }
       });
+
+      bind("btnLoginOk", doLogin);
+      bind("btnLoginCancel", hideLogin);
 
       bind("btnInfoBasic", ()=>toast("Basic: film, 4 generi, 3 risultati."));
       bind("btnBuyPremium", ()=>{ setPremiumEnabled(true); toast("Premium attivo in test."); });
