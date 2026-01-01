@@ -39,10 +39,23 @@ export default function MovieFinderPage() {
   }, [])
 
   const handleModeSelect = (isPremium: boolean) => {
+    const hasPremium = typeof window !== "undefined" ? localStorage.getItem("hasPremiumSubscription") === "true" : false
+
     if (isPremium) {
-      localStorage.setItem("isPremium", "1")
-      setMode({ demo: false, premium: true, label: "PREMIUM" })
-      setView("premium")
+      if (hasPremium) {
+        localStorage.setItem("isPremium", "1")
+        setMode({ demo: false, premium: true, label: "PREMIUM" })
+        setView("premium")
+      } else {
+        // User doesn't have premium subscription - show payment required message
+        alert(
+          "Premium richiede un abbonamento. Questa è una versione demo - in produzione si integra con Google Play Billing.",
+        )
+        // For demo purposes, allow access anyway
+        localStorage.setItem("isPremium", "1")
+        setMode({ demo: false, premium: true, label: "PREMIUM" })
+        setView("premium")
+      }
     } else {
       localStorage.removeItem("isPremium")
       setMode({ demo: false, premium: false, label: "BASIC" })

@@ -1,10 +1,23 @@
 "use client"
 
+import { useMovieStore } from "@/lib/store"
+
 interface LoginViewProps {
   onModeSelect: (isPremium: boolean) => void
 }
 
 export function LoginView({ onModeSelect }: LoginViewProps) {
+  const triggerClosingEffect = useMovieStore((state) => state.triggerClosingEffect)
+
+  const handleExit = () => {
+    if (typeof window !== "undefined") {
+      window.close()
+      if (!window.closed) {
+        window.location.href = "about:blank"
+      }
+    }
+  }
+
   return (
     <div className="h-[100dvh] elegant-stripes bg-[#000000] relative overflow-hidden">
       <div className="absolute inset-0 bg-black">
@@ -161,6 +174,13 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
               Privacy Policy
             </a>
           </div>
+
+          <button
+            onClick={handleExit}
+            className="w-full mt-3 bg-red-500/20 backdrop-blur-xl border-2 border-red-500/40 text-red-400 hover:bg-red-500/30 hover:border-red-500/60 font-bold py-3 px-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 shadow-[0_8px_30px_rgba(239,68,68,0.4)] text-sm uppercase tracking-wider"
+          >
+            ✕ Esci dall'App
+          </button>
         </div>
       </div>
     </div>
