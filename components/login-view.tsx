@@ -18,8 +18,7 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
 
   useEffect(() => {
     checkPremiumStatus()
-    console.log("[v0] Premium status:", hasPremium)
-  }, [checkPremiumStatus, hasPremium])
+  }, [checkPremiumStatus])
 
   const handleExit = () => {
     if (typeof window !== "undefined") {
@@ -31,11 +30,9 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
   }
 
   const handlePremiumClick = () => {
-    console.log("[v0] Premium button clicked, hasPremium:", hasPremium)
     if (hasPremium) {
       onModeSelect(true)
     } else {
-      console.log("[v0] Opening unlock modal")
       setShowUnlockModal(true)
       setUnlockError("")
       setUnlockCode("")
@@ -233,8 +230,15 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
       </div>
 
       {showUnlockModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-yellow-500/40 rounded-3xl p-6 max-w-sm w-full shadow-[0_20px_80px_rgba(234,179,8,0.5)] animate-fade-in">
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
+          style={{ zIndex: 9999 }}
+          onClick={() => setShowUnlockModal(false)}
+        >
+          <div
+            className="bg-gradient-to-br from-gray-900 to-black border-2 border-yellow-500/40 rounded-3xl p-6 max-w-sm w-full shadow-[0_20px_80px_rgba(234,179,8,0.5)] animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="text-center mb-4">
               <div className="text-6xl mb-3">🔐</div>
               <h3 className="text-2xl font-black text-yellow-400 uppercase tracking-wider mb-2">Sblocca Premium</h3>
