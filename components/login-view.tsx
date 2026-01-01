@@ -54,6 +54,13 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
     }
   }
 
+  const handleResetPremium = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("premiumUnlocked")
+      checkPremiumStatus()
+    }
+  }
+
   return (
     <div className="h-[100dvh] elegant-stripes bg-[#000000] relative overflow-hidden">
       <div className="absolute inset-0 bg-black">
@@ -226,6 +233,15 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
           >
             ✕ Esci dall'App
           </button>
+
+          {hasPremium && (
+            <button
+              onClick={handleResetPremium}
+              className="w-full mt-2 bg-gray-700/30 backdrop-blur-xl border border-gray-600/40 text-gray-400 hover:bg-gray-600/30 font-bold py-2 px-4 rounded-xl transition-all text-xs uppercase tracking-wider"
+            >
+              Reset Premium (Test)
+            </button>
+          )}
         </div>
       </div>
 
