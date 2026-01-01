@@ -1,6 +1,7 @@
 "use client"
 
 import { useMovieStore } from "@/lib/store"
+import { useState, useEffect } from "react"
 
 interface LoginViewProps {
   onModeSelect: (isPremium: boolean) => void
@@ -8,6 +9,16 @@ interface LoginViewProps {
 
 export function LoginView({ onModeSelect }: LoginViewProps) {
   const triggerClosingEffect = useMovieStore((state) => state.triggerClosingEffect)
+  const hasPremium = useMovieStore((state) => state.hasPremium)
+  const checkPremiumStatus = useMovieStore((state) => state.checkPremiumStatus)
+
+  const [showUnlockModal, setShowUnlockModal] = useState(false)
+  const [unlockCode, setUnlockCode] = useState("")
+  const [unlockError, setUnlockError] = useState("")
+
+  useEffect(() => {
+    checkPremiumStatus()
+  }, [checkPremiumStatus])
 
   const handleExit = () => {
     if (typeof window !== "undefined") {
@@ -18,13 +29,37 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
     }
   }
 
+  const handlePremiumClick = () => {
+    if (hasPremium) {
+      onModeSelect(true)
+    } else {
+      setShowUnlockModal(true)
+      setUnlockError("")
+      setUnlockCode("")
+    }
+  }
+
+  const handleUnlockSubmit = () => {
+    const validCode = "PREMIUM2026" // Codice di sblocco
+    if (unlockCode.toUpperCase() === validCode) {
+      // Salva lo stato Premium in localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("premiumUnlocked", "true")
+      }
+      checkPremiumStatus()
+      setShowUnlockModal(false)
+      onModeSelect(true)
+    } else {
+      setUnlockError("Codice non valido. Riprova.")
+    }
+  }
+
   return (
     <div className="h-[100dvh] elegant-stripes bg-[#000000] relative overflow-hidden">
       <div className="absolute inset-0 bg-black">
         <img src="/background.png" alt="" className="absolute inset-0 w-full h-full object-cover opacity-60" />
       </div>
 
-      {/* Radial gradient circles for depth */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
       <div
         className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"
@@ -35,7 +70,6 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
         style={{ animationDelay: "2s" }}
       ></div>
 
-      {/* Dot pattern overlay */}
       <div
         className="absolute inset-0"
         style={{
@@ -61,7 +95,6 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
               </div>
             </div>
             <div className="relative mb-2">
-              {/* Film strip background icon */}
               <svg
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-32 opacity-10"
                 viewBox="0 0 200 100"
@@ -88,7 +121,6 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
                 </defs>
               </svg>
 
-              {/* Title text */}
               <h1 className="relative text-4xl font-black text-white tracking-[0.2em] uppercase mb-1 drop-shadow-2xl">
                 MOVIE
               </h1>
@@ -101,12 +133,25 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
 
           <div className="space-y-3">
             <button
-              onClick={() => onModeSelect(true)}
-              className="group w-full relative bg-gradient-to-r from-amber-500 via-yellow-500 to-yellow-400 hover:from-amber-400 hover:via-yellow-400 hover:to-yellow-300 text-black font-black py-3 px-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(251,191,36,0.4)] overflow-hidden"
+              onClick={handlePremiumClick}
+              disabled={!hasPremium}
+              className={`group w-full relative ${
+                hasPremium
+                  ? "bg-gradient-to-r from-amber-500 via-yellow-500 to-yellow-400 hover:from-amber-400 hover:via-yellow-400 hover:to-yellow-300 text-black"
+                  : "bg-gray-700/50 text-gray-500 cursor-not-allowed"
+              } font-black py-3 px-6 rounded-2xl transition-all duration-300 ${
+                hasPremium ? "transform hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(251,191,36,0.4)]" : ""
+              } overflow-hidden`}
             >
-              <span className="relative z-10 tracking-wider text-sm uppercase drop-shadow-md">🚀 Accedi • Premium</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-white/10"></div>
+              <span className="relative z-10 tracking-wider text-sm uppercase drop-shadow-md">
+                {hasPremium ? "🚀 Accedi • Premium" : "🔒 Premium Bloccato"}
+              </span>
+              {hasPremium && (
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-transparent to-white/10"></div>
+                </>
+              )}
             </button>
 
             <button
@@ -183,6 +228,60 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
           </button>
         </div>
       </div>
+
+      {showUnlockModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-yellow-500/40 rounded-3xl p-6 max-w-sm w-full shadow-[0_20px_80px_rgba(234,179,8,0.5)] animate-fade-in">
+            <div className="text-center mb-4">
+              <div className="text-6xl mb-3">🔐</div>
+              <h3 className="text-2xl font-black text-yellow-400 uppercase tracking-wider mb-2">Sblocca Premium</h3>
+              <p className="text-gray-400 text-sm">
+                Inserisci il codice di sblocco per accedere a tutte le funzionalità Premium
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={unlockCode}
+                onChange={(e) => {
+                  setUnlockCode(e.target.value.toUpperCase())
+                  setUnlockError("")
+                }}
+                onKeyPress={(e) => e.key === "Enter" && handleUnlockSubmit()}
+                placeholder="CODICE-PREMIUM"
+                className="w-full bg-white/10 border-2 border-yellow-500/30 rounded-xl px-4 py-3 text-white text-center font-bold text-lg uppercase tracking-widest focus:outline-none focus:border-yellow-400 transition-colors"
+                maxLength={20}
+              />
+
+              {unlockError && (
+                <p className="text-red-400 text-sm text-center font-semibold animate-shake">{unlockError}</p>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowUnlockModal(false)}
+                  className="flex-1 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 font-bold py-3 px-4 rounded-xl transition-colors uppercase text-sm tracking-wider"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={handleUnlockSubmit}
+                  className="flex-1 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black py-3 px-4 rounded-xl transition-all shadow-[0_10px_30px_rgba(234,179,8,0.4)] uppercase text-sm tracking-wider"
+                >
+                  Sblocca
+                </button>
+              </div>
+
+              <div className="text-center pt-2">
+                <p className="text-gray-500 text-xs">
+                  Codice demo: <span className="text-yellow-400 font-mono">PREMIUM2026</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
