@@ -66,10 +66,14 @@ export default function MovieFinderPage() {
 
       {isClosing && (
         <div className="cinema-closing-overlay">
-          <div className="cinema-closing-text">
-            METTITI COMODO
-            <br />
-            INIZIA LO SPETTACOLO
+          <div className="cinema-screen-frame">
+            <div className="cinema-screen-content">
+              <div className="cinema-closing-text">
+                METTITI COMODO
+                <br />
+                INIZIA LO SPETTACOLO
+              </div>
+            </div>
           </div>
         </div>
       )}
