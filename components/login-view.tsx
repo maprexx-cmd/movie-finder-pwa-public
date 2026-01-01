@@ -18,7 +18,8 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
 
   useEffect(() => {
     checkPremiumStatus()
-  }, [checkPremiumStatus])
+    console.log("[v0] Premium status:", hasPremium)
+  }, [checkPremiumStatus, hasPremium])
 
   const handleExit = () => {
     if (typeof window !== "undefined") {
@@ -30,9 +31,11 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
   }
 
   const handlePremiumClick = () => {
+    console.log("[v0] Premium button clicked, hasPremium:", hasPremium)
     if (hasPremium) {
       onModeSelect(true)
     } else {
+      console.log("[v0] Opening unlock modal")
       setShowUnlockModal(true)
       setUnlockError("")
       setUnlockCode("")
