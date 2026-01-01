@@ -43,6 +43,10 @@ export function MovieCard({ result, isTvMode = false, isBasicMode = false }: Mov
 
   const btnPrimaryText = isBasicMode ? "text-white" : "text-black"
 
+  const btnPrimaryShadow = isBasicMode
+    ? "shadow-[0_0_30px_rgba(6,182,212,0.7),0_8px_20px_rgba(6,182,212,0.5)] hover:shadow-[0_0_45px_rgba(6,182,212,0.9),0_12px_30px_rgba(6,182,212,0.7)]"
+    : "shadow-[0_0_30px_rgba(234,179,8,0.7),0_8px_20px_rgba(234,179,8,0.5)] hover:shadow-[0_0_45px_rgba(234,179,8,0.9),0_12px_30px_rgba(234,179,8,0.7)]"
+
   const handleShare = async () => {
     const appUrl = typeof window !== "undefined" ? window.location.origin : ""
     const shareText = `Sto guardando: ${title}\n\nL'ho trovato grazie a MOVIE FINDER\nScarica adesso e trova i film e le serie tv più famose.\n\n${appUrl}`
@@ -232,7 +236,7 @@ export function MovieCard({ result, isTvMode = false, isBasicMode = false }: Mov
               </button>
               <button
                 onClick={handleWatch}
-                className={`${btnPrimaryBg} ${btnPrimaryHover} ${btnPrimaryText} font-semibold py-2 px-4 rounded-xl transition-all text-sm transform hover:-translate-y-1 shadow-lg tracking-wide`}
+                className={`${btnPrimaryBg} ${btnPrimaryHover} ${btnPrimaryText} ${btnPrimaryShadow} font-semibold py-2 px-4 rounded-xl transition-all text-sm transform hover:-translate-y-1 tracking-wide`}
               >
                 Guarda
               </button>
