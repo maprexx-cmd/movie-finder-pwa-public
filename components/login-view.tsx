@@ -2,6 +2,7 @@
 
 import { useMovieStore } from "@/lib/store"
 import { useState, useEffect } from "react"
+import { purchasePremium } from "@/lib/play-billing"
 
 interface LoginViewProps {
   onModeSelect: (isPremium: boolean) => void
@@ -15,6 +16,7 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
   const [showUnlockModal, setShowUnlockModal] = useState(false)
   const [unlockCode, setUnlockCode] = useState("")
   const [unlockError, setUnlockError] = useState("")
+  const [isPurchasing, setIsPurchasing] = useState(false)
 
   useEffect(() => {
     checkPremiumStatus()
@@ -39,18 +41,40 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
     }
   }
 
-  const handleUnlockSubmit = () => {
-    const validCode = "PREMIUM2026" // Codice di sblocco
-    if (unlockCode.toUpperCase() === validCode) {
-      // Salva lo stato Premium in localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("premiumUnlocked", "true")
+  const handleUnlockSubmit = async () => {
+    // Check if running as native Android app
+    const isNative = typeof window !== "undefined" && (window as any).Capacitor !== undefined
+
+    if (isNative) {
+      // Use Google Play Billing for native app
+      setIsPurchasing(true)
+      try {
+        const success = await purchasePremium()
+        if (success) {
+          checkPremiumStatus()
+          setShowUnlockModal(false)
+          onModeSelect(true)
+        } else {
+          setUnlockError("Acquisto non completato. Riprova.")
+        }
+      } catch (error) {
+        setUnlockError("Errore durante l'acquisto. Riprova.")
+      } finally {
+        setIsPurchasing(false)
       }
-      checkPremiumStatus()
-      setShowUnlockModal(false)
-      onModeSelect(true)
     } else {
-      setUnlockError("Codice non valido. Riprova.")
+      // Use unlock code for web version
+      const validCode = "PREMIUM2026"
+      if (unlockCode.toUpperCase() === validCode) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("premiumUnlocked", "true")
+        }
+        checkPremiumStatus()
+        setShowUnlockModal(false)
+        onModeSelect(true)
+      } else {
+        setUnlockError("Codice non valido. Riprova.")
+      }
     }
   }
 
@@ -258,23 +282,35 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
               <div className="text-6xl mb-3">🔐</div>
               <h3 className="text-2xl font-black text-yellow-400 uppercase tracking-wider mb-2">Sblocca Premium</h3>
               <p className="text-gray-400 text-sm">
-                Inserisci il codice di sblocco per accedere a tutte le funzionalità Premium
+                {typeof window !== "undefined" && (window as any).Capacitor !== undefined
+                  ? "Abbonamento mensile €2.99/mese - Primi 7 giorni gratis"
+                  : "Inserisci il codice di sblocco per accedere a tutte le funzionalità Premium"}
               </p>
             </div>
 
             <div className="space-y-4">
-              <input
-                type="text"
-                value={unlockCode}
-                onChange={(e) => {
-                  setUnlockCode(e.target.value.toUpperCase())
-                  setUnlockError("")
-                }}
-                onKeyPress={(e) => e.key === "Enter" && handleUnlockSubmit()}
-                placeholder="CODICE-PREMIUM"
-                className="w-full bg-white/10 border-2 border-yellow-500/30 rounded-xl px-4 py-3 text-white text-center font-bold text-lg uppercase tracking-widest focus:outline-none focus:border-yellow-400 transition-colors"
-                maxLength={20}
-              />
+              {(typeof window === "undefined" || (window as any).Capacitor === undefined) && (
+                <>
+                  <input
+                    type="text"
+                    value={unlockCode}
+                    onChange={(e) => {
+                      setUnlockCode(e.target.value.toUpperCase())
+                      setUnlockError("")
+                    }}
+                    onKeyPress={(e) => e.key === "Enter" && handleUnlockSubmit()}
+                    placeholder="CODICE-PREMIUM"
+                    className="w-full bg-white/10 border-2 border-yellow-500/30 rounded-xl px-4 py-3 text-white text-center font-bold text-lg uppercase tracking-widest focus:outline-none focus:border-yellow-400 transition-colors"
+                    maxLength={20}
+                  />
+
+                  <div className="text-center pt-2">
+                    <p className="text-gray-500 text-xs">
+                      Codice demo: <span className="text-yellow-400 font-mono">PREMIUM2026</span>
+                    </p>
+                  </div>
+                </>
+              )}
 
               {unlockError && (
                 <p className="text-red-400 text-sm text-center font-semibold animate-shake">{unlockError}</p>
@@ -283,22 +319,22 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowUnlockModal(false)}
-                  className="flex-1 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 font-bold py-3 px-4 rounded-xl transition-colors uppercase text-sm tracking-wider"
+                  disabled={isPurchasing}
+                  className="flex-1 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 font-bold py-3 px-4 rounded-xl transition-colors uppercase text-sm tracking-wider disabled:opacity-50"
                 >
                   Annulla
                 </button>
                 <button
                   onClick={handleUnlockSubmit}
-                  className="flex-1 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black py-3 px-4 rounded-xl transition-all shadow-[0_10px_30px_rgba(234,179,8,0.4)] uppercase text-sm tracking-wider"
+                  disabled={isPurchasing}
+                  className="flex-1 bg-gradient-to-r from-yellow-500 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-black font-black py-3 px-4 rounded-xl transition-all shadow-[0_10px_30px_rgba(234,179,8,0.4)] uppercase text-sm tracking-wider disabled:opacity-50"
                 >
-                  Sblocca
+                  {isPurchasing
+                    ? "..."
+                    : typeof window !== "undefined" && (window as any).Capacitor !== undefined
+                      ? "Prova 7 giorni gratis"
+                      : "Sblocca"}
                 </button>
-              </div>
-
-              <div className="text-center pt-2">
-                <p className="text-gray-500 text-xs">
-                  Codice demo: <span className="text-yellow-400 font-mono">PREMIUM2026</span>
-                </p>
               </div>
             </div>
           </div>
