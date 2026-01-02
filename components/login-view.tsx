@@ -141,11 +141,10 @@ export function LoginView({ onModeSelect }: LoginViewProps) {
           <div className="space-y-3">
             <button
               onClick={handlePremiumClick}
-              disabled={!hasPremium}
               className={`group w-full relative ${
                 hasPremium
                   ? "bg-gradient-to-r from-amber-500 via-yellow-500 to-yellow-400 hover:from-amber-400 hover:via-yellow-400 hover:to-yellow-300 text-black"
-                  : "bg-gray-700/50 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-700/50 text-gray-500 cursor-pointer"
               } font-black py-3 px-6 rounded-2xl transition-all duration-300 ${
                 hasPremium ? "transform hover:-translate-y-2 hover:shadow-[0_25px_50px_rgba(251,191,36,0.4)]" : ""
               } overflow-hidden`}
